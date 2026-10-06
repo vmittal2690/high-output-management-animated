@@ -16,33 +16,33 @@ window.TIMINGS = {
   ]
  },
  "success": {
-  "dur": 29.672,
+  "dur": 28.354,
   "marks": {
-   "egg": 5.508,
-   "uni": 12.142,
-   "full": 15.892,
-   "cost": 19.58,
-   "pass": 23.066
+   "egg": 4.19,
+   "uni": 10.824,
+   "full": 14.574,
+   "cost": 18.262,
+   "pass": 21.748
   },
   "cues": [
    [
     0.15,
-    "Part three of the book picks up the breakfast factory where we left it."
+    "Back to the breakfast factory, where we left it."
    ],
    [
-    5.508,
+    4.19,
     "Business was so good that we bought a continuous egg-boiling machine."
    ],
    [
-    10.722,
+    9.404,
     "It was expensive, but breakfasts came out more uniform than ever."
    ],
    [
-    15.892,
+    14.574,
     "Volume grew until the machine ran at full capacity, so the cost of each breakfast kept falling."
    ],
    [
-    23.066,
+    21.748,
     "We passed some of the savings on to customers, and our reputation spread."
    ]
   ]

@@ -1,6 +1,6 @@
 window.TIMINGS = {
  "intro": {
-  "dur": 11.506,
+  "dur": 10.636,
   "marks": {
    "sub": 2.094
   },
@@ -11,10 +11,10 @@ window.TIMINGS = {
    ],
    [
     2.094,
-    "Two emotionally charged tasks close this part of the book."
+    "Two emotionally charged tasks open this part."
    ],
    [
-    6.578,
+    5.708,
     "First: interviewing someone you might hire."
    ]
   ]

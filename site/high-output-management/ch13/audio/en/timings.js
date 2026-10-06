@@ -511,7 +511,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 6.646,
+  "dur": 8.73,
   "marks": {},
   "cues": [
    [
@@ -520,7 +520,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson thirteen, and of Part Two."
+    "That is the end of lesson thirteen, and of part three, on deciding and planning."
    ]
   ]
  }

@@ -509,7 +509,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.106,
+  "dur": 5.486,
   "marks": {},
   "cues": [
    [
@@ -518,7 +518,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson twenty-nine, and of Grove's two difficult tasks."
+    "That is the end of lesson twenty-nine."
    ]
   ]
  }
