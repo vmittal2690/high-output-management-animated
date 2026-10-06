@@ -19,7 +19,7 @@ Started by Vaishali Mittal. Lesson engine and pipeline: [Papermorph](https://git
 | `site/high-output-management/` | The finished static book: cover, contents, lessons 1 to 32. This is what gets published. |
 | `.claude/skills/papermorph/` | The Papermorph skill, unmodified: pipeline, engine, templates, review scripts. |
 | `.claude/skills/hom-lessons/` | Companion skill: this book's audience, coverage rule, look, and the plan for chapters 3 to 15. |
-| `books/high-output-management/` | Book plan (`BOOK.md`), lesson map (`chapters.md`), per-lesson notes. |
+| `books/high-output-management/` | Book plan, lesson map and per-lesson notes. Kept locally only (git-ignored). |
 | `content/high-output-management/` | Narration scripts, one JSON per lesson. |
 | `tools/high-output-management/` | Caption-timing tool and browser tests. |
 | `CLAUDE.md` | Project context Claude Code reads at the start of every session. |
