@@ -7,3 +7,5 @@ shots*/
 CLAUDE.md
 .vercel
 books/
+.env
+content/*/*/*.google.json

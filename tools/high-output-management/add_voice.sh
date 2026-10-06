@@ -1,14 +1,13 @@
 #!/bin/bash
-# Add neural voice narration to every lesson, then switch the lessons from captions-only to voiced.
-# Run from the hom-webbook folder on a computer with internet access:
+# Add Google Cloud Text-to-Speech narration to every lesson, then switch the lessons from captions-only to voiced.
+# Run from the hom-webbook folder:
 #     bash tools/high-output-management/add_voice.sh
-# Needs: uv (https://docs.astral.sh/uv/) and ffmpeg (for ffprobe). Safe to rerun: finished clips are cached.
+# Needs: ffmpeg (for ffprobe) and GOOGLE_TTS_API_KEY in the environment or in .env (git-ignored).
+# Optional: GOOGLE_TTS_VOICE, GOOGLE_TTS_RATE. Safe to rerun: finished clips are cached.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-SK=.claude/skills/papermorph
 BOOK=high-output-management
 
-command -v uv >/dev/null || { echo "Missing uv. Install it with:  curl -LsSf https://astral.sh/uv/install.sh | sh"; exit 1; }
 command -v ffprobe >/dev/null || { echo "Missing ffmpeg. Install it with:  brew install ffmpeg"; exit 1; }
 
 LESSONS=$(ls -d site/$BOOK/ch[0-9][0-9] | xargs -n1 basename)
@@ -16,7 +15,7 @@ LESSONS=$(ls -d site/$BOOK/ch[0-9][0-9] | xargs -n1 basename)
 # 1. Generate audio for every lesson first. If any lesson fails, nothing is switched over.
 for c in $LESSONS; do
   echo "== $c: generating voice"
-  uv run --with edge-tts $SK/scripts/tts.py content/$BOOK/$c/narration.en.json site/$BOOK/$c/audio/en
+  python3 tools/$BOOK/tts_google.py content/$BOOK/$c/narration.en.json site/$BOOK/$c/audio/en
 done
 
 # 2. Every lesson has audio: turn off captions-only mode and update the contents page.
