@@ -523,7 +523,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.308,
+  "dur": 7.864,
   "marks": {},
   "cues": [
    [
@@ -532,7 +532,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson eighteen, and of Grove's chapter on dual reporting."
+    "That is the end of lesson eighteen, and of part four, on structure."
    ]
   ]
  }

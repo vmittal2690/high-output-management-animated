@@ -567,7 +567,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.902,
+  "dur": 8.396,
   "marks": {},
   "cues": [
    [
@@ -576,7 +576,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson twenty-seven, and of Grove's chapter on performance reviews."
+    "That is the end of lesson twenty-seven, and of part six, on growing people."
    ]
   ]
  }

@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 21, title: 'Can’t or won’t, and the ladder of needs', kicker: 'Chapter 11 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch22/index.html' };
+const CHAPTER = { number: 21, title: 'Can’t or won’t, and the ladder of needs', kicker: 'Part 5 · Lesson 3', minutes: 12, language: 'en', silent: true, next: '../ch22/index.html' };
 
 /* Colours: blue = training and capability (ordinary work); purple = motivation and the two upper needs,
    which make people perform; salmon = the three lower needs, which get people to show up;
@@ -46,7 +46,7 @@ function l21Ladder(p, x, y, s, t0, { hi = [0, 1, 2, 3, 4], size = 24, labels = t
 }
 
 const BEATS = [
-  ['intro', 'Can’t or won’t, and the ladder of needs', (m, D) => hmTitle(m, D, 'Chapter 11 · The Sports Analogy · Lesson 1 of 2', 'Can’t or won’t, and the ladder of needs', 'Why people don’t perform, and what really moves them')],
+  ['intro', 'Can’t or won’t, and the ladder of needs', (m, D) => hmTitle(m, D, 'Part 5 · Control and motivation · Lesson 3 of 4', 'Can’t or won’t, and the ladder of needs', 'Why people don’t perform, and what really moves them')],
 
   ['cant', 'Can’t or won’t?', (m) => {
     const p = panel(0);
@@ -83,7 +83,7 @@ const BEATS = [
     hmSay(p, 'B', 742, 392, m('mot', .8), { size: 26, weight: 700, fill: COL.good, anchor: 'end' });
     hmSay(p, 'motivation', 780, 505, m('mot', .3), { size: 24, fill: COL.real, weight: 600, anchor: 'start' });
     hmSay(p, 'after Grove’s figure (1983), shape only', 1500, 640, m('axes', 1), { size: 18, fill: COL.faint, anchor: 'end' });
-    hmSay(p, 'this chapter: motivation', 1300, 420, m('focus'), { size: 28, fill: COL.real, weight: 700 });
+    hmSay(p, 'this lesson: motivation', 1300, 420, m('focus'), { size: 28, fill: COL.real, weight: 700 });
     hmRule(p, 'Training moves people right. Motivation lifts them up.', m('focus', 2.5), 745);
   }],
 

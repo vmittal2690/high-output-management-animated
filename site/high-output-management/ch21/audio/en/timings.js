@@ -78,7 +78,7 @@ window.TIMINGS = {
   ]
  },
  "levers": {
-  "dur": 27.86,
+  "dur": 27.794,
   "marks": {
    "axes": 2.638,
    "low": 6.578,
@@ -119,7 +119,7 @@ window.TIMINGS = {
    ],
    [
     22.396,
-    "This chapter is about the second lever: motivation."
+    "This lesson is about the second lever: motivation."
    ]
   ]
  },

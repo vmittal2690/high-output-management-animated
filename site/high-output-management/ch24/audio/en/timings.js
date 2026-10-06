@@ -491,7 +491,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 9.034,
+  "dur": 5.486,
   "marks": {},
   "cues": [
    [
@@ -500,7 +500,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson twenty-four, and of Grove's chapter on task-relevant maturity."
+    "That is the end of lesson twenty-four."
    ]
   ]
  }

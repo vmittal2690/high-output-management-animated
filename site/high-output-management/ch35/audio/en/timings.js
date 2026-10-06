@@ -375,7 +375,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of the bonus chapter, and of the book."
+    "That is the end of the bonus lessons, and of the book."
    ]
   ]
  }

@@ -358,7 +358,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 5.024,
+  "dur": 4.958,
   "marks": {},
   "cues": [
    [
@@ -367,7 +367,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of chapter one."
+    "That is the end of lesson two."
    ]
   ]
  }

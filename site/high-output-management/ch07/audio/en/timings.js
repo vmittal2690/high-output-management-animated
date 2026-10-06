@@ -534,7 +534,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.44,
+  "dur": 5.09,
   "marks": {},
   "cues": [
    [
@@ -543,7 +543,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson seven, and of Grove's chapter on managerial leverage."
+    "That is the end of lesson seven."
    ]
   ]
  }

@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 20, title: 'Choosing the mode of control', kicker: 'Chapter 10 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch21/index.html' };
+const CHAPTER = { number: 20, title: 'Choosing the mode of control', kicker: 'Part 5 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch21/index.html' };
 
 /* Colours (as in lesson 19): pink = the market mode; blue = the contract mode; purple = cultural values;
    green = the goal; red = a problem (high CUA, the nothing-works box); amber = the rule. */
@@ -67,7 +67,7 @@ function l20Quad(p, ox, oy, s, at) {
 const l20Side = (p, arr, t0s, y0 = 220) => arr.forEach(([s, o], i) => hmSay(p, s, 920, y0 + i * 52, t0s[i], { size: 26, anchor: 'start', ...o }));
 
 const BEATS = [
-  ['intro', 'Choosing the mode of control', (m, D) => hmTitle(m, D, 'Chapter 10 · Modes of Control · Lesson 2 of 2', 'Choosing the mode of control', 'Motivation, the CUA factor, and all three modes in a working day')],
+  ['intro', 'Choosing the mode of control', (m, D) => hmTitle(m, D, 'Part 5 · Control and motivation · Lesson 2 of 4', 'Choosing the mode of control', 'Motivation, the CUA factor, and all three modes in a working day')],
 
   ['ideal', 'Don’t idealize culture', (m) => {
     const p = panel(0);

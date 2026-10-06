@@ -1,7 +1,8 @@
 # High Output Management, animated
 
 Short animated lessons with quizzes that retell Andrew Grove's *High Output Management* for new managers.
-The whole book is built: 32 lessons covering all fifteen chapters and Grove's closing homework list.
+35 lessons in seven parts, each built around one of Grove's main ideas (output, leverage, deciding and planning,
+structure, motivation, growing people, people decisions), plus a closing homework lesson and three bonus lessons on AI agents.
 Captions only for now; see "Voice narration" below.
 
 Based on *High Output Management* by Andrew S. Grove (first published 1983; Vintage Books).

@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 23, title: 'Match the style to the maturity', kicker: 'Chapter 12 · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch24/index.html' };
+const CHAPTER = { number: 23, title: 'Match the style to the maturity', kicker: 'Part 6 · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch24/index.html' };
 
 /* Colours: salmon = structured style (low TRM); pink = individual, communicating style (medium TRM);
    purple = minimal involvement and monitoring (high TRM); blue = ordinary work, people and TRM itself;
@@ -48,7 +48,7 @@ function l23Scale(p, y, t0s, { axis = true } = {}) {
 }
 
 const BEATS = [
-  ['intro', 'Match the style to the maturity', (m, D) => hmTitle(m, D, 'Chapter 12 · Task-Relevant Maturity · Lesson 1 of 2', 'Match the style to the maturity', 'Why no style is best, and the one variable that decides')],
+  ['intro', 'Match the style to the maturity', (m, D) => hmTitle(m, D, 'Part 6 · Growing people · Lesson 1 of 5', 'Match the style to the maturity', 'Why no style is best, and the one variable that decides')],
 
   ['nobest', 'Is there one best style?', (m) => {
     const p = panel(0);
@@ -237,7 +237,7 @@ const BEATS = [
   }],
 
   ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
-    { id: 'p-best', prompt: ['A peer asks which management style is “the best one” to learn. What does Grove’s chapter say?'],
+    { id: 'p-best', prompt: ['A peer asks which management style is “the best one” to learn. What does Grove say?'],
       build: choice([['Structured: it is the most reliable'], ['Communicating: it is the most modern'], ['None is best: it depends on the person’s task-relevant maturity']], 2,
         'Research found no best style. The effective one depends on TRM, task by task.',
         ['Structured is effective only when TRM is low.', 'Communicating fits medium TRM; it is not best everywhere.', null]) },

@@ -15,7 +15,7 @@ Where this skill and papermorph disagree, this skill wins.
 - Done: the whole book, lessons 1 to 32 (`ch01` to `ch32`), covering book chapters 1 to 15 and One More Thing.
   Lessons 5 to 32 still need the Playwright checks below; they were built where no browser was available.
 - Lesson folders are numbered in reading order (`ch05`, `ch06`, ...). They are lessons, not book chapters.
-  The contents page groups lessons under the book's chapter titles through `UNITS` in `index.html`.
+  The contents page groups lessons into parts named for main ideas (not the book's chapter titles) through `UNITS` in `index.html`.
 - `books/high-output-management/chapters.md` is the lesson map and the plan. Keep it current.
 
 ## The coverage rule (the reason lessons 1 to 4 were rebuilt once)
@@ -46,8 +46,8 @@ Follow papermorph's `references/authoring.md`, with these fixed choices:
 - Every wrong option gets its own one-sentence explanation of the misunderstanding.
 - Every lesson beat ends on its rule in amber (`hmRule`).
 - Grove's story carries the explanation; questions move to a manager's week (see `CLAUDE.md`).
-- Set `CHAPTER.kicker` to `'Chapter N · Lesson M'`, `CHAPTER.next` on the previous lesson, and add the
-  lesson to `UNITS`. Add a unit sketch to `unit-art.js` when a new book chapter starts.
+- Set `CHAPTER.kicker` to `'Part N · Lesson M'`, `CHAPTER.next` on the previous lesson, and add the
+  lesson to `UNITS`. Each part reuses a sketch from `unit-art.js` (see the mapping at its end).
 
 ## Look and layout (approved in lessons 1 to 4)
 

@@ -542,7 +542,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 7.644,
+  "dur": 7.468,
   "marks": {},
   "cues": [
    [
@@ -551,7 +551,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson nine, and of Grove's chapter on meetings."
+    "That is the end of lesson nine, and of part two, on leverage."
    ]
   ]
  }

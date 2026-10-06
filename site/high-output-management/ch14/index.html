@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Breakfast Factory goes national</title>
+<title>From one team to many</title>
 <link rel="stylesheet" href="../lib/engine.css">
 <link rel="expect" href="#bar" blocking="render">
 </head>
@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 14, title: 'The Breakfast Factory goes national', kicker: 'Chapter 7 · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch15/index.html' };
+const CHAPTER = { number: 14, title: 'From one team to many', kicker: 'Part 4 · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch15/index.html' };
 
 /* Colours: blue = each local branch (ordinary work); pink = the regional middle; purple = headquarters (central);
    green = the goal (quality, output); red = a problem or cost (overhead, crossed-out options); amber = the rule. */
@@ -50,7 +50,7 @@ function l14Board(p, beat, m) {
 }
 
 const BEATS = [
-  ['intro', 'The Breakfast Factory goes national', (m, D) => hmTitle(m, D, 'Chapter 7 · The Breakfast Factory Goes National · Lesson 1 of 1', 'The Breakfast Factory goes national', 'When one team becomes many: what to centralize, what to leave local')],
+  ['intro', 'From one team to many', (m, D) => hmTitle(m, D, 'Part 4 · Structure · Lesson 1 of 5', 'From one team to many', 'When one team becomes many: what to centralize, what to leave local')],
 
   ['success', 'Success brings scale', (m) => {
     const p = panel(0);
@@ -219,7 +219,7 @@ const BEATS = [
   }],
 
   ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
-    id: 'c-tot', prompt: ['Your group has grown from one team to four. You now spend more time linking the teams than doing the work. What does this chapter suggest?'],
+    id: 'c-tot', prompt: ['Your group has grown from one team to four. You now spend more time linking the teams than doing the work. What does this lesson suggest?'],
     build: choice([['Something is wrong: go back to doing the work yourself'], ['That is the job now: making the teams support each other'], ['Merge the four teams into one so nothing needs linking']], 1,
       'With many teams, a manager’s work is fashioning a team of teams that support one another.',
       ['That is the CEO’s wish for the old days. The network’s output depends on the links.', null, 'One giant team loses the local knowledge each team brings; the links are the work.']),

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>One more thing: your homework</title>
+<title>Your homework</title>
 <link rel="stylesheet" href="../lib/engine.css">
 <link rel="expect" href="#bar" blocking="render">
 </head>
@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 32, title: 'One more thing: your homework', kicker: 'One More Thing · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch33/index.html' };
+const CHAPTER = { number: 32, title: 'Your homework', kicker: 'Closing · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch33/index.html' };
 
 /* Colours: salmon = production homework; purple = leverage homework; pink = performance homework;
    grey = topics the list leaves out; green = the goal (Grove's 100 points); amber = the rule.
@@ -84,7 +84,7 @@ const L32_PERF2 = [
 ];
 
 const BEATS = [
-  ['intro', 'One more thing: your homework', (m, D) => hmTitle(m, D, 'One More Thing... · Lesson 1 of 1', 'One more thing: your homework', 'Grove’s closing assignments, and where each was taught')],
+  ['intro', 'Your homework', (m, D) => hmTitle(m, D, 'Closing · Lesson 1 of 1', 'Your homework', 'Grove’s closing assignments, and where each was taught')],
 
   ['deal', 'Grove’s deal', (m) => {
     const p = panel(0);
@@ -176,8 +176,8 @@ const BEATS = [
   ['beyond', 'What the list leaves out', (m) => {
     const p = panel(0);
     hmHead(p, 'Not on Grove’s list');
-    hmBox(p, 480, 320, 620, 220, COL.faint, m('gap'), 'Organizing', { size: 30, sub: ['Lesson 14: the factory goes national', 'Lessons 15–16: hybrid organizations', 'Lessons 17–18: dual reporting', 'Lessons 19–20: modes of control'] });
-    hmBox(p, 1120, 320, 620, 220, COL.faint, m('hire'), 'People', { size: 30, sub: ['Lessons 28–29: interviewing, “I quit!”', 'Lessons 30–31: pay (one item touches it)'] });
+    hmBox(p, 480, 320, 620, 220, COL.faint, m('gap'), 'Organizing', { size: 30, sub: ['Lesson 14: from one team to many', 'Lessons 15–16: hybrid organizations', 'Lessons 17–18: dual reporting', 'Lessons 19–20: modes of control'] });
+    hmBox(p, 1120, 320, 620, 220, COL.faint, m('hire'), 'People', { size: 30, sub: ['Lessons 28–29: interviewing, resignations', 'Lessons 30–31: pay (one item touches it)'] });
     hmSay(p, 'our observation, not Grove’s', 800, 490, m('hire', 3), { size: 22, fill: COL.dim });
     hmSay(p, 'These arrive with the situation. Then reopen the lesson.', 800, 600, m('when'), { size: 30, fill: COL.good, weight: 600 });
     hmRule(p, 'When the situation comes, the lesson is here.', m('when', 4), 745);

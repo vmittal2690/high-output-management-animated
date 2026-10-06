@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 22, title: 'The drive to achieve, and work as a sport', kicker: 'Chapter 11 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch23/index.html' };
+const CHAPTER = { number: 22, title: 'The drive to achieve, and work as a sport', kicker: 'Part 5 · Lesson 4', minutes: 12, language: 'en', silent: true, next: '../ch23/index.html' };
 
 /* Colours: pink = competence-driven (mastery); purple = achievement-driven, and money as a measure of it;
    salmon = money as a need; blue = ordinary work and training; green = the goal or a good result;
@@ -38,7 +38,7 @@ function l22Peg(p, x, floor, t0) {
 const l22Ring = (p, x, y, color, t0) => { const r = G(p, { x, y, o: 0 }); mk('ellipse', { rx: 20, ry: 7, fill: 'none', stroke: color, 'stroke-width': 4 }, r); show(r, t0); return r; };
 
 const BEATS = [
-  ['intro', 'The drive to achieve, and work as a sport', (m, D) => hmTitle(m, D, 'Chapter 11 · The Sports Analogy · Lesson 2 of 2', 'The drive to achieve, and work as a sport', 'Stretch goals, money, feedback, and the manager as coach')],
+  ['intro', 'The drive to achieve, and work as a sport', (m, D) => hmTitle(m, D, 'Part 5 · Control and motivation · Lesson 4 of 4', 'The drive to achieve, and work as a sport', 'Stretch goals, money, feedback, and the manager as coach')],
 
   ['drives', 'Two forms of the drive', (m) => {
     const p = panel(0);
@@ -183,7 +183,7 @@ const BEATS = [
     pop(hmCross(p, 620, 290, COL.bad, 14), m('irr', 1.5)); pop(hmCross(p, 620, 370, COL.bad, 14), m('irr', 1.8));
     hmArrow(p, 680, 330, 950, 330, COL.dim, m('rel'), .6);
     hmSay(p, 'steer', 815, 315, m('rel'), { size: 22, fill: COL.dim });
-    hmBox(p, 1150, 500, 460, 110, COL.good, m('review'), 'The performance review', { size: 28, fill: COL.good, sub: ['the most important; a later chapter'] });
+    hmBox(p, 1150, 500, 460, 110, COL.good, m('review'), 'The performance review', { size: 28, fill: COL.good, sub: ['the most important; a later lesson'] });
     hmRule(p, 'Reward what ties to the work, not the office.', m('review', 4), 745);
   }],
 

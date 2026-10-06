@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 1, title: 'Planning around the limiting step', kicker: 'Chapter 1 · Lesson 1', minutes: 8, language: 'en', silent: true, next: '../ch02/index.html' };
+const CHAPTER = { number: 1, title: 'Planning around the limiting step', kicker: 'Part 1 · Lesson 1', minutes: 8, language: 'en', silent: true, next: '../ch02/index.html' };
 
 /* ---------- the breakfast plan: bars finish together at X_READY; 150 px = 1 minute ---------- */
 const X_READY = 1320, X_DEL = 1380, PXM = 150, BH = 64, ROW = { egg: 270, toast: 400, coffee: 530 };
@@ -65,7 +65,7 @@ const C1_TASKS = [['Security clearance', '5 weeks', 750], ['System accounts', '1
 const C1_HIRE = ['phone screen', 'on-site visit', 'offer made', 'first month'];
 
 const BEATS = [
-  ['intro', 'Planning around the limiting step', (m, D) => hmTitle(m, D, 'Chapter 1 · The Basics of Production · Lesson 1 of 2', 'Planning around the limiting step', 'How to plan any piece of work, learned from serving breakfast')],
+  ['intro', 'Planning around the limiting step', (m, D) => hmTitle(m, D, 'Part 1 · Output · Lesson 1 of 4', 'Planning around the limiting step', 'How to plan any piece of work, learned from serving breakfast')],
 
   ['order', 'One breakfast order', (m) => {
     const p = panel(0);

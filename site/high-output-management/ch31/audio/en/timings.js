@@ -384,40 +384,40 @@ window.TIMINGS = {
   ]
  },
  "honest": {
-  "dur": 34.186,
+  "dur": 33.386,
   "marks": {
-   "ratings": 2.238,
-   "pay": 10.068,
-   "promos": 17.56,
-   "result": 25.096
+   "ratings": 1.438,
+   "pay": 9.268,
+   "promos": 16.76,
+   "result": 24.296
   },
   "cues": [
    [
     0.15,
-    "To sum up the chapter."
+    "To sum up."
    ],
    [
-    2.238,
+    1.438,
     "We managers must give honest performance ratings."
    ],
    [
-    6.116,
+    5.316,
     "That is the appraisal work of the earlier lessons."
    ],
    [
-    10.068,
+    9.268,
     "And honest, merit-based pay: the bonus, the base salary, and the ranking behind them."
    ],
    [
-    17.56,
+    16.76,
     "Promotions, too, must follow performance."
    ],
    [
-    21.342,
+    20.542,
     "Each one is feedback the whole company can see."
    ],
    [
-    25.096,
+    24.296,
     "If we do all this, the eventual result is performance valued for its own sake, throughout the organization."
    ]
   ]
@@ -477,7 +477,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.304,
+  "dur": 8.528,
   "marks": {},
   "cues": [
    [
@@ -486,7 +486,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson thirty-one, and of Grove's chapter on compensation."
+    "That is the end of lesson thirty-one, and of part seven, on people decisions."
    ]
   ]
  }

@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 31, title: 'Promotions and the Peter Principle', kicker: 'Chapter 15 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch32/index.html' };
+const CHAPTER = { number: 31, title: 'Promotions and the Peter Principle', kicker: 'Part 7 · Lesson 4', minutes: 11, language: 'en', silent: true, next: '../ch32/index.html' };
 
 /* Colours: blue = pay curves, ordinary work and the noncompetitor; purple = a promotion and the competitor;
    green = the goal and an "exceeds" rating; chalk = a "meets" rating; red = a problem; amber = the rule. */
@@ -31,7 +31,7 @@ const L31_P = { A: l31At(L31_J[0], .08), B: l31At(L31_J[0], .3), M2: l31At(L31_J
 function l31Pt(p, k, color, t0, r = 13) { const [x, y] = L31_P[k]; const d = hmDot(p, x, y, color, r); show(d, t0, .3); return d; }
 
 const BEATS = [
-  ['intro', 'Promotions and the Peter Principle', (m, D) => hmTitle(m, D, 'Chapter 15 · Compensation as Task-Relevant Feedback · Lesson 2 of 2', 'Promotions and the Peter Principle', 'Why promotions must follow performance, and how to undo one that went too far')],
+  ['intro', 'Promotions and the Peter Principle', (m, D) => hmTitle(m, D, 'Part 7 · People decisions · Lesson 4 of 4', 'Promotions and the Peter Principle', 'Why promotions must follow performance, and how to undo one that went too far')],
 
   ['promo', 'What a promotion says', (m) => {
     const p = panel(0);
@@ -211,7 +211,7 @@ const BEATS = [
 
   ['honest', 'Honest ratings, honest pay', (m) => {
     const p = panel(0);
-    hmHead(p, 'The chapter in one picture');
+    hmHead(p, 'Pay and promotion in one picture');
     hmBox(p, 330, 260, 400, 110, COL.chalk, m('ratings'), 'Honest ratings', { size: 30, sub: ['the performance review'] });
     hmBox(p, 800, 260, 400, 110, COL.rat, m('pay'), 'Honest merit pay', { size: 30, fill: COL.rat, sub: ['bonus, base salary, ranking'] });
     hmBox(p, 1270, 260, 400, 110, L31.promo, m('promos'), 'Promotions', { size: 30, fill: L31.promo, sub: ['on performance, in full view'] });

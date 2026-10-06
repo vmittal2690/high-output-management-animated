@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 16, title: 'Grove’s Law and who makes it work', kicker: 'Chapter 8 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch17/index.html' };
+const CHAPTER = { number: 16, title: 'Grove’s Law and who makes it work', kicker: 'Part 4 · Lesson 3', minutes: 11, language: 'en', silent: true, next: '../ch17/index.html' };
 
 /* Colours (as in lesson 15): blue = mission-oriented units; purple = shared functional groups; green = the goal;
    red = a problem (central planning, overload); amber = the rule. */
@@ -47,7 +47,7 @@ function l16Doc(p, x, y, w, h, color, lines, t0) {
 const l16Roll = (p, x, y, color, t0) => { const g = G(p, { x, y, o: 0 }); mk('rect', { x: -16, y: -22, width: 32, height: 44, rx: 6, fill: color }, g); mk('rect', { x: -6, y: -30, width: 12, height: 10, rx: 2, fill: color }, g); show(g, t0, .2); return g; };
 
 const BEATS = [
-  ['intro', 'Grove’s Law and who makes it work', (m, D) => hmTitle(m, D, 'Chapter 8 · Hybrid Organizations · Lesson 2 of 2', 'Grove’s Law and who makes it work', 'Why nearly every organization ends up a hybrid, and who balances it')],
+  ['intro', 'Grove’s Law and who makes it work', (m, D) => hmTitle(m, D, 'Part 4 · Structure · Lesson 3 of 5', 'Grove’s Law and who makes it work', 'Why nearly every organization ends up a hybrid, and who balances it')],
 
   ['press', 'A press release', (m) => {
     const p = panel(0);

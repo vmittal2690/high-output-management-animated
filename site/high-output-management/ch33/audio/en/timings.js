@@ -1,6 +1,6 @@
 window.TIMINGS = {
  "intro": {
-  "dur": 12.076,
+  "dur": 12.608,
   "marks": {
    "sub": 1.9
   },
@@ -19,7 +19,7 @@ window.TIMINGS = {
    ],
    [
     7.606,
-    "This chapter is our application, not his."
+    "These bonus lessons are our application, not his."
    ]
   ]
  },

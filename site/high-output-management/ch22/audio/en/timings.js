@@ -302,7 +302,7 @@ window.TIMINGS = {
   ]
  },
  "relevant": {
-  "dur": 25.982,
+  "dur": 25.916,
   "marks": {
    "ind": 5.72,
    "irr": 10.266,
@@ -320,7 +320,7 @@ window.TIMINGS = {
    ],
    [
     17.586,
-    "The most important task-relevant feedback is the performance review, which comes in a later chapter."
+    "The most important task-relevant feedback is the performance review, which comes in a later lesson."
    ]
   ]
  },
@@ -628,7 +628,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.172,
+  "dur": 8.862,
   "marks": {},
   "cues": [
    [
@@ -637,7 +637,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson twenty-two, and of Grove's chapter on motivation."
+    "That is the end of lesson twenty-two, and of part five, on control and motivation."
    ]
   ]
  }

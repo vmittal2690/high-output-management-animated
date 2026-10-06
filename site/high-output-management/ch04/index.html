@@ -13,13 +13,13 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 4, title: 'Forecasts, quality and leverage', kicker: 'Chapter 2 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch05/index.html' };
+const CHAPTER = { number: 4, title: 'Forecasts, quality and leverage', kicker: 'Part 1 · Lesson 4', minutes: 11, language: 'en', silent: true, next: '../ch05/index.html' };
 
 /* ---------- staffing chart: people needed for the forecast workload, by month; 7 px per person ---------- */
 const WORK = [30, 45, 60, 40, 30, 50], WX = i => 420 + i * 150, WY = v => 620 - v * 7;
 
 const BEATS = [
-  ['intro', 'Forecasts, quality and leverage', (m, D) => hmTitle(m, D, 'Chapter 2 · Managing the Breakfast Factory · Lesson 2 of 2', 'Forecasts, quality and leverage', 'How to plan ahead of demand, protect quality, and get more from every hour')],
+  ['intro', 'Forecasts, quality and leverage', (m, D) => hmTitle(m, D, 'Part 1 · Output · Lesson 4 of 4', 'Forecasts, quality and leverage', 'How to plan ahead of demand, protect quality, and get more from every hour')],
 
   ['order', 'Build to order or to forecast', (m) => {
     const p = panel(0);

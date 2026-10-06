@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 24, title: 'Growing maturity, and the traps', kicker: 'Chapter 12 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch25/index.html' };
+const CHAPTER = { number: 24, title: 'Growing maturity, and the traps', kicker: 'Part 6 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch25/index.html' };
 
 /* Colours (as in lesson 23): salmon = structured style (low TRM); pink = individual, communicating style
    (medium TRM); purple = minimal involvement and monitoring (high TRM); blue = ordinary work and social ties;
@@ -41,7 +41,7 @@ const L24_STY = [['Structured', ['tell what, when, how'], COL.nat], ['Individual
 const l24Styles = (p, y, t0, h = 120, sub = true) => L24_STY.map(([n, s, c], i) => hmBox(p, L24_X[i], y, 400, h, c, t0 + i * .1, n, { size: 28, fill: c, sub: sub ? s : undefined }));
 
 const BEATS = [
-  ['intro', 'Growing maturity, and the traps', (m, D) => hmTitle(m, D, 'Chapter 12 · Task-Relevant Maturity · Lesson 2 of 2', 'Growing maturity, and the traps', 'How TRM grows, why to speed it up, and what gets in the way')],
+  ['intro', 'Growing maturity, and the traps', (m, D) => hmTitle(m, D, 'Part 6 · Growing people · Lesson 2 of 5', 'Growing maturity, and the traps', 'How TRM grows, why to speed it up, and what gets in the way')],
 
   ['inside', 'Structure moves inside', (m) => {
     const p = panel(0);

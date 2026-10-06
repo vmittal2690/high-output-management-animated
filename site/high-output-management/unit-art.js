@@ -60,4 +60,7 @@
       P('M400 70H470V130H400Z', 'a') + P('M420 92A4 4 0 1 0 428 92A4 4 0 1 0 420 92', 'a') + P('M442 92A4 4 0 1 0 450 92A4 4 0 1 0 442 92', 'a') +
       P('M470 100H530') + P('M530 70V130', '', 'stroke-width="6"') + P('M535 100H580') + P('M570 92L580 100L570 108') + Tx(500, 60, 'gate', 20) + Tx(350, 150, 'brief', 20, 'a')),
   ];
+  // The sketches above were drawn one per book chapter; the contents now groups lessons into parts by main idea.
+  // Each part reuses the sketch that best captures its idea.
+  window.UNIT_ART = [0, 2, 5, 7, 10, 11, 14, 15, 16].map(i => window.UNIT_ART[i]);
 })();

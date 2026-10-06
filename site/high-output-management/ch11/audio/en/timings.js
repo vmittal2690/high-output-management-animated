@@ -501,7 +501,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 7.842,
+  "dur": 5.156,
   "marks": {},
   "cues": [
    [
@@ -510,7 +510,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson eleven, and of Grove's chapter on decisions."
+    "That is the end of lesson eleven."
    ]
   ]
  }

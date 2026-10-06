@@ -13,7 +13,7 @@
 <script src="audio/en/timings.js"></script>
 <script>
 'use strict';
-const CHAPTER = { number: 26, title: 'Delivering the review', kicker: 'Chapter 13 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch27/index.html' };
+const CHAPTER = { number: 26, title: 'Delivering the review', kicker: 'Part 6 · Lesson 4', minutes: 12, language: 'en', silent: true, next: '../ch27/index.html' };
 
 /* Colours: blue = ordinary work and output measures; purple = internal measures (as in lesson 25);
    green = the goal, positives and the messages kept; red = a problem, negatives; amber = the rule. */
@@ -40,7 +40,7 @@ const L26_POS = ['planning process much better', 'good report to the council', '
 const L26_NEG = ['spec process: zero progress', 'meetings: a debating society', 'weak kick-off for spec training', 'confused on computer use', 'doesn’t listen to peers'];
 
 const BEATS = [
-  ['intro', 'Delivering the review', (m, D) => hmTitle(m, D, 'Chapter 13 · Performance Appraisal: Manager as Judge and Jury · Lesson 2 of 3', 'Delivering the review', 'The three L’s, and preparing the usual mixed review')],
+  ['intro', 'Delivering the review', (m, D) => hmTitle(m, D, 'Part 6 · Growing people · Lesson 4 of 5', 'Delivering the review', 'The three L’s, and preparing the usual mixed review')],
 
   ['threel', 'The three L’s', (m) => {
     const p = panel(0);
@@ -259,7 +259,7 @@ const BEATS = [
       draw(path(p, `M610 ${y}q20 -24 40 0t40 0t40 -6t40 4`, { stroke: COL.whole, 'stroke-width': 3, fill: 'none' }, { d: 0 }), t + .3, .5);
     });
     hmLines(p, ['two levels of management', '+ personnel: checks and balances'], 960, 290, m('two', 2.5), { size: 22, fill: COL.good, anchor: 'start' });
-    hmLines(p, ['prepared jointly with a council head:', 'dual reporting (book chapter 9)'], 960, 440, m('dual'), { size: 22, fill: COL.real, anchor: 'start' });
+    hmLines(p, ['prepared jointly with a council head:', 'dual reporting (lesson 17)'], 960, 440, m('dual'), { size: 22, fill: COL.real, anchor: 'start' });
     hmLines(p, ['means: received it', 'not: agrees with it'], 960, 540, m('sig', 2), { size: 22, fill: COL.chalk, weight: 600, anchor: 'start' });
     hmRule(p, 'A signature means received, not agreed.', m('sig', 6), 745);
   }],

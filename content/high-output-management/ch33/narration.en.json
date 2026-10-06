@@ -2,7 +2,7 @@
   "voice": "en-US-AndrewMultilingualNeural",
   "rate": "-4%",
   "beats": {
-    "intro": "Bonus lesson one. [[sub]]Grove never met an AI agent. But his ideas fit them remarkably well. This chapter is our application, not his.",
+    "intro": "Bonus lesson one. [[sub]]Grove never met an AI agent. But his ideas fit them remarkably well. These bonus lessons are our application, not his.",
     "new": "In the fall of 2026, a new kind of software arrived. [[dots]]OpenAI's Dots: always-on agents in ChatGPT. You hand one a goal, and it carries the job forward on its own computer in the cloud. [[muse]]Meta's Muse: a personal agent that books, fills forms, negotiates and checks out, and keeps working after you close the app. [[inst]]And Instinct, a startup whose agent you text or call to plan trips, buy groceries or cancel subscriptions. [[shift]]These don't answer questions. They do work. And work that is delegated needs managing.",
     "output": "Remember Grove's definition. [[def]]A manager's output is the output of their organization, plus the neighbouring organizations they influence. [[now]]Agents you direct are now part of your organization. [[yours]]Their output is your output. [[mist]]And so are their mistakes.",
     "lever": "Leverage is output per activity. [[mult]]Agents can multiply it enormously. One clear brief can drive hours of work. [[brief]]A well-written brief is now one of the highest-leverage things a manager does. [[neg]]But leverage can be negative, too. A vague or wrong brief also gets carried out, at machine speed.",

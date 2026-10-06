@@ -222,24 +222,16 @@ main#contents { padding-bottom: 80px; }
 
 <script>
 'use strict';
-// Chapters are numbered in order through the units. Add a chapter here when its lesson is ready.
-const UNITS = [   // [unit title, [[lesson title, minutes], ...], optional label]; lessons are numbered in order through the units.
-  ['The Basics of Production', [['Planning around the limiting step', 8], ['Scale, quality and value', 8]]],
-  ['Managing the Breakfast Factory', [['Indicators: seeing inside the box', 10], ['Forecasts, quality and leverage', 11]]],
-  ['Managerial Leverage', [['What a manager produces', 12], ['Leverage', 12], ['Run your week like a factory', 11]]],
-  ['Meetings: The Medium of Managerial Work', [['Meetings and the one-on-one', 12], ['Staff, review and decision meetings', 12]]],
-  ['Decisions, Decisions', [['How good decisions get made', 10], ['What gets in the way, and the six questions', 12]]],
-  ['Planning: Today’s Actions for Tomorrow’s Output', [['The planning process', 11], ['What planning produces, and OKRs', 11]]],
-  ['The Breakfast Factory Goes National', [['The Breakfast Factory goes national', 11]]],
-  ['Hybrid Organizations', [['Mission, function and the hybrid', 12], ['Grove’s Law and who makes it work', 11]]],
-  ['Dual Reporting', [['Why one job has two bosses', 12], ['Dual reporting at work', 12]]],
-  ['Modes of Control', [['Three modes of control', 11], ['Choosing the mode of control', 12]]],
-  ['The Sports Analogy', [['Can’t or won’t, and the ladder of needs', 12], ['The drive to achieve, and work as a sport', 12]]],
-  ['Task-Relevant Maturity', [['Match the style to the maturity', 10], ['Growing maturity, and the traps', 12]]],
-  ['Performance Appraisal: Manager as Judge and Jury', [['Why reviews matter, and judging performance', 12], ['Delivering the review', 12], ['The blast, the ace, and other practices', 12]]],
-  ['Two Difficult Tasks', [['Interviewing', 12], ['“I quit!”', 11]]],
-  ['Compensation as Task-Relevant Feedback', [['Pay as feedback: the bonus and the base salary', 12], ['Promotions and the Peter Principle', 11]]],
-  ['One More Thing…', [['One more thing: your homework', 11]], 'Closing'],
+// Lessons are grouped by main idea into parts. Add a lesson here when it is ready.
+const UNITS = [   // [part title, [[lesson title, minutes], ...], optional label]; lessons are numbered in order through the parts.
+  ['Output: run work like a production line', [['Planning around the limiting step', 8], ['Scale, quality and value', 8], ['Indicators: seeing inside the box', 10], ['Forecasts, quality and leverage', 11]]],
+  ['Leverage: where a manager’s time pays off', [['What a manager produces', 12], ['Leverage', 12], ['Run your week like a factory', 11], ['Meetings and the one-on-one', 12], ['Staff, review and decision meetings', 12]]],
+  ['Deciding and planning', [['How good decisions get made', 10], ['What gets in the way, and the six questions', 12], ['The planning process', 11], ['What planning produces, and OKRs', 11]]],
+  ['Structure: building a team of teams', [['From one team to many', 11], ['Mission, function and the hybrid', 12], ['Grove’s Law and who makes it work', 11], ['Why one job has two bosses', 12], ['Dual reporting at work', 12]]],
+  ['Why people do the work: control and motivation', [['Three modes of control', 11], ['Choosing the mode of control', 12], ['Can’t or won’t, and the ladder of needs', 12], ['The drive to achieve, and work as a sport', 12]]],
+  ['Growing people: maturity and reviews', [['Match the style to the maturity', 10], ['Growing maturity, and the traps', 12], ['Why reviews matter, and judging performance', 12], ['Delivering the review', 12], ['The blast, the ace, and other practices', 12]]],
+  ['People decisions: hiring, resignations, pay and promotion', [['Interviewing', 12], ['When a valued person resigns', 11], ['Pay as feedback: the bonus and the base salary', 12], ['Promotions and the Peter Principle', 11]]],
+  ['Putting it to work', [['Your homework', 11]], 'Closing'],
   ['Grove for the age of agents (beyond the book)', [['Delegating to agents', 10], ['Running an agent workforce', 10], ['Managing people who manage agents', 10]], 'Bonus'],
 ];
 const HUES = ['#f4a48c', '#86c9e8', '#f3c95c', '#e8a0c8', '#8fd6b0', '#bba8ee', '#f0b45a'];
@@ -256,7 +248,7 @@ const done = new Set(Array.isArray(P.done) ? P.done.filter(n => Number.isInteger
 let n = 0, total = 0, i = 0;   // i staggers the entrance, in reading order
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 document.getElementById('units').innerHTML = UNITS.map(([name, chs, label], u) => {
-  return `<section class="unit" style="--c:${HUES[u % HUES.length]};--i:${i++}"><svg class="unit-art" viewBox="0 0 600 180" aria-hidden="true">${UNIT_ART[u] || ''}</svg><h2><span>${label || 'Chapter ' + (u + 1)}</span>${esc(name)}</h2><div class="grid">` +
+  return `<section class="unit" style="--c:${HUES[u % HUES.length]};--i:${i++}"><svg class="unit-art" viewBox="0 0 600 180" aria-hidden="true">${UNIT_ART[u] || ''}</svg><h2><span>${label || 'Part ' + (u + 1)}</span>${esc(name)}</h2><div class="grid">` +
     chs.map(([t, min]) => { n++;
       const cls = 'ch' + (done.has(n) ? ' done' : '') + (P.last === n ? ' last' : '');
       return `<a class="${cls}" id="${id(n)}" href="${id(n)}/index.html" style="--i:${i++}"><b>${n}</b><span>${esc(t)}</span><small>${min} min</small></a>`;
@@ -268,7 +260,7 @@ const seen = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecti
 document.querySelectorAll('.unit').forEach(u => seen.observe(u));
 const finished = [...done].filter(k => k <= total).length;
 document.getElementById('prog').innerHTML = finished ? `<b>${finished}</b> of ${total} finished` : `${total} lesson${total === 1 ? '' : 's'}`;
-document.getElementById('meta').textContent = `${UNITS.length - 2} chapters, a closing and a bonus on agents · ${total} lessons · captioned, with quick checks`;
+document.getElementById('meta').textContent = `${UNITS.length - 2} parts, a closing and a bonus on agents · ${total} lessons · captioned, with quick checks`;
 const last = Number.isInteger(P.last) && document.getElementById(id(P.last));
 if (last) {
   const r = document.getElementById('resume');

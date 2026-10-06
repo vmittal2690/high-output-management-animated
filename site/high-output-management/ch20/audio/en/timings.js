@@ -549,7 +549,7 @@ window.TIMINGS = {
   ]
  },
  "finish": {
-  "dur": 8.312,
+  "dur": 5.156,
   "marks": {},
   "cues": [
    [
@@ -558,7 +558,7 @@ window.TIMINGS = {
    ],
    [
     1.434,
-    "That is the end of lesson twenty, and of Grove's chapter on modes of control."
+    "That is the end of lesson twenty."
    ]
   ]
  }
