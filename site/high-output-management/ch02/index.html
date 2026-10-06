@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scale, quality and value</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 2, title: 'Scale, quality and value', kicker: 'Chapter 1 · Lesson 2', minutes: 8, language: 'en', silent: true, next: '../ch03/index.html' };
+
+/* ---------- the continuous egg boiler: eggs ride a path through the water ---------- */
+const L2_PTS = [[170, 250], [330, 250], [430, 370], [1170, 370], [1270, 250], [1430, 250]];
+const L2_LEN = L2_PTS.slice(1).map((q, i) => Math.hypot(q[0] - L2_PTS[i][0], q[1] - L2_PTS[i][1]));
+const L2_TOT = L2_LEN.reduce((a, b) => a + b, 0);
+function l2Pos(q) {
+  let d = q * L2_TOT;
+  for (let i = 0; i < L2_LEN.length; i++) {
+    if (d <= L2_LEN[i]) { const f = d / L2_LEN[i], a = L2_PTS[i], b = L2_PTS[i + 1]; return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; }
+    d -= L2_LEN[i];
+  }
+  return L2_PTS[L2_PTS.length - 1];
+}
+function l2Boiler(p, t0, tEnd) {
+  const tank = G(p, { o: 0 });
+  mk('path', { d: 'M360 300L440 420H1160L1240 300Z', fill: '#26485a', opacity: .55 }, tank);
+  path(tank, 'M330 250L440 420H1160L1270 250', { stroke: COL.chalk, 'stroke-width': 5 });
+  path(tank, 'M368 300H1232', { stroke: COL.whole, 'stroke-width': 3, 'stroke-dasharray': '18 10' });
+  mk('path', { d: 'M800 470Q780 440 800 430Q820 440 800 470Z', fill: COL.task }, tank);
+  path(tank, 'M800 470V500', { stroke: COL.dim, 'stroke-width': 5 });
+  show(tank, t0);
+  const eggs = [];
+  for (let k = 0, t = t0 + .3; t < tEnd; k++, t += .85) {
+    const e = mk('ellipse', { rx: 17, ry: 22, fill: COL.chalk }, p);
+    put(e, { x: L2_PTS[0][0], y: L2_PTS[0][1], o: 0 });
+    prog(q => { const [x, y] = l2Pos(q); put(e, { x, y, o: q <= 0 ? 0 : q < .97 ? 1 : (1 - q) / .03 }); }, t, 6.5, lin);
+    eggs.push(e);
+  }
+  return eggs;
+}
+function l2Toast(p, x, y, t0, s = 1) {
+  const g = G(p, { x, y, s: 0, o: 0 });
+  mk('path', { d: 'M-26 -14Q-26 -28 -11 -25Q0 -32 11 -25Q26 -28 26 -14V26H-26Z', fill: '#d9a45b', stroke: '#a8742f', 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+  tw(g, { s, o: 1 }, t0, .4, back);
+  return g;
+}
+
+const L2_HIRE = ['phone screen', 'on-site visit', 'offer made', 'first month'];
+const L2_JAIL = ['Report', 'Investigation', 'Arrest', 'Trial', 'Conviction', 'Jail'];
+
+const BEATS = [
+  ['intro', 'Scale, quality and value', (m, D) => hmTitle(m, D, 'Chapter 1 · The Basics of Production · Lesson 2 of 2', 'Scale, quality and value', 'What changes when the work scales up, and where to catch problems')],
+
+  ['cont', 'The breakfast factory', (m, D) => {
+    const p = panel(0);
+    hmHead(p, 'From kitchen to factory');
+    l2Boiler(p, m('boiler'), D);
+    hmSay(p, 'continuous egg boiler: a steady supply of three-minute eggs', 800, 190, m('boiler', .5), { size: 26, fill: COL.dim });
+    const belt = G(p, { o: 0 });
+    path(belt, 'M420 590H1180', { stroke: COL.chalk, 'stroke-width': 5 });
+    T(belt, 'continuous toaster', { x: 400, y: 578, size: 24, fill: COL.dim, anchor: 'end' });
+    show(belt, m('toast'));
+    [0, 1, 2, 3, 4, 5, 6].forEach(i => l2Toast(p, 480 + i * 106, 556, m('toast', .2 + i * .12)));
+    hmLines(p, ['+ lower cost', '+ predictable quality'], 330, 680, m('plus'), { size: 30, fill: COL.good, weight: 600, anchor: 'start' });
+    hmLines(p, ['− flexibility', 'no four-minute egg'], 880, 680, m('minus'), { size: 30, fill: COL.bad, weight: 600, anchor: 'start' });
+  }],
+
+  ['fail', 'When the machine drifts', (m, D) => {
+    const p = panel(0);
+    hmHead(p, 'A fault nobody notices');
+    const eggs = l2Boiler(p, .2, D);
+    const td = m('drift');
+    const temp = hmSay(p, 'water: 100°', 800, 200, .3, { size: 32, weight: 600 });
+    prog(q => { temp.textContent = `water: ${Math.round(100 - 9 * q)}°`; }, td, 2.5, lin);
+    tw(temp, { c_fill: COL.bad }, td + 1.5, .8);
+    eggs.forEach(e => tw(e, { c_fill: COL.bad }, m('lost'), .6));
+    hmSay(p, 'everything in process is lost', 800, 545, m('lost', .3), { size: 30, fill: COL.bad, weight: 700 });
+    const ts = m('toast');
+    [0, 1, 2, 3, 4, 5, 6].forEach(i => {
+      const g = l2Toast(p, 480 + i * 106, 620, .5);
+      draw(path(g, 'M-30 -30L30 30M30 -30L-30 30', { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), ts + i * .08, .3);
+    });
+    hmSay(p, 'and so is the toast made to go with it', 800, 696, ts + .4, { size: 28, fill: COL.bad, weight: 600 });
+    hmRule(p, 'How do you catch it early?', m('q'), 752);
+  }],
+
+  ['tests', 'Two ways to check', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two ways to check');
+    path(p, 'M800 190V640', { stroke: COL.faint, 'stroke-width': 2.5 });
+    hmSay(p, 'Functional test', 420, 220, .3, { size: 36, weight: 700 });
+    const e = G(p, { x: 420, y: 400, o: 0 });
+    mk('ellipse', { rx: 74, ry: 96, fill: COL.chalk }, e);
+    const crack = path(e, 'M-74 0L-44 -22L-18 12L10 -20L40 10L74 -8', { stroke: COL.board, 'stroke-width': 7 }, { d: 0 });
+    const yolk = mk('circle', { cy: 30, r: 30, fill: COL.task }, e); put(yolk, { o: 0 });
+    show(e, m('open', -.3)); draw(crack, m('open'), .5); show(yolk, m('open', .5));
+    hmSay(p, 'open one and look', 420, 550, m('open', .5), { size: 28, fill: COL.dim });
+    hmSay(p, 'it works, but that egg is gone', 420, 600, m('destroy'), { size: 28, fill: COL.bad, weight: 600 });
+    hmSay(p, 'In-process inspection', 1180, 220, m('thermo', -1.2), { size: 36, weight: 700 });
+    const th = G(p, { x: 1100, y: 400, o: 0 });
+    mk('rect', { x: -14, y: -110, width: 28, height: 180, rx: 14, fill: COL.board, stroke: COL.chalk, 'stroke-width': 4 }, th);
+    mk('circle', { cy: 84, r: 30, fill: COL.bad, stroke: COL.chalk, 'stroke-width': 4 }, th);
+    mk('rect', { x: -6, y: -40, width: 12, height: 110, fill: COL.bad }, th);
+    [-80, -50, -20, 10].forEach(y => path(th, `M22 ${y}h16`, { stroke: COL.dim, 'stroke-width': 3 }));
+    show(th, m('thermo'));
+    hmSay(p, 'a thermometer in the water', 1180, 550, m('thermo', .3), { size: 28, fill: COL.dim });
+    const bell = G(p, { x: 1270, y: 390, s: 0, o: 0 });
+    mk('path', { d: 'M-44 30Q-34 14 -34 -10Q-34 -52 0 -52Q34 -52 34 -10Q34 14 44 30Z', fill: COL.task }, bell);
+    mk('circle', { cy: 42, r: 10, fill: COL.task }, bell);
+    pop(bell, m('alarm')); pulse(bell, m('alarm', .6), 1.25);
+    hmSay(p, 'checks every egg, loses none', 1180, 600, m('alarm', .4), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Prefer the check that does not destroy the product.', m('rule'), 720);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-inprocess', prompt: ['Your team is writing a 40-page proposal over four weeks. Which of these is an in-process check?'],
+    build: choice([['Read the finished proposal the night before it is due'], ['Review the outline and one finished section in week one'], ['Ask the client what they thought after it is sent']], 1,
+      'An early look at the outline and one section tests the approach while the work is still cheap to change.',
+      ['That is a final inspection. If the approach is wrong, four weeks of work are already spent.', null, 'By then the customer has found the problem for you.']),
+  }], done) }],
+
+  ['incoming', 'Checks at the door, and stock', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Inspect what comes in');
+    hmSay(p, 'supplier', 150, 390, .3, { size: 30, fill: COL.dim });
+    hmArrow(p, 230, 380, 380, 380, COL.dim, .4);
+    const dm = G(p, { x: 430, y: 380, s: 0, o: 0 });
+    mk('path', { d: 'M0 -40L40 0L0 40L-40 0Z', fill: COL.board, stroke: COL.task, 'stroke-width': 4 }, dm);
+    pop(dm, m('door'));
+    hmSay(p, 'incoming inspection', 430, 470, m('door', .2), { size: 26, fill: COL.task, weight: 600 });
+    hmArrow(p, 480, 380, 1010, 380, COL.dim, .5);
+    hmBox(p, 1180, 380, 320, 180, COL.chalk, .4, 'Factory', { size: 34 });
+    const tr = m('reject'), bad = hmDot(p, 250, 380, COL.bad, 16);
+    show(bad, tr - .9, .2); tw(bad, { x: 400 }, tr - .8, .6); tw(bad, { x: 230, y: 300 }, tr, .7); hide(bad, tr + 1.4, .4);
+    const none = hmSay(p, 'batch rejected: nothing to cook', 1180, 250, tr + .4, { size: 28, fill: COL.bad, weight: 600 });
+    const ts = m('stock');
+    hide(none, ts, .4);
+    [0, 1, 2, 3, 4, 5].forEach(i => {
+      const c = G(p, { x: 640 + (i % 3) * 90, y: 290 + Math.floor(i / 3) * 0 - (i > 2 ? 70 : 0), s: 0, o: 0 });
+      mk('rect', { x: -36, y: -28, width: 72, height: 56, rx: 6, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, c);
+      [-16, 0, 16].forEach(x => mk('ellipse', { cx: x, cy: 2, rx: 6, ry: 9, fill: COL.chalk }, c));
+      pop(c, ts + i * .1);
+    });
+    hmSay(p, 'raw material inventory', 730, 180, ts + .4, { size: 28, fill: COL.whole, weight: 600 });
+    draw(path(p, 'M596 440V456H864V440', { stroke: COL.whole, 'stroke-width': 3 }, { d: 0 }), m('day'), .5);
+    hmLines(p, ['one day of eggs:', 'the time it takes to restock'], 730, 500, m('day', .2), { size: 26, fill: COL.whole });
+    hmBox(p, 440, 670, 460, 100, COL.bad, m('cost'), 'Cost of carrying stock', { size: 28 });
+    hmSay(p, 'against', 800, 680, m('cost', .3), { size: 26, fill: COL.dim });
+    hmBox(p, 1160, 670, 460, 100, COL.task, m('risk'), 'Opportunity at risk', { size: 28, sub: ['customers lost in a day’s shutdown'] });
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-stock', prompt: ['Your lab uses 40 test kits a day. The supplier needs 3 days to deliver a new order. What is the smallest stock that covers the gap?'],
+    build: blanks([{ parts: ['40 × 3 = ', { box: '120' }, '  kits'], why: 'Use per day times the days it takes to restock: 120 kits. Hold more only if the cost of running out justifies it.', hint: 'Multiply what you use each day by the days it takes to get more.' }]),
+  }], done) }],
+
+  ['value', 'Value builds up', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Work gains value at every step');
+    path(p, 'M240 640H1440', { stroke: COL.faint, 'stroke-width': 3 });
+    const st4 = hmStairs(p, ['raw egg', 'boiled egg', 'plated breakfast', 'on the table'], [70, 160, 260, 360], 640, [m('s1'), m('s2'), m('s3'), m('s4')]);
+    const x = hmCross(p, st4[0].cx, st4[0].top - 44);
+    pop(x, m('bad'));
+    const a = hmSay(p, 'caught here: lose a raw egg', st4[0].cx, st4[0].top - 96, m('bad', .3), { size: 26, fill: COL.good, weight: 600 });
+    const tl = m('late');
+    hide(a, tl, .3);
+    tw(x, { x: st4[3].cx, y: st4[3].top - 44 }, tl, 1.1);
+    tw(st4[3].bar, { c_fill: COL.bad }, tl + .9, .5);
+    hmSay(p, 'caught here: lose the whole meal', st4[3].cx - 30, st4[3].top - 96, tl + 1, { size: 26, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Detect and fix problems at the lowest-value stage.', m('rule'));
+  }],
+
+  ['q3', 'Quick check', () => {
+    const p = panel(0);
+    hmSay(p, 'Hiring: what you have invested in a candidate so far', 800, 100, .2, { size: 36, weight: 600 });
+    path(p, 'M240 600H1440', { stroke: COL.faint, 'stroke-width': 3 });
+    S.q3 = hmStairs(p, L2_HIRE, [60, 240, 290, 340], 600, [.3, .45, .6, .75]);
+  }, { ask: done => quiz(BAND, [{
+    id: 'c-value', prompt: ['The on-site visit is the costly step. Click where a weak fit should be caught.'],
+    build: pickEls(S.q3.map((s, i) => ({ el: s.bar, box: [s.x - 12, s.top - 12, s.w + 24, s.h + 62], label: L2_HIRE[i] })), 0,
+      'A phone screen costs minutes, and saves the cost of the visit.',
+      i => i === 1 ? 'By then you have paid for travel and a day of interviews.' : 'By this stage nearly all the cost is already spent.'),
+  }], done) }],
+
+  ['jail', 'The wrong limiting step', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A production line you would not expect');
+    const xs = L2_JAIL.map((_, i) => 150 + i * 260);
+    const tf = m('flow');
+    const boxes = hmChain(p, L2_JAIL, xs, 250, 210, 90, COL.whole, L2_JAIL.map((_, i) => tf + i * .45));
+    const tn = m('narrow');
+    [150, 96, 60, 38, 22, 10].forEach((h, i) => hmBarUp(p, xs[i] - 50, 520, 100, h, COL.whole, tn + i * .15, .5));
+    path(p, 'M40 520H1560', { stroke: COL.faint, 'stroke-width': 2.5 });
+    hmSay(p, 'cases still in the system (illustrative)', 40, 556, tn + .5, { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'over $1,000,000 spent for each conviction that ends in jail', 800, 620, m('mil'), { size: 30, fill: COL.task, weight: 700 });
+    hmSay(p, 'about $80,000 to build a cell', 800, 668, m('cell'), { size: 30, weight: 600 });
+    hmSay(p, 'Grove’s estimates, 1983', 1560, 668, m('cell'), { size: 20, fill: COL.dim, anchor: 'end' });
+    tw(boxes[5].firstChild, { c_stroke: COL.bad }, m('limit'), .5);
+    hmSay(p, 'the step that limited everything', 1555, 180, m('limit'), { size: 24, fill: COL.bad, weight: 700, anchor: 'end' });
+    hmRule(p, 'Never let a cheap step choke an expensive one.', m('rule'));
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-wrong', prompt: ['Engineers spent six months building a feature. Its release has waited three weeks for time on one shared $2,000 test device. What is wrong?'],
+    build: choice([['The engineers built too slowly'], ['A cheap resource is limiting an expensive investment'], ['Nothing: queues are normal']], 1,
+      'Six months of engineering is waiting on a $2,000 device. Add a second device.',
+      ['The build is done. The delay is in what happens after it.', null, 'A queue is only acceptable when the waiting work is cheap. This work is not.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 2 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Scale lowers cost but gives up flexibility.', 'w1'], ['Prefer checks that do not destroy the work.', 'w2'], ['Hold enough raw material to cover the time to restock.', 'w3'], ['Catch problems at the lowest-value stage.', 'w4'], ['Never let a cheap step limit an expensive one.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-scale', prompt: ['Your team replaces custom client reports with one standard monthly report. What do you give up?'],
+      build: choice([['Predictable quality'], ['Low cost per report'], ['Flexibility for unusual requests']], 2,
+        'Standardising is continuous operation: cheaper and more consistent, but the four-minute egg is off the menu.',
+        ['Standard work makes quality more predictable, not less.', 'A standard report costs less to produce each time.', null]) },
+    { id: 'p-value', prompt: ['A mistake in the requirements is cheapest to fix…'],
+      build: choice([['after launch'], ['once the build is finished'], ['when reviewing the one-page brief']], 2,
+        'The brief is the lowest-value stage. Almost nothing has been invested yet.',
+        ['After launch you lose the build, the launch effort and some customer trust.', 'By then the whole build may need rework.', null]) },
+    { id: 'p-risk', prompt: ['How much spare stock of a critical input should you hold?'],
+      build: choice([['As much as storage allows'], ['None: inventory is waste'], ['Enough to cover use during restocking, weighed against the cost of a shutdown']], 2,
+        'Cover what you consume in the time it takes to restock, then compare the carrying cost with the opportunity at risk.',
+        ['Inventory costs money to buy and to hold.', 'With none, one rejected delivery stops the line.', null]) },
+    { id: 'p-cheap', prompt: ['A signed contract worth a year of sales effort has sat for two weeks waiting for a routine credit check. What does this lesson say?'],
+      build: choice([['Add capacity to the credit check'], ['Start selling earlier'], ['Accept the wait']], 0,
+        'The cheap step is choking the expensive one. A little more capacity there releases a year of investment.',
+        [null, 'Selling earlier does not shorten the queue at the credit check.', 'The cost of waiting is the whole investment sitting idle.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

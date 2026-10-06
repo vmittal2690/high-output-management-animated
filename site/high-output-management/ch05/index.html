@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a manager produces</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 5, title: 'What a manager produces', kicker: 'Chapter 3 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch06/index.html' };
+
+/* Colours for the four kinds of managerial work, used only in this lesson. Amber stays the rule, green the output. */
+const L5K = { g: COL.whole, v: COL.real, d: COL.rat, n: COL.nat };
+const L5K_NAME = { g: 'gathering information', v: 'giving information', d: 'deciding', n: 'nudging' };
+const L5_LEG = [250, 636, 979, 1178];   // legend x positions, spaced for each label's width
+
+/* ---------- Grove's day (book p. 43–47): 120 px = 1 hour, 8:00 at x = 170, 6:15 pm at x = 1400 ---------- */
+const L5X = h => 170 + (h - 8) * 120;
+// [start, end, label, label tier (0 high, 1 low), activity kinds in order, counted as a meeting]
+const L5_DAY = [
+  [8, 8.5, 'resignation', 0, ['g', 'n', 'd', 'g'], true],
+  [8.5, 9, 'mail', 1, ['n', 'd', 'g'], false],
+  [9, 12, 'executive staff meeting', 1, ['g', 'd', 'g', 'n', 'g'], true],
+  [12, 13, 'lunch', 1, ['g', 'n'], false],
+  [13, 14, 'quality problem', 0, ['g', 'd'], true],
+  [14, 16, 'orientation lecture', 1, ['v', 'g'], true],
+  [16, 16.75, 'calls', 0, ['d', 'd'], false],
+  [16.75, 17, 'assistant', 1, ['d'], true],
+  [17, 18.25, 'evening mail', 0, ['g', 'n', 'd'], false],
+];
+const L5_BY = 300, L5_BH = 60;   // block top and height
+function l5Day(p, t0, step = .12) {
+  [[8, '8 am'], [10, '10'], [12, 'noon'], [14, '2 pm'], [16, '4'], [18, '6']].forEach(([h, s]) => {
+    path(p, `M${L5X(h)} ${L5_BY + L5_BH}V${L5_BY + L5_BH + 10}`, { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, s, L5X(h), L5_BY + L5_BH + 34, t0, { size: 18, fill: COL.dim });
+  });
+  return L5_DAY.map(([a, b, lab, tier], i) => {
+    const x0 = L5X(a), w = L5X(b) - x0, g = G(p, { o: 0 });
+    mk('rect', { x: x0 + 1.5, y: L5_BY, width: w - 3, height: L5_BH, rx: 6, fill: '#33463f', stroke: COL.faint, 'stroke-width': 2 }, g);
+    show(g, t0 + i * step, .3);
+    hmSay(p, lab, x0 + w / 2, tier ? 286 : 250, t0 + i * step, { size: 20, fill: COL.chalk });
+    return { g, rect: g.firstChild, x0, w, cx: x0 + w / 2 };
+  });
+}
+// One dot per activity under its block, stacked down; each kind appears at its own time.
+function l5Dots(p, at) {
+  L5_DAY.forEach(([a, b, , , kinds], i) => {
+    const cx = (L5X(a) + L5X(b)) / 2;
+    kinds.forEach((k, j) => {
+      const d = hmDot(p, cx, 412 + j * 26, L5K[k], 9);
+      put(d, { s: 0 }); tw(d, { s: 1, o: 1 }, at[k] + j * .05, .35, back);
+    });
+  });
+}
+// A gear centred on (0,0): n teeth, outer radius r.
+function l5Gear(p, x, y, r, n, color) {
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const a = i / n * 2 * Math.PI, s = Math.PI / n;
+    [[a - s * .55, r - 12], [a - s * .35, r], [a + s * .35, r], [a + s * .55, r - 12], [a + s * 1.45, r - 12]].forEach(([q, rr], k) =>
+      d += (i || k ? 'L' : 'M') + (rr * Math.cos(q)).toFixed(1) + ' ' + (rr * Math.sin(q)).toFixed(1));
+  }
+  const g = G(p, { x, y, o: 0 });
+  mk('path', { d: d + 'Z', fill: '#16211d', stroke: color, 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+  mk('circle', { r: r * .28, fill: 'none', stroke: color, 'stroke-width': 4 }, g);
+  return g;
+}
+// A small person: head and shoulders, centred on (x, y).
+function l5Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const L5_ACT = ['judgments and opinions', 'direction', 'resources allocated', 'mistakes caught', 'people trained', 'courses taught', 'products planned', 'commitments negotiated'];
+
+const BEATS = [
+  ['intro', 'What a manager produces', (m, D) => hmTitle(m, D, 'Chapter 3 · Managerial Leverage · Lesson 1 of 3', 'What a manager produces', 'What a manager’s output is, and where a manager’s day really goes')],
+
+  ['output', 'Activity or output', (m) => {
+    const p = panel(0);
+    hmSay(p, 'What managers said they produce', 420, 140, .2, { size: 30, weight: 600 });
+    L5_ACT.forEach((s, i) => hmSay(p, s, 420, 210 + i * 50, m('list', i * .18), { size: 26, fill: COL.whole }));
+    const br = path(p, 'M690 186V584', { stroke: COL.whole, 'stroke-width': 4 }, { d: 0 }); draw(br, m('act'), .5);
+    hmLines(p, ['these are', 'activities'], 760, 370, m('act', .2), { size: 28, fill: COL.whole, weight: 700, anchor: 'start' });
+    hmSay(p, 'Output: the result', 1210, 140, m('out'), { size: 30, weight: 600, fill: COL.good });
+    [['head of a chip plant', 'finished, tested wafers', 'out'], ['design lead', 'designs ready to build', 'out'], ['surgeon', 'a patient who is healed', 'surg']].forEach(([who, what, k], i) => {
+      const t = m(k, k === 'out' ? [1.5, 5][i] : 0);
+      hmSay(p, who, 1210, 240 + i * 120, t, { size: 26, fill: COL.dim });
+      hmSay(p, what, 1210, 280 + i * 120, t + .2, { size: 30, fill: COL.good, weight: 700 });
+    });
+    hmRule(p, 'Activity is what you do. Output is what your team delivers.', m('surg', 1.4));
+  }],
+
+  ['formula', 'A manager’s output', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Your output', 330, 150, .2, { size: 36, weight: 700 });
+    hmSay(p, '=', 520, 150, m('own'), { size: 36, weight: 700 });
+    hmSay(p, 'your team’s output', 760, 150, m('own'), { size: 36, weight: 700, fill: COL.good });
+    hmSay(p, '+', 990, 150, m('plus'), { size: 36, weight: 700 });
+    hmSay(p, 'teams you influence', 1240, 150, m('plus'), { size: 36, weight: 700, fill: COL.good });
+    const you = l5Person(p, 800, 300, COL.chalk, .9); show(you, .3);
+    hmSay(p, 'you', 880, 298, .4, { size: 26, fill: COL.dim, anchor: 'start' });
+    // your team: solid line, it reports to you
+    draw(path(p, 'M800 330V405', { stroke: COL.chalk, 'stroke-width': 3 }, { d: 0 }), m('own', .2), .4);
+    const tb = G(p, { o: 0 }); mk('rect', { x: 610, y: 410, width: 380, height: 110, rx: 14, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, tb);
+    [-120, -60, 0, 60, 120].forEach(dx => mk('circle', { cx: 800 + dx, cy: 450, r: 14, fill: COL.good }, tb));
+    T(tb, 'reports to you', { x: 800, y: 500, size: 22, fill: COL.dim, anchor: 'middle' });
+    show(tb, m('own', .4));
+    // neighbouring teams: dashed lines, influence only
+    [[310, 'a team you advise'], [1290, 'a team you supply']].forEach(([x, lab], k) => {
+      const ln = path(p, `M${k ? 850 : 750} 300L${k ? x - 120 : x + 120} 425`, { stroke: COL.dim, 'stroke-width': 3, 'stroke-dasharray': '10 9' }); put(ln, { o: 0 }); show(ln, m('plus', .2));
+      const nb = G(p, { o: 0 }); mk('rect', { x: x - 150, y: 410, width: 300, height: 110, rx: 14, fill: '#16211d', stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, nb);
+      [-60, 0, 60].forEach(dx => mk('circle', { cx: x + dx, cy: 450, r: 14, fill: COL.good }, nb));
+      T(nb, lab, { x, y: 500, size: 22, fill: COL.dim, anchor: 'middle' });
+      show(nb, m('plus', .4 + k * .2));
+    });
+    hmSay(p, 'Standings are kept by team, not by player.', 800, 630, m('team', 2), { size: 28, fill: COL.dim });
+    hmRule(p, 'Your own work matters, but on its own it is not your output.', m('rule'));
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-output', prompt: ['Activity or output? Sort each line from a manager’s weekly update.'],
+    build: grid([
+      { parts: ['Held three design reviews'], ans: ['a'], why: 'Reviews are something you do. What they produce is a better design.' },
+      { parts: ['A verified design handed to manufacturing'], ans: ['o'], why: 'This is the result the team delivers.' },
+      { parts: ['Coached two new engineers'], ans: ['a'], why: 'Coaching is an activity. Its output shows up in their work.' },
+      { parts: ['Every study site enrolling patients on plan'], ans: ['o'], why: 'A result achieved by the group, not a description of effort.' },
+    ], [['a', 'Activity', COL.whole, 'A'], ['o', 'Output', COL.good, 'O']], { multi: false, text: true }),
+  }], done) }],
+
+  ['knowhow', 'Managers without reports', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Managing without reports');
+    const sp = l5Person(p, 830, 560, COL.chalk); show(sp, .3);
+    hmLines(p, ['regulatory specialist', 'no direct reports'], 880, 556, m('spec'), { size: 24, fill: COL.dim, anchor: 'start' });
+    // years of research, stacked, waiting at the approval gate
+    hmSay(p, 'years of research', 620, 200, m('gate'), { size: 26, fill: COL.whole, weight: 600 });
+    [0, 1, 2, 3, 4].forEach(i => { const r = mk('rect', { x: 500, y: 226 + i * 44, width: 240, height: 34, rx: 6, fill: COL.whole }, p); put(r, { o: 0 }); show(r, m('gate', .1 + i * .12), .25); });
+    const gate = path(p, 'M830 220V440', { stroke: COL.dim, 'stroke-width': 10 }); put(gate, { o: 0 }); show(gate, m('gate', .7));
+    hmSay(p, 'approval', 830, 205, m('gate', .7), { size: 22, fill: COL.dim });
+    draw(path(p, 'M830 524V452', { stroke: COL.chalk, 'stroke-width': 3, 'stroke-dasharray': '8 8' }, { d: 0 }), m('years'), .4);
+    tw(gate, { y: -260, o: 0 }, m('years', .6), .7);
+    hmArrow(p, 760, 330, 1150, 330, COL.good, m('years', 1), .7);
+    hmBox(p, 1300, 330, 260, 110, COL.good, m('years', 1.6), 'patients', { size: 32, fill: COL.good, sub: ['finally reached'] });
+    hmLines(p, ['People who gather and spread know-how', 'are managers too: their reach can be enormous.'], 800, 650, m('ic'), { size: 30 });
+    hmRule(p, 'Know-how that shapes other teams’ work is managing.', m('ic', 5), 752);
+  }],
+
+  ['reach', 'Two kinds of reach', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One engineer, two roles');
+    const xs = [320, 560, 800, 1040, 1280];
+    const plants = xs.map((x, i) => hmBox(p, x, 470, 200, 100, COL.good, i ? m('all', i * .12) : m('lead'), `plant ${i + 1}`, { size: 26, sub: [i ? 'uses the method' : 'her own team'] }));
+    const eng = l5Person(p, 320, 300, COL.chalk); show(eng, .3);
+    hmSay(p, 'supervises', 300, 385, m('lead', .2), { size: 22, fill: COL.dim, anchor: 'end' });
+    draw(path(p, 'M320 330V418', { stroke: COL.chalk, 'stroke-width': 3 }, { d: 0 }), m('lead', .2), .4);
+    hmBox(p, 960, 260, 420, 90, COL.whole, m('board'), 'company standards group', { size: 26 });
+    draw(path(p, 'M346 290H748', { stroke: COL.chalk, 'stroke-width': 3, 'stroke-dasharray': '8 8' }, { d: 0 }), m('board', .2), .5);
+    xs.forEach((x, i) => draw(path(p, `M${960 + (x - 960) * .3} 306L${x} 418`, { stroke: COL.dim, 'stroke-width': 2.5, 'stroke-dasharray': '8 8' }, { d: 0 }), m('board', .6 + i * .08), .4));
+    hmSay(p, 'Her output: all five plants', 800, 600, m('all', .8), { size: 30, fill: COL.good, weight: 700 });
+    hmSay(p, 'Teaching a class, visiting a plant: “those are your job too.”', 800, 660, m('grove', 6), { size: 28, fill: COL.dim });
+    hmRule(p, 'Count every team your work improves.', m('grove', 9));
+  }],
+
+  ['gears', 'Power, oil, direction', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Inside the black box');
+    const box = mk('rect', { x: 600, y: 200, width: 640, height: 400, rx: 18, fill: '#121a17', stroke: COL.faint, 'stroke-width': 4 }, p); put(box, { o: 0 }); show(box, .3);
+    const g1 = l5Gear(p, 790, 400, 110, 12, COL.whole), g2 = l5Gear(p, 939, 314, 72, 8, COL.whole), g3 = l5Gear(p, 923, 493, 62, 7, COL.whole);
+    [g1, g2, g3].forEach((g, i) => show(g, .4 + i * .15));
+    // meshing ratios: 12 : 8 : 7 teeth
+    const tg = m('gears');
+    tw(g1, { r: 120 }, tg, 14, lin); tw(g2, { r: -180 }, tg, 14, lin); tw(g3, { r: -205 }, tg, 14, lin);
+    const L = [['power', 'in a crisis', 'power', 290], ['oil', 'when things grind', 'oil', 400], ['direction', 'always', 'dir', 510]];
+    L.forEach(([a, b, k, y]) => {
+      hmSay(p, a, 540, y - 4, m(k), { size: 34, weight: 700, fill: COL.good, anchor: 'end' });
+      hmSay(p, b, 540, y + 30, m(k, .2), { size: 24, fill: COL.dim, anchor: 'end' });
+      hmArrow(p, 552, y, 640, y, COL.good, m(k, .2), .35);
+    });
+    hmRule(p, 'A manager supplies power, oil and direction.', m('dir', 2));
+  }],
+
+  ['day', 'A day in Grove’s life', (m) => {
+    const p = S.dayP = panel(0);
+    hmSay(p, 'One of Grove’s busier days', 800, 110, .2, { size: 38, weight: 600 });
+    hmLines(p, ['scrubbing, cutting, stitching', '→ a healed patient'], 800, 170, m('odd', 4.5), { size: 22, fill: COL.dim, lh: 26 });
+    S.l5b = l5Day(p, m('blocks'), .55);
+    hmSay(p, 'No obvious pattern.', 800, 600, m('never'), { size: 30, weight: 600 });
+    hmRule(p, 'The day ends when he is tired, not when he is done.', m('never', 1.4));
+  }],
+
+  ['kinds', 'Four kinds of work', (m) => {
+    const p = S.dayP;
+    const old = [...p.children].slice(-2); old.forEach(e => hide(e, .1, .4));   // the "no pattern" line and the rule
+    const at = { g: m('g'), v: m('v'), d: m('d'), n: m('n') };
+    l5Dots(p, at);
+    ['g', 'v', 'd', 'n'].forEach((k, i) => {
+      const x = L5_LEG[i], g = G(p, { o: 0 });
+      mk('circle', { cx: x, cy: 600, r: 12, fill: L5K[k] }, g);
+      T(g, L5K_NAME[k], { x: x + 24, y: 608, size: 24, fill: L5K[k], weight: 600 });
+      show(g, at[k]);
+    });
+    hmSay(p, 'about 25 activities, mostly gathering and giving information', 800, 680, m('mix'), { size: 28, fill: COL.chalk });
+  }],
+
+  ['q2', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-day', prompt: ['Click the block of Grove’s day that was mainly giving information.'],
+    build: pickEls(S.l5b.map((b, i) => ({ el: b.g, box: [b.x0, L5_BY - 6, b.w, L5_BH + 12], label: L5_DAY[i][2] })), 5,
+      'The orientation lecture: two hours telling new staff about the company’s goals, history and values.',
+      i => i === 2 ? 'The staff meeting was mostly reviews coming to him: gathering, plus a decision and nudges.' : i === 0 ? 'He mostly listened there, then nudged and decided.' : 'Look for the purple dot: where he spoke to a large group.'),
+  }], done) }],
+
+  ['gather', 'Gathering information', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Gathering information comes first');
+    ['reports', 'people inside', 'people outside', 'complaints, inside and out'].forEach((s, i, a) => {
+      const w = [150, 200, 210, 340][i], x = [330, 560, 820, 1150][i];
+      const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: 172, width: w, height: 48, rx: 24, fill: 'none', stroke: L5K.g, 'stroke-width': 2.5 }, g);
+      T(g, s, { x, y: 205, size: 24, fill: L5K.g, anchor: 'middle' }); show(g, m('src', i * .4));
+    });
+    // three levels, like the news: each sheet more complete and later than the one before
+    [['headline', 'a quick word', 'first, sketchy', 1, 'head', 330], ['article', 'a written report', 'later, the facts', 5, 'art', 800], ['magazine', 'a review', 'a week on, perspective', 9, 'mag', 1270]].forEach(([n, mgr, when, lines, k, x]) => {
+      const g = G(p, { o: 0 });
+      mk('rect', { x: x - 110, y: 280, width: 220, height: 230, rx: 10, fill: '#16211d', stroke: L5K.g, 'stroke-width': 3 }, g);
+      mk('rect', { x: x - 86, y: 302, width: 172, height: 22, rx: 4, fill: L5K.g }, g);
+      for (let j = 1; j < lines; j++) mk('rect', { x: x - 86, y: 318 + j * 18, width: j % 3 === 2 ? 120 : 172, height: 7, rx: 3, fill: COL.faint }, g);
+      T(g, n, { x, y: 262, size: 28, fill: COL.chalk, weight: 700, anchor: 'middle' });
+      T(g, mgr, { x, y: 548, size: 24, fill: L5K.g, anchor: 'middle' });
+      T(g, when, { x, y: 582, size: 22, fill: COL.dim, anchor: 'middle' });
+      show(g, m(k));
+    });
+    [565, 1035].forEach(x => { hmSay(p, '⇄', x, 410, m('all'), { size: 44, fill: COL.chalk }); hmSay(p, 'check', x, 450, m('all'), { size: 20, fill: COL.dim }); });
+    hmRule(p, 'Use every level, and let each one check the others.', m('all', .8));
+  }],
+
+  ['reports', 'Why write reports', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Why write reports, if talk is faster?');
+    const doc = G(p, { o: 0 });
+    mk('rect', { x: 300, y: 190, width: 260, height: 330, rx: 12, fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 }, doc);
+    for (let j = 0; j < 11; j++) mk('rect', { x: 330, y: 222 + j * 26, width: j % 4 === 3 ? 130 : 200, height: 8, rx: 4, fill: COL.faint }, doc);
+    show(doc, .3);
+    [['an archive', 'arch'], ['a check on what you heard', 'val'], ['a net for what you missed', 'net']].forEach(([s, k], i) => hmSay(p, s, 660, 240 + i * 56, m(k), { size: 30, fill: COL.whole, anchor: 'start' }));
+    const tdisc = m('disc');
+    hmSay(p, 'Mostly: writing forces the author to think.', 660, 440, tdisc, { size: 32, fill: COL.good, weight: 700, anchor: 'start' });
+    const pen = G(p, { x: 520, y: 470, r: -40, o: 0 });
+    mk('rect', { x: -8, y: -70, width: 16, height: 70, rx: 4, fill: COL.good }, pen); path(pen, 'M-8 0L0 18L8 0Z', { fill: COL.good, stroke: 'none' });
+    show(pen, tdisc); tw(pen, { x: 440 }, tdisc + .2, 1.2, io);
+    hmLines(p, ['The same holds for an annual plan or a spending request:', 'the thinking is the point, not the bound volume.'], 800, 600, m('plan'), { size: 26, fill: COL.dim, lh: 36 });
+    hmRule(p, 'Writing the report matters more than reading it.', m('rule'));
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-reports', prompt: ['Your team hears every update in standup before the written monthly summary arrives. Is the summary still worth writing?'],
+    build: choice([['No: by the time it is read, the news is old'], ['Yes: writing it forces precision, and it leaves a record to check against'], ['Yes: it is the fastest way to spread news']], 1,
+      'Its job is not speed. It disciplines the writer, archives the facts, and catches what talk missed.',
+      ['Timeliness is talk’s job. A report earns its place as an archive and as a discipline for the writer.', null, 'Talk is faster. Reports are slower but more precise and complete.']),
+  }], done) }],
+
+  ['visits', 'Go and see', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Go and see');
+    // 30 px = 1 minute
+    hmSay(p, 'they come to your office', 380, 270, m('office'), { size: 26, anchor: 'end' });
+    const b1 = mk('rect', { x: 400, y: 238, width: 0, height: 50, rx: 8, fill: COL.faint }, p); put(b1, { a_width: 0 }); tw(b1, { a_width: 900 }, m('office', .2), 1.4, out);
+    const k1 = mk('rect', { x: 820, y: 238, width: 60, height: 50, rx: 6, fill: COL.good }, p); put(k1, { o: 0 }); show(k1, m('office', 1.4));
+    hmSay(p, 'half an hour', 1320, 272, m('office', 1.6), { size: 26, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'the two-minute item', 850, 225, m('office', 1.6), { size: 22, fill: COL.good });
+    hmSay(p, 'you walk through', 380, 400, m('walk'), { size: 26, anchor: 'end' });
+    const k2 = mk('rect', { x: 400, y: 368, width: 0, height: 50, rx: 6, fill: COL.good }, p); put(k2, { a_width: 0 }); tw(k2, { a_width: 60 }, m('walk', .3), .4, out);
+    hmSay(p, 'two minutes, then move on', 480, 402, m('walk', .6), { size: 26, fill: COL.good, weight: 600, anchor: 'start' });
+    hmSay(p, 'bars drawn to scale', 1300, 470, m('walk', .6), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Wandering with no task feels awkward,', 800, 560, m('awk'), { size: 28, fill: COL.dim });
+    hmSay(p, 'so give the walk a task: a housekeeping and safety round.', 800, 610, m('prog'), { size: 28, fill: COL.chalk, weight: 600 });
+    hmRule(p, 'Go and see: two-minute items stay two minutes.', m('prog', 3.5));
+  }],
+
+  ['give', 'Giving information', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Giving information: more than facts');
+    const you = l5Person(p, 260, 360, COL.chalk); show(you, .3);
+    hmSay(p, 'you', 260, 430, .3, { size: 24, fill: COL.dim });
+    [1240, 1310, 1380].forEach((x, i) => { const r = l5Person(p, x, 360, COL.chalk, .8); show(r, .4 + i * .1); });
+    hmSay(p, 'your team', 1310, 430, .4, { size: 24, fill: COL.dim });
+    const chipAt = (s, color, y, t0, w) => {
+      const g = G(p, { x: 360 + w / 2, y, o: 0 });
+      mk('rect', { x: -w / 2, y: -24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+      T(g, s, { x: 0, y: 9, size: 24, fill: color, anchor: 'middle' });
+      show(g, t0); tw(g, { x: 1160 - w / 2 }, t0 + .2, 1.2, io);
+    };
+    chipAt('facts', COL.dim, 230, m('facts'), 120);
+    [['objectives', 180], ['priorities', 170], ['how you prefer it done', 300]].forEach(([s, w], i) => chipAt(s, L5K.v, 290 + i * 60, m('pref', i * .5), w));
+    hmSay(p, '✓ decisions you would accept', 1310, 500, m('why'), { size: 28, fill: COL.good, weight: 700 });
+    // the rulebook shrinks as shared values take over
+    const book = G(p, { x: 400, y: 640, o: 0 });
+    [0, 1, 2, 3].forEach(i => mk('rect', { x: -110 + i * 6, y: -50 - i * 14, width: 220, height: 40, rx: 4, fill: '#16211d', stroke: COL.dim, 'stroke-width': 2.5 }, book));
+    hmSay(p, 'rules and procedures', 400, 680, m('cult'), { size: 20, fill: COL.dim });
+    show(book, m('cult')); tw(book, { s: .6 }, m('cult', 1.4), 1);
+    hmSay(p, 'shared values: far fewer rules needed', 560, 625, m('cult', 1.6), { size: 28, fill: L5K.v, weight: 600, anchor: 'start' });
+    hmRule(p, 'Share how you think, so others can decide as you would.', m('cult', 4), 750);
+  }],
+
+  ['decide', 'Taking part in decisions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Decisions: you make few, you shape many');
+    const one = hmDot(p, 300, 260, L5K.d, 26); show(one, m('few'));
+    hmSay(p, 'decide alone', 300, 330, m('few'), { size: 26, fill: L5K.d });
+    ['facts', 'opinions', 'debate', 'review', 'ratify or veto'].forEach((s, i) => {
+      const x = [620, 790, 960, 1120, 1320][i], w = [100, 140, 120, 120, 200][i];
+      const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: 236, width: w, height: 48, rx: 24, fill: 'none', stroke: L5K.d, 'stroke-width': 2.5 }, g);
+      T(g, s, { x, y: 269, size: 24, fill: L5K.d, anchor: 'middle' }); show(g, m('many', i * .45));
+    });
+    hmSay(p, 'take part', 960, 330, m('many'), { size: 26, fill: L5K.d });
+    hmBox(p, 480, 490, 560, 130, COL.faint, m('fwd'), 'Looking ahead', { size: 32, sub: ['where next year’s money goes'] });
+    hmBox(p, 1120, 490, 560, 130, COL.faint, m('resp'), 'Responding to a problem', { size: 32, sub: ['a quality failure; someone about to quit'] });
+    hmRule(p, 'Every decision rests on what you know.', m('base'));
+  }],
+
+  ['nudge', 'Nudging', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Nudging: between informing and ordering');
+    ['a call suggesting a way', 'a note with your view', 'a comment in a review'].forEach((s, i) => hmSay(p, s, 400 + i * 400, 210, m('call', i * 1.3), { size: 26, fill: COL.dim }));
+    draw(path(p, 'M300 300H1300', { stroke: COL.faint, 'stroke-width': 5 }, { d: 0 }), .2, .8);
+    hmSay(p, 'inform', 300, 350, .3, { size: 26, fill: COL.dim });
+    hmSay(p, 'command', 1300, 350, .3, { size: 26, fill: COL.dim });
+    const nd = hmDot(p, 300, 300, L5K.n, 18); show(nd, m('call')); tw(nd, { x: 800 }, m('mid'), .9, io);
+    hmSay(p, 'nudge', 800, 350, m('mid', .8), { size: 30, fill: L5K.n, weight: 700 });
+    const td = m('dozen');
+    for (let i = 0; i < 12; i++) { const d = hmDot(p, 360 + i * 52, 500, L5K.n, 15); put(d, { s: 0 }); tw(d, { s: 1, o: 1 }, td + i * .12, .3, back); }
+    hmSay(p, 'about a dozen nudges', 646, 560, td + .8, { size: 26, fill: L5K.n, weight: 600 });
+    hmSay(p, 'for', 1040, 510, td + 1.5, { size: 28, fill: COL.dim });
+    const one = hmDot(p, 1180, 500, L5K.d, 22); show(one, td + 1.7);
+    hmSay(p, 'one clear decision', 1180, 560, td + 1.7, { size: 26, fill: L5K.d, weight: 600 });
+    hmRule(p, 'Most of your influence travels as nudges.', td + 3.4);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-kinds', prompt: ['Name the kind of work in each moment of your week.'],
+    build: grid([
+      { parts: ['You walk the lab and hear the test fixture keeps jamming.'], ans: ['g'], why: 'You learned something you did not know: gathering, on a walk-through.' },
+      { parts: ['You tell your team why safety fixes outrank new features this quarter.'], ans: ['v'], why: 'Passing on priorities is giving information, the kind that lets people decide as you would.' },
+      { parts: ['You approve the verification test plan.'], ans: ['d'], why: 'A firm yes: a decision.' },
+      { parts: ['You tell a peer you would lean toward the vendor with better validation data.'], ans: ['n'], why: 'You advocate a course without ordering it: a nudge.' },
+    ], [['g', 'Gather', L5K.g], ['v', 'Give', L5K.v], ['d', 'Decide', L5K.d], ['n', 'Nudge', L5K.n]], { multi: false, text: true }),
+  }], done) }],
+
+  ['model', 'Role model', (m) => {
+    const p = panel(0);
+    hmHead(p, 'You are always a role model');
+    const you = l5Person(p, 800, 390, COL.chalk); show(you, m('seen'));
+    [[650, 300], [950, 300], [610, 440], [990, 440], [800, 230]].forEach(([x, y], i) => { const w = l5Person(p, x, y, COL.dim, .6); show(w, m('seen', .3 + i * .15)); });
+    hmSay(p, 'your team, your peers, your boss', 800, 510, m('seen', 1), { size: 24, fill: COL.dim });
+    const memo = G(p, { o: 0 });
+    mk('rect', { x: 170, y: 270, width: 180, height: 230, rx: 10, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, memo);
+    T(memo, 'Our values', { x: 260, y: 312, size: 24, fill: COL.chalk, anchor: 'middle', weight: 600 });
+    for (let j = 0; j < 6; j++) mk('rect', { x: 192, y: 336 + j * 24, width: j % 3 === 2 ? 90 : 136, height: 7, rx: 3, fill: COL.faint }, memo);
+    show(memo, m('memo')); tw(memo, { o: .3 }, m('do'), .8);
+    hmSay(p, 'by memo: weak', 260, 540, m('memo', .4), { size: 24, fill: COL.dim });
+    hmSay(p, 'by example: strong', 800, 160, m('do'), { size: 26, fill: COL.good, weight: 700 });
+    // a clock: how you spend your time
+    const ck = G(p, { x: 1330, y: 380, o: 0 });
+    mk('circle', { r: 70, fill: '#16211d', stroke: COL.good, 'stroke-width': 4 }, ck);
+    path(ck, 'M0 0V-48M0 0L34 18', { stroke: COL.good, 'stroke-width': 5 });
+    show(ck, m('time'));
+    hmLines(p, ['how you spend', 'your time'], 1330, 490, m('time', .3), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, 'Personal calls all day: the office learns what is allowed.', 800, 600, m('small'), { size: 26, fill: COL.chalk });
+    hmSay(p, 'Taking the work seriously: the most important value of all.', 800, 645, m('small', 5.5), { size: 26, fill: COL.chalk });
+    hmRule(p, 'People copy what you visibly do, above all with your time.', m('time', 3), 750);
+  }],
+
+  ['meetings', 'Meetings are a medium', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Grove’s day again', 800, 110, .2, { size: 38, weight: 600 });
+    const bl = l5Day(p, .25, .05);
+    const tm = m('meet');
+    bl.forEach((b, i) => { if (L5_DAY[i][5]) tw(b.rect, { c_stroke: COL.chalk, 'a_stroke-width': 4 }, tm, .4); else tw(b.g, { o: .3 }, tm, .5); });
+    // meeting hours to scale on the same 120 px/hour axis: 6.75 of 10.25 hours
+    const full = mk('rect', { x: 170, y: 440, width: 1230, height: 30, rx: 6, fill: '#26362f' }, p); put(full, { o: 0 }); show(full, tm + .4);
+    const mt = mk('rect', { x: 170, y: 440, width: 0, height: 30, rx: 6, fill: COL.chalk }, p); put(mt, { a_width: 0 }); tw(mt, { a_width: 810 }, tm + .6, 1, out);
+    hmSay(p, 'in meetings: 6¾ of 10¼ hours, about two-thirds', 170, 505, tm + 1.2, { size: 24, fill: COL.chalk, anchor: 'start' });
+    hmSay(p, 'Which of these could happen outside a meeting?', 800, 570, m('q'), { size: 28, fill: COL.dim });
+    ['g', 'v', 'd', 'n'].forEach((k, i) => { const x = L5_LEG[i], g = G(p, { o: 0 }); mk('circle', { cx: x, cy: 615, r: 11, fill: L5K[k] }, g); T(g, L5K_NAME[k], { x: x + 22, y: 623, size: 24, fill: L5K[k] }); show(g, m('q', 1 + i * .15)); });
+    hmSay(p, 'Practically none. A meeting is a medium, not an activity.', 800, 682, m('none'), { size: 28, weight: 700 });
+    hmRule(p, 'Choose the medium that gives you the most leverage.', m('lev'), 750);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 5 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Output = your team’s + the teams you influence.', 'w1'], ['People who supply know-how are managers too.', 'w2'], ['Your day: gathering, giving, deciding, nudging.', 'w3'], ['Gather first; let fast and slow sources check each other.', 'w4'], ['You are a role model, above all in how you spend time.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-update', prompt: ['A new manager’s weekly update lists twelve meetings, thirty code reviews and four one-on-ones. What is missing?'],
+      build: choice([['More detail on the meetings'], ['What the team actually delivered'], ['The hours worked']], 1,
+        'Every line is an activity. Grove would ask what the group produced: the output.',
+        ['More detail on activity is still activity.', null, 'Hours are effort, not output.']) },
+    { id: 'p-knowhow', prompt: ['A clinical data scientist has no reports, but her analysis decides which study sites the company opens. By Grove’s definition, what is her output?'],
+      build: choice([['Only her own analyses'], ['Her analyses plus the work of every team they steer'], ['Nothing yet: she is not a manager']], 1,
+        'She is a know-how manager. Her output includes the output of the neighbouring teams she influences.',
+        ['That counts her activity, not the results it shapes.', null, 'Grove widens “manager” to people who gather and spread know-how, reports or not.']) },
+    { id: 'p-hallway', prompt: ['You hear in the hallway that a supplier’s parts are failing incoming inspection. What is the best next move?'],
+      build: choice([['Wait for the monthly quality report'], ['Act on it at once as settled fact'], ['Treat it as an early headline and check the inspection data now']], 2,
+        'Hallway news is fast but sketchy. Use it as a lead, and confirm it with the fuller source.',
+        ['Too slow: the report confirms, it does not warn.', 'Quick verbal reports can be incomplete or wrong. Check before you act.', null]) },
+    { id: 'p-visit', prompt: ['Small questions with another team keep turning into half-hour meetings in your office. What does Grove suggest?'],
+      build: choice([['Walk through their area regularly and settle small items on the spot'], ['Refuse meetings under thirty minutes'], ['Ask them to email everything instead']], 0,
+        'On a walk-through, a two-minute item takes two minutes, and you see things first-hand.',
+        [null, 'That makes every small item take thirty minutes.', 'Email loses the quick, timely exchange that is most useful.']) },
+    { id: 'p-model', prompt: ['You tell the team quality comes first, but you skip design reviews when you are busy. What do they learn?'],
+      build: choice([['Quality comes first, because you said so'], ['Reviews are optional when you are busy'], ['Nothing: they will not notice']], 1,
+        'Values travel by what you visibly do. Your calendar is the loudest message you send.',
+        ['Words by memo or speech are weaker than example.', null, 'People watch how their manager spends time very closely.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

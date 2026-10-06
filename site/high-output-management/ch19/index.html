@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three modes of control</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 19, title: 'Three modes of control', kicker: 'Chapter 10 · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch20/index.html' };
+
+/* Colours: pink = the market mode; blue = the contract mode (ordinary agreed work); purple = cultural values;
+   green = the goal; red = a problem or a cost (overhead); amber = the rule. */
+const L19 = { mkt: COL.rat, con: COL.whole, cul: COL.real };
+function l19Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l19Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l19Car(p, x, y) {
+  const g = G(p, { x, y, o: 0 });
+  path(g, 'M-62 10V-12Q-62 -18 -54 -20L-30 -24L-14 -44H26L44 -22L58 -18Q64 -16 64 -8V10Z', { fill: COL.chalk, stroke: 'none' });
+  path(g, 'M-8 -38H22L34 -24H-20Z', { fill: COL.board, stroke: 'none' });
+  [-34, 38].forEach(cx => mk('circle', { cx, cy: 12, r: 14, fill: COL.board, stroke: COL.chalk, 'stroke-width': 4 }, g));
+  return g;
+}
+
+const BEATS = [
+  ['intro', 'Three modes of control', (m, D) => hmTitle(m, D, 'Chapter 10 · Modes of Control · Lesson 1 of 2', 'Three modes of control', 'The market, the contract and culture: what steers people at work')],
+
+  ['drive', 'One drive, three forces', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One drive, three different forces');
+    path(p, 'M120 400H1480', { stroke: COL.faint, 'stroke-width': 6 });
+    path(p, 'M120 400H1480', { stroke: COL.board, 'stroke-width': 2, 'stroke-dasharray': '24 22' });
+    const car = l19Car(p, 150, 376); show(car, .3);
+    tw(car, { x: 250 }, m('tires'), 1.2);
+    // tire shop
+    const tire = G(p, { x: 380, y: 250, o: 0 });
+    mk('circle', { r: 46, fill: 'none', stroke: L19.mkt, 'stroke-width': 14 }, tire);
+    mk('circle', { r: 14, fill: L19.mkt }, tire);
+    show(tire, m('tires', .3));
+    l19Chip(p, 'lowest price', 380, 170, L19.mkt, m('tires', 3), 200);
+    hmSay(p, 'self-interest', 380, 470, m('tires', 5), { size: 28, fill: L19.mkt, weight: 600 });
+    hmSay(p, 'lowest cost to me', 380, 510, m('tires', 5), { size: 22, fill: COL.dim });
+    // traffic light
+    tw(car, { x: 700 }, m('light'), 1.4);
+    const lt = G(p, { o: 0 });
+    path(lt, 'M800 300V400', { stroke: COL.dim, 'stroke-width': 6 });
+    mk('rect', { x: 778, y: 186, width: 44, height: 116, rx: 10, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, lt);
+    mk('circle', { cx: 800, cy: 210, r: 12, fill: COL.bad }, lt);
+    mk('circle', { cx: 800, cy: 244, r: 12, fill: COL.faint }, lt);
+    mk('circle', { cx: 800, cy: 278, r: 12, fill: COL.faint }, lt);
+    show(lt, m('light', .3));
+    hmSay(p, 'a rule everyone keeps', 800, 470, m('light', 3), { size: 28, fill: L19.con, weight: 600 });
+    hmSay(p, 'a traffic cop penalizes breakers', 800, 510, m('light', 4.5), { size: 22, fill: COL.dim });
+    // accident
+    tw(car, { x: 1100 }, m('crash'), 1.4);
+    const ac = G(p, { o: 0 });
+    path(ac, 'M1260 196L1316 296H1204Z', { fill: '#16211d', stroke: COL.bad, 'stroke-width': 5 });
+    T(ac, '!', { x: 1260, y: 284, size: 52, fill: COL.bad, weight: 700, anchor: 'middle' });
+    show(ac, m('crash', .3));
+    hmSay(p, 'concern for others', 1260, 470, m('crash', 4), { size: 28, fill: L19.cul, weight: 600 });
+    hmSay(p, 'help, even at a risk', 1260, 510, m('crash', 5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Three moments. Three different reasons to act.', 800, 620, m('care', 1.5), { size: 30 });
+    hmRule(p, 'What steers us changes with the situation.', m('care', 3.5));
+  }],
+
+  ['three', 'The three modes', (m) => {
+    const p = panel(0);
+    hmHead(p, 'At work: three modes of control');
+    hmSay(p, 'invisible, and everywhere', 800, 175, m('work', 1), { size: 26, fill: COL.dim });
+    hmBox(p, 330, 330, 400, 200, L19.mkt, m('m1'), ['Free-market', 'forces'], { size: 32, fill: L19.mkt, sub: ['price decides'] });
+    hmBox(p, 800, 330, 400, 200, L19.con, m('m2'), ['Contractual', 'obligations'], { size: 32, fill: L19.con, sub: ['agreed rules'] });
+    hmBox(p, 1270, 330, 400, 200, L19.cul, m('m3'), ['Cultural', 'values'], { size: 32, fill: L19.cul, sub: ['shared values'] });
+    hmSay(p, 'the tire shop', 330, 480, m('road'), { size: 24, fill: COL.dim });
+    hmSay(p, 'the red light', 800, 480, m('road', .5), { size: 24, fill: COL.dim });
+    hmSay(p, 'the accident', 1270, 480, m('road', 1), { size: 24, fill: COL.dim });
+    hmRule(p, 'Market, contract, culture: three ways work is steered.', m('road', 2.5));
+  }],
+
+  ['market', 'Free-market forces', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Free-market forces: price decides');
+    const a = l19Person(p, 420, 320, L19.mkt, 1.3), b = l19Person(p, 1180, 320, L19.mkt, 1.3);
+    show(a, m('two')); show(b, m('two', .3));
+    hmSay(p, 'buyer', 420, 400, m('two'), { size: 22, fill: COL.dim });
+    hmSay(p, 'seller', 1180, 400, m('two', .3), { size: 22, fill: COL.dim });
+    hmArrow(p, 500, 290, 1100, 290, COL.dim, m('two', 2), .6);
+    hmSay(p, 'money', 800, 272, m('two', 2), { size: 22, fill: COL.dim });
+    hmArrow(p, 1100, 345, 500, 345, COL.dim, m('two', 2.6), .6);
+    hmSay(p, 'goods or services', 800, 380, m('two', 2.6), { size: 22, fill: COL.dim });
+    l19Chip(p, 'lowest price', 420, 196, L19.mkt, m('price'), 210);
+    l19Chip(p, 'highest price', 1180, 196, L19.mkt, m('price', 1.6), 220);
+    hmSay(p, 'Neither cares if the other goes broke.', 800, 470, m('broke'), { size: 28 });
+    hmSay(p, 'Efficient: no one needs to oversee it.', 800, 525, m('eff'), { size: 28, fill: COL.good, weight: 600 });
+    hmBox(p, 480, 630, 440, 80, COL.good, m('but', 4), 'clear price: tires', { size: 26, fill: COL.good });
+    hmBox(p, 1120, 630, 520, 80, COL.bad, m('but', 6), 'hard to price: much of work', { size: 26, fill: COL.bad });
+    hmRule(p, 'Markets work only when value has a clear price.', m('but', 8.5));
+  }],
+
+  ['contract', 'Contractual obligations', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When value is hard to price: a contract');
+    [220, 320, 420, 520].forEach((x, i) => { show(l19Person(p, x, 270, L19.con), m('team', i * .2)); l19Chip(p, '$?', x, 190, COL.bad, m('team', 2 + i * .2), 64); });
+    hmSay(p, 'what is each one’s share worth?', 370, 350, m('team', 2.5), { size: 24, fill: COL.dim });
+    // illustrative bars: pricing a bit of work costs more than the bit
+    hmSay(p, 'a bit of work', 160, 430, m('bit'), { size: 22, anchor: 'start' });
+    const b1 = mk('rect', { x: 340, y: 410, width: 0, height: 26, rx: 4, fill: L19.con }, p); put(b1, { a_width: 0 }); tw(b1, { a_width: 60 }, m('bit', .3), .4);
+    hmSay(p, 'pricing that bit', 160, 480, m('bit', 1.5), { size: 22, anchor: 'start' });
+    const b2 = mk('rect', { x: 340, y: 460, width: 0, height: 26, rx: 4, fill: COL.bad }, p); put(b2, { a_width: 0 }); tw(b2, { a_width: 240 }, m('bit', 1.8), .8, out);
+    hmSay(p, 'illustrative', 580, 520, m('bit', 2), { size: 18, fill: COL.faint, anchor: 'end' });
+    const doc = G(p, { o: 0 });
+    mk('rect', { x: 820, y: 166, width: 520, height: 248, rx: 12, fill: '#16211d', stroke: L19.con, 'stroke-width': 3 }, doc);
+    T(doc, 'the contract', { x: 1080, y: 206, size: 26, fill: L19.con, weight: 600, anchor: 'middle' });
+    show(doc, m('deal'));
+    ['one year, for a set amount', 'a certain kind of work', 'an office and a terminal', 'your best effort'].forEach((s, i) => hmSay(p, '•  ' + s, 860, 252 + i * 42, m('deal', 1.5 + i * 1.6), { size: 24, anchor: 'start' }));
+    hmSay(p, 'general authority to:', 1080, 470, m('auth', 1), { size: 24, fill: COL.dim });
+    [['monitor', 920], ['evaluate', 1080], ['correct', 1240]].forEach(([s, x], i) => l19Chip(p, s, x, 528, L19.con, m('auth', 3 + i * .8), 150));
+    hmSay(p, 'plus rules both sides obey', 800, 620, m('rules'), { size: 28, fill: L19.con, weight: 600 });
+    hmRule(p, 'A contract trades pay for rules and authority.', m('rules', 2.5));
+  }],
+
+  ['overhead', 'Contracts need monitors', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Contracts need monitors: overhead');
+    hmBox(p, 300, 290, 440, 220, L19.con, m('green'), 'The red light', { size: 30, fill: L19.con, sub: ['we stop, so others stop too', 'and we go through on green'] });
+    l19Chip(p, 'overhead: police', 300, 450, COL.bad, m('cop', 2.5), 260);
+    hmBox(p, 800, 290, 440, 220, L19.con, m('tax'), 'Taxes', { size: 30, fill: L19.con, sub: ['part of our pay, for services', 'returns must be audited'] });
+    l19Chip(p, 'overhead: audits', 800, 450, COL.bad, m('tax', 4), 260);
+    hmBox(p, 1300, 290, 440, 220, L19.con, m('util'), 'A utility', { size: 30, fill: L19.con, sub: ['builds a $300 million plant', 'if no rival may sell power'] });
+    l19Chip(p, 'overhead: the PUC', 1300, 450, COL.bad, m('puc', 1), 270);
+    hmLines(p, ['the commission sets', 'prices and profit'], 1300, 520, m('puc', 3), { size: 22, fill: COL.dim });
+    hmSay(p, 'A monopoly, in exchange for accepting the rules.', 800, 640, m('mono'), { size: 28, fill: L19.con, weight: 600 });
+    hmRule(p, 'Contracts work, but monitoring them costs overhead.', m('mono', 3));
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-mc', prompt: ['Market or contract? (Illustrative situations.)'],
+    build: grid([
+      { parts: ['Buying sterile pouches from the lowest qualified bidder'], ans: ['m'], why: 'A clearly priced good: each side serves itself.' },
+      { parts: ['Hiring a clinical research associate on a yearly salary'], ans: ['c'], why: 'Her share of the study is hard to price, so you agree pay, work and rules.' },
+      { parts: ['A monthly audit that every software change has a signed review'], ans: ['c'], why: 'Monitoring adherence to agreed rules: contract overhead.' },
+      { parts: ['Choosing a courier for one shipment by price'], ans: ['m'], why: 'One clear transaction, decided on price.' },
+    ], [['m', 'Market', L19.mkt, 'M'], ['c', 'Contract', L19.con, 'C']], { multi: false, text: true }),
+  }], done) }],
+
+  ['culture', 'Cultural values', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When rules can’t keep up: cultural values');
+    l19Chip(p, 'change faster than rules', 520, 190, COL.dim, m('when'), 360);
+    l19Chip(p, 'too unclear for a contract', 1080, 190, COL.dim, m('when', 4), 390);
+    const ring = G(p, { o: 0 });
+    mk('circle', { cx: 800, cy: 380, r: 120, fill: '#16211d', stroke: L19.cul, 'stroke-width': 4 }, ring);
+    show(ring, m('group'));
+    [[-50, -50], [40, -60], [70, 10], [10, 60], [-60, 30], [-10, -5]].forEach(([dx, dy], i) => show(hmDot(p, 800 + dx, 380 + dy, L19.cul, 14), m('group', .3 + i * .1)));
+    const you = hmDot(p, 560, 380, COL.chalk, 14); show(you, m('group', .5));
+    const yl = hmSay(p, 'you', 560, 420, m('group', .5), { size: 22, fill: COL.dim });
+    tw(you, { x: 865, y: 445 }, m('group', 2.5), 1, io); hide(yl, m('group', 2.5), .4);
+    hmLines(p, ['the group’s interest', 'before your own'], 950, 370, m('group', 3.5), { size: 26, fill: L19.cul, weight: 600, anchor: 'start' });
+    hmSay(p, 'trust', 520, 395, m('trust'), { size: 52, fill: L19.cul, weight: 700 });
+    hmSay(p, 'you hand the group your ability to protect yourself', 800, 540, m('trust', 1.5), { size: 24, fill: COL.dim });
+    [['common values', 480, 260], ['common objectives', 800, 300], ['common methods', 1120, 270]].forEach(([s, x, w], i) => l19Chip(p, s, x, 600, L19.cul, m('share', 1.5 + i * 1), w));
+    hmSay(p, 'grown only from a lot of shared experience', 800, 670, m('exp'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'Culture runs on trust, and trust on shared experience.', m('exp', 3));
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-cul', prompt: ['Your clinical-AI team hits a question no procedure covers, and the regulatory picture shifts weekly (illustrative). Which mode can carry the team?'],
+    build: choice([['The market: let each engineer bid on the work'], ['A contract: write a full procedure covering every case first'], ['Cultural values: people acting for the group on shared aims']], 2,
+      'When change outruns the rules and the case is unclear, control comes from shared values, objectives and methods.',
+      ['Nothing here has a clear price to trade on.', 'A contract covering every case would be hopelessly complicated, and out of date next week.', null]),
+  }], done) }],
+
+  ['mgmt', 'What managers do in each mode', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What managers do in each mode');
+    hmBox(p, 330, 220, 400, 90, L19.mkt, m('flea'), 'Market', { size: 32, fill: L19.mkt });
+    hmSay(p, 'nothing needed', 330, 330, m('flea', 1), { size: 28, fill: L19.mkt, weight: 600 });
+    hmLines(p, ['no one supervises', 'a flea market'], 330, 380, m('flea', 2), { size: 22, fill: COL.dim });
+    hmBox(p, 800, 220, 400, 90, L19.con, m('cmgr'), 'Contract', { size: 32, fill: L19.con });
+    ['set and change the rules', 'monitor that they’re kept', 'evaluate and improve'].forEach((s, i) => hmSay(p, s, 800, 330 + i * 50, m('cmgr', 1.5 + i * 1.6), { size: 26, fill: L19.con }));
+    hmBox(p, 1270, 220, 400, 90, L19.cul, m('cult'), 'Culture', { size: 32, fill: L19.cul });
+    hmLines(p, ['build shared values,', 'objectives and methods'], 1270, 330, m('cult', 1.5), { size: 22, fill: COL.dim });
+    hmSay(p, '1  spell them out', 1270, 430, m('say'), { size: 28, fill: L19.cul, weight: 600 });
+    hmSay(p, '2  set the example', 1270, 485, m('ex'), { size: 32, fill: COL.good, weight: 700 });
+    hmSay(p, 'the more important way', 1270, 525, m('ex', 1.5), { size: 22, fill: COL.dim });
+    hmSay(p, 'When your behaviour matches the values you profess, culture grows.', 800, 630, m('match'), { size: 26 });
+    hmRule(p, 'Build culture by saying it, and more by doing it.', m('match', 3.5));
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-role', prompt: ['Which mode is this manager working in? (Illustrative.)'],
+    build: grid([
+      { parts: ['Writing the rules for how code reviews are signed off'], ans: ['c'], why: 'Setting rules and monitoring them: the contract mode.' },
+      { parts: ['Staying late to help another team finish a submission, as she asks her team to do'], ans: ['v'], why: 'Leading by example: the strongest way to build culture.' },
+      { parts: ['Letting the team buy test compute from the cheapest provider'], ans: ['m'], why: 'A clearly priced purchase: the market handles it.' },
+      { parts: ['Explaining to new hires why patient safety comes before dates'], ans: ['v'], why: 'Spelling out a shared value.' },
+    ], [['m', 'Market', L19.mkt, 'M'], ['c', 'Contract', L19.con, 'C'], ['v', 'Culture', L19.cul, 'V']], { multi: false, text: true }),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 19 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Market: each side serves itself; price decides.', 'w1'], ['Contract: pay for rules and authority.', 'w2'], ['Contracts fit work that is hard to price.', 'w3'], ['Culture: group first, trust from shared history.', 'w4'], ['Build culture by saying it, more by doing it.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-mkt', prompt: ['You choose the supplier for lab gloves purely on price and spec. Which mode of control is at work?'],
+      build: choice([['Free-market forces'], ['Contractual obligations'], ['Cultural values']], 0,
+        'A clearly priced good, with each side serving its own interest: the market.',
+        [null, 'There is no ongoing agreement on rules or authority, just a priced purchase.', 'No one is putting the group ahead of their own interest here.']) },
+    { id: 'p-bit', prompt: ['Why doesn’t a company pay its algorithm engineers per line of code?'],
+      build: choice([['Lines of code are too cheap to count'], ['Pricing each contribution would cost more than it is worth, so a contract fits'], ['Engineers are motivated only by culture']], 1,
+        'When value is hard to price, a contract with set pay, a type of work and agreed rules is more efficient.',
+        ['The problem is not cost per line but that a line’s value cannot be pinned down.', null, 'Engineers work under a contract too; culture is not the reason here.']) },
+    { id: 'p-ovh', prompt: ['Your QA lead checks that every design review follows the procedure. In Grove’s terms, what is that?'],
+      build: choice([['Waste that a good market would remove'], ['The monitoring a contract needs: overhead, like a traffic cop'], ['Proof that the team has no culture']], 1,
+        'Contracts need someone to monitor adherence, and that monitoring is overhead.',
+        ['A market cannot price design reviews; this is a contract, and contracts need monitors.', null, 'Contracts and culture can coexist; monitoring rules is simply part of the contract mode.']) },
+    { id: 'p-fast', prompt: ['New guidance on AI in devices changes faster than your procedures can be revised (illustrative). What does Grove say a team then needs?'],
+      build: choice([['A longer procedure that covers every case'], ['Shared values, objectives and methods, so people act for the group'], ['A bonus for each engineer who follows the old rules']], 1,
+        'When the world moves faster than the rules, control has to come from cultural values.',
+        ['A contract for every case gets hopelessly complicated, and still lags.', null, 'Rewarding the old rules pulls toward self-interest and away from the group.']) },
+    { id: 'p-ex', prompt: ['You tell the team patient safety comes first, then approve skipping a verification step to hit a date. What does that do?'],
+      build: choice([['Little: what you say is what builds culture'], ['It undermines the value, because example matters more than words'], ['It is fine if you explain the reason in writing']], 1,
+        'Culture grows when behaviour matches professed values; example is the more important way.',
+        ['Spelling values out helps, but people watch what you do.', null, 'A written reason does not undo what your action taught the team.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

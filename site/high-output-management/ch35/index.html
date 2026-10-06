@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Managing people who manage agents</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 35, title: 'Managing people who manage agents', kicker: 'Bonus · Lesson 3', minutes: 10, language: 'en', silent: true };
+
+/* Not from Grove's book: our application of his ideas to AI agents. Every lesson beat carries a
+   "beyond the book" chip. Colours: blue = people; purple = agents; green = the goal or the output;
+   red = a problem; amber = the rule. Agent icons are generic drawings, not any product's artwork. */
+
+// The small dim chip, top left, on every lesson beat.
+function l35Beyond(p) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: 30, y: 28, width: 220, height: 40, rx: 20, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, g);
+  T(g, 'beyond the book', { x: 140, y: 55, size: 20, fill: COL.dim, anchor: 'middle' });
+  show(g, .2); return g;
+}
+const l35Panel = () => { const p = panel(0); l35Beyond(p); return p; };
+function l35Person(p, x, y, t0, s = 1, color = COL.whole) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  show(g, t0); return g;
+}
+// A generic agent: a rounded head with two eyes and an antenna, on a small body.
+function l35Agent(p, x, y, t0, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  path(g, 'M0 -40V-54', { stroke: COL.real, 'stroke-width': 4 });
+  mk('circle', { cy: -58, r: 5, fill: COL.real }, g);
+  mk('rect', { x: -26, y: -42, width: 52, height: 38, rx: 12, fill: COL.real }, g);
+  mk('circle', { cx: -10, cy: -23, r: 5, fill: COL.board }, g);
+  mk('circle', { cx: 10, cy: -23, r: 5, fill: COL.board }, g);
+  mk('rect', { x: -22, y: 2, width: 44, height: 24, rx: 8, fill: COL.real }, g);
+  show(g, t0); return g;
+}
+function l35Chip(p, s, x, y, color, t0, w, size = 24) {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+}
+function l35Check(p, x, y, t0) {
+  const g = G(p, { x, y, o: 0 });
+  mk('circle', { r: 18, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, g);
+  show(g, t0);
+  draw(path(g, 'M-8 1L-2 8L9 -7', { stroke: COL.good, 'stroke-width': 4 }, { d: 0 }), t0 + .2, .3);
+  return g;
+}
+// One homework item: number disc, two lines, and a pill naming the lessons behind it.
+function l35Item(p, y, n, lines, tag, t0) {
+  const g = G(p, { o: 0 });
+  mk('circle', { cx: 210, cy: y, r: 32, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, g);
+  T(g, String(n), { x: 210, y: y + 9, size: 26, fill: COL.real, weight: 700, anchor: 'middle' });
+  lines.forEach((s, i) => T(g, s, { x: 268, y: y - 8 + i * 34, size: 26, fill: COL.chalk, weight: i ? 400 : 600 }));
+  mk('rect', { x: 1230, y: y - 22, width: 270, height: 44, rx: 22, fill: '#16211d', stroke: COL.faint, 'stroke-width': 2 }, g);
+  T(g, tag, { x: 1365, y: y + 8, size: 22, fill: COL.dim, anchor: 'middle' });
+  show(g, t0); return g;
+}
+
+const BEATS = [
+  ['intro', 'Managing people who manage agents', (m, D) => hmTitle(m, D, 'Bonus chapter · Grove for the age of agents · Lesson 3 of 3', 'Managing people who manage agents', 'Decisions, one-on-ones, reviews and a homework list')],
+
+  ['okr', 'Objectives for agents', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Objectives and key results, for agents');
+    l35Agent(p, 150, 280, .5, 1.2);
+    hmBox(p, 520, 255, 540, 100, COL.good, m('obj'), 'Objective: where to go', { size: 30, sub: ['e.g. an audit pack ready for review'] });
+    [['outline: day 2', 310], ['draft: day 5', 540], ['checked: day 8', 770]].forEach(([s, x], i) => l35Chip(p, s, x, 370, COL.good, m('kr', .3 + i * .8), 210));
+    hmSay(p, 'key results, dated (illustrative)', 540, 425, m('kr', 2.5), { size: 20, fill: COL.dim });
+    // the drive to the airport (Lesson 13)
+    hmSay(p, 'Lesson 13: the drive to the airport', 510, 480, m('air'), { size: 22, fill: COL.dim });
+    draw(path(p, 'M160 560H860', { stroke: COL.faint, 'stroke-width': 8 }, { d: 0 }), m('air', .2), .6);
+    draw(path(p, 'M300 560L420 640', { stroke: COL.faint, 'stroke-width': 6, 'stroke-dasharray': '10 8' }, { d: 0 }), m('air', .5), .4);
+    [[160, 'start'], [440, 'town A, minute 20'], [860, 'airport']].forEach(([x, s]) => {
+      show(hmDot(p, x, 560, COL.chalk, 10), m('air', .4));
+      hmSay(p, s, x, 535, m('air', .4), { size: 22, fill: COL.dim });
+    });
+    const car = hmDot(p, 160, 560, COL.real, 14); show(car, m('air', 1));
+    tw(car, { x: 300, y: 560 }, m('air', 1.2), 1.2); tw(car, { x: 405, y: 630 }, m('air', 2.5), 1);
+    hmSay(p, 'minute 20, no town A: lost', 450, 655, m('air', 4.5), { size: 24, fill: COL.bad, weight: 600, anchor: 'start' });
+    hmSay(p, 'milestones show when it is lost', 510, 698, m('air', 7.8), { size: 24, fill: COL.good, weight: 600 });
+    // keep objectives few
+    hmSay(p, 'Keep objectives few', 1240, 220, m('few'), { size: 28, weight: 600 });
+    for (let i = 0; i < 9; i++) { const r = mk('rect', { x: 1030 + (i % 3) * 52, y: 270 + Math.floor(i / 3) * 52, width: 40, height: 40, rx: 6, fill: 'none', stroke: COL.bad, 'stroke-width': 2.5 }, p); put(r, { o: 0 }); show(r, m('few', .3 + i * .08)); }
+    pop(hmCross(p, 1108, 348, COL.bad, 22), m('few', 2.4));
+    hmSay(p, 'do everything', 1108, 460, m('few', 2.4), { size: 22, fill: COL.bad });
+    [0, 1, 2].forEach(i => { const r = mk('rect', { x: 1300, y: 270 + i * 52, width: 160, height: 40, rx: 6, fill: COL.good }, p); put(r, { o: 0 }); show(r, m('few', 3 + i * .3)); });
+    hmSay(p, 'a few, sharp', 1380, 460, m('few', 3.5), { size: 22, fill: COL.good });
+    hmRule(p, 'Few objectives, with dated key results.', m('few', 5), 750);
+  }],
+
+  ['decide', 'Knowledge is not authority', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Knowledge is not authority');
+    l35Agent(p, 240, 310, .4, 1.3);
+    hmSay(p, 'knowledge', 240, 390, .6, { size: 24, fill: COL.real, weight: 600 });
+    l35Person(p, 460, 310, m('pos'), 1.3);
+    hmSay(p, 'position', 460, 390, m('pos'), { size: 24, fill: COL.whole, weight: 600 });
+    hmSay(p, 'knowledge ≠ authority', 350, 460, m('pos', .8), { size: 28, weight: 700 });
+    hmSay(p, 'Grove’s six questions (Lesson 11)', 1110, 195, m('six'), { size: 24, fill: COL.dim });
+    const Q = ['What is decided?', 'By when?', 'Who decides?', 'Who is consulted?', 'Who ratifies?', 'Who is told?'];
+    Q.forEach((s, i) => hmSay(p, s, 1010, 258 + i * 62, m('six', .6 + i * 1.2), { size: 26, anchor: 'end' }));
+    const A = [['the question', COL.dim, m('six', .9)], ['a date', COL.dim, m('six', 2.1)], ['a person', COL.whole, m('human')],
+      ['people, and the agent', COL.real, m('role')], ['a person', COL.whole, m('human', 1.6)], ['the agent can send it', COL.real, m('role', 2.4)]];
+    A.forEach(([s, c, t], i) => l35Chip(p, s, 1250, 250 + i * 62, c, t, 340));
+    const doc = G(p, { x: 330, y: 640, o: 0 });
+    mk('rect', { x: -22, y: -30, width: 44, height: 60, rx: 6, fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 }, doc);
+    path(doc, 'M-12 14C-6 6 0 20 12 10', { stroke: COL.whole, 'stroke-width': 3 });
+    show(doc, m('reg'));
+    hmSay(p, 'Regulated work: a named person on the record', 380, 650, m('reg'), { size: 28, anchor: 'start' });
+    hmRule(p, 'Agents advise and inform. People decide and ratify.', m('reg', 3.5), 750);
+  }],
+
+  ['free', 'One voice, not the last word', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Free discussion still comes first');
+    hmChain(p, ['free discussion', 'clear decision', 'full support'], [380, 800, 1220], 215, 320, 80, COL.whole, [.4, .8, 1.2]);
+    hmSay(p, 'Grove’s ideal process, Lesson 10', 800, 290, 1.6, { size: 22, fill: COL.dim });
+    [200, 300, 400].forEach((x, i) => l35Person(p, x, 450, m('ask', i * .2), .9));
+    l35Agent(p, 530, 452, m('ask', .8), .9);
+    l35Chip(p, 'its analysis', 530, 360, COL.real, m('ask', 1.2), 190);
+    hmSay(p, 'one voice in the discussion, not the last word', 400, 520, m('ask', 2), { size: 24, fill: COL.real, weight: 600 });
+    const scr = G(p, { o: 0 });
+    mk('rect', { x: 1030, y: 330, width: 300, height: 110, rx: 10, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, scr);
+    T(scr, 'THE ANSWER', { x: 1180, y: 396, size: 30, fill: COL.real, weight: 700, anchor: 'middle' });
+    show(scr, m('fear'));
+    [1040, 1180, 1320].forEach((x, i) => l35Person(p, x, 520, m('fear', .6 + i * .2), .8));
+    hmSay(p, 'deferring to the machine', 1180, 585, m('fear', 2.5), { size: 26, fill: COL.bad, weight: 700 });
+    hmSay(p, 'a new peer-group syndrome (Lesson 11)', 1180, 620, m('fear', 4), { size: 22, fill: COL.dim });
+    hmSay(p, 'Ask one more question (Lesson 8): of the agent, and of your team', 800, 685, m('one'), { size: 28, fill: COL.good, weight: 700 });
+    hmRule(p, 'The agent is one voice. Ask one more question.', m('one', 3.5), 750);
+  }],
+
+  ['q1', 'Quick check', () => { l35Panel(); }, { ask: done => quiz(MID, [{
+    id: 'c-six', prompt: ['Which of the six questions does each line answer? (illustrative)'],
+    build: grid([
+      { parts: ['An agent compiles the evidence on two sterilization methods'], ans: ['c'], why: 'The agent brings knowledge: it is consulted.' },
+      { parts: ['The quality lead chooses the method'], ans: ['d'], why: 'A person decides the consequential call.' },
+      { parts: ['The site director signs off'], ans: ['r'], why: 'A person ratifies, and her name is on the record.' },
+      { parts: ['The agent posts the decision to the team channel'], ans: ['i'], why: 'Telling people is a job an agent can do.' },
+    ], [['c', 'Consulted', null, 'C'], ['d', 'Decides', null, 'D'], ['r', 'Ratifies', null, 'R'], ['i', 'Informed', null, 'I']], { multi: false, text: true }),
+  }], done) }],
+
+  ['oneone', 'One-on-ones', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'One-on-ones matter more, not less');
+    l35Person(p, 250, 310, .3, 1.1, COL.chalk); l35Person(p, 500, 310, .4, 1.1);
+    hmSay(p, 'you', 250, 380, .3, { size: 22, fill: COL.dim }); hmSay(p, 'report', 500, 380, .4, { size: 22, fill: COL.dim });
+    [690, 780, 870].forEach((x, i) => l35Agent(p, x, 318, .6 + i * .15, .8));
+    hmSay(p, 'their agents', 780, 380, .9, { size: 22, fill: COL.real });
+    [['how they brief', 220, 220], ['where they gate', 470, 240], ['what they learned', 740, 260]].forEach(([s, x, w], i) => l35Chip(p, s, x, 450, COL.whole, m('coach', 1.5 + i * 1.6), w));
+    hmSay(p, 'Task-relevant maturity (Lessons 23–24)', 1230, 205, m('trm'), { size: 22, fill: COL.dim });
+    hmSay(p, 'the work itself', 1000, 265, m('trm', .5), { size: 22, anchor: 'start' });
+    hmSay(p, 'expert', 1450, 265, m('trm', 1.5), { size: 22, fill: COL.whole, weight: 600, anchor: 'end' });
+    const b1 = mk('rect', { x: 1000, y: 280, width: 0, height: 30, rx: 6, fill: COL.whole }, p); put(b1, { a_width: 0 }); tw(b1, { a_width: 450 }, m('trm', .6), .8, out);
+    hmSay(p, 'directing agents on it', 1000, 355, m('trm', 4), { size: 22, anchor: 'start' });
+    const b2 = mk('rect', { x: 1000, y: 370, width: 0, height: 30, rx: 6, fill: COL.real }, p); put(b2, { a_width: 0 }); tw(b2, { a_width: 110 }, m('trm', 4.2), .6, out);
+    hmSay(p, 'new', 1130, 393, m('trm', 5), { size: 22, fill: COL.real, weight: 600, anchor: 'start' });
+    hmSay(p, 'same person, same task: two maturities', 1230, 450, m('trm', 6), { size: 22, fill: COL.dim });
+    const fol = G(p, { x: 800, y: 615, o: 0 });
+    mk('path', { d: 'M-90 -40H-30L-15 -26H90V46H-90Z', fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, fol);
+    T(fol, 'hold file', { x: 0, y: 16, size: 24, fill: COL.whole, anchor: 'middle', weight: 600 });
+    show(fol, m('hold'));
+    [0, 1, 2].forEach(i => { const d = hmDot(p, 620 - i * 70, 560, COL.real, 10); show(d, m('hold', .8 + i * .4), .2); tw(d, { x: 800, y: 600, o: 0 }, m('hold', 1.2 + i * .4), .6); });
+    hmLines(p, ['batch agent questions,', 'like the hold file (Lesson 8)'], 940, 605, m('hold', 2.5), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'agent questions', 480, 600, m('hold', 1), { size: 22, fill: COL.real });
+    hmRule(p, 'Coach how they direct agents. Batch the questions.', m('hold', 5), 750);
+  }],
+
+  ['review', 'Judge output and judgment', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Judge output, not activity');
+    hmSay(p, 'performance reviews, Lessons 25–27', 800, 160, .4, { size: 22, fill: COL.dim });
+    l35Person(p, 200, 320, m('out'), 1.1);
+    l35Agent(p, 330, 270, m('out', .3), .7); l35Agent(p, 330, 360, m('out', .5), .7);
+    hmArrow(p, 390, 315, 560, 315, COL.good, m('out', 1), .5);
+    hmBox(p, 700, 315, 260, 120, COL.good, m('out', 1.5), 'Output', { size: 30, sub: ['theirs and', 'their agents’'] });
+    hmSay(p, 'and their judgment', 1200, 210, m('judge'), { size: 26, fill: COL.good, weight: 700 });
+    [['gated what mattered?', 0], ['caught the agent’s mistakes?', 2], ['owned the result?', 4]].forEach(([s, o], i) => {
+      l35Check(p, 1000, 262 + i * 66, m('judge', 1 + o));
+      hmSay(p, s, 1035, 271 + i * 66, m('judge', 1 + o), { size: 26, anchor: 'start' });
+    });
+    hmBox(p, 500, 590, 460, 120, COL.bad, m('not'), 'Activity', { size: 30, sub: ['agents running, tasks started'] });
+    hmBox(p, 1100, 590, 460, 120, COL.good, m('not', 2.5), 'Output', { size: 30, sub: ['what they produced, and how good'] });
+    pop(hmCross(p, 720, 535, COL.bad, 16), m('not', 1.5));
+    hmRule(p, 'Judge the output and the judgment, not the agent count.', m('not', 4), 750);
+  }],
+
+  ['people', 'Hire and grow for judgment', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Hire and grow for judgment');
+    [['Clear briefing', 'objective, priorities, approach', 350], ['Sound checking', 'sample, gate, verify', 800], ['When to trust', 'and when to verify', 1250]].forEach(([s, sub, x], i) =>
+      hmBox(p, x, 255, 390, 110, COL.whole, m('skills', 1 + i * 2.2), s, { size: 30, sub: [sub] }));
+    hmSay(p, 'An interview question (Lesson 28)', 800, 380, m('interview'), { size: 22, fill: COL.dim });
+    const bub = G(p, { o: 0 });
+    mk('rect', { x: 330, y: 400, width: 940, height: 64, rx: 22, fill: '#16211d', stroke: COL.whole, 'stroke-width': 2.5 }, bub);
+    T(bub, '“Tell me about a time you caught a tool’s mistake.”', { x: 800, y: 442, size: 28, fill: COL.whole, anchor: 'middle' });
+    show(bub, m('interview', .4));
+    hmSay(p, 'Motivation (Lessons 21–22): people need work that stretches them', 800, 540, m('motiv'), { size: 22, fill: COL.dim });
+    l35Chip(p, 'the routine', 340, 630, COL.real, m('motiv', 4), 200);
+    hmArrow(p, 450, 630, 560, 630, COL.dim, m('motiv', 4.5), .4);
+    l35Agent(p, 620, 645, m('motiv', 4.8), .9);
+    l35Chip(p, 'harder problems', 1000, 630, COL.good, m('motiv', 6), 260);
+    hmArrow(p, 1140, 630, 1250, 630, COL.dim, m('motiv', 6.5), .4);
+    l35Person(p, 1310, 645, m('motiv', 6.8), 1);
+    hmRule(p, 'Hire for judgment. Give people the stretch.', m('motiv', 9), 750);
+  }],
+
+  ['q2', 'Quick check', () => { l35Panel(); }, { ask: done => quiz(MID, [{
+    id: 'c-review', prompt: ['A report runs eight agents and ships twice as many documents as last year. Two had errors she never caught. How do you judge her?'],
+    build: choice([['Highly: twice the documents, eight agents'], ['On output and judgment: the missed errors count'], ['Leave the errors out: the agents made them']], 1,
+      'Volume and agent count are activity. Quality is part of output, and catching errors is her job.',
+      ['Eight agents is activity; two uncaught errors are part of what she shipped.', null, 'Her agents’ output is her output, mistakes included.']),
+  }], done) }],
+
+  ['homework', 'Homework for the age of agents', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Homework for the age of agents');
+    hmSay(p, 'ours, not Grove’s · his list is in Lesson 32', 800, 160, m('h0'), { size: 22, fill: COL.dim });
+    S.hw = [
+      [['Write one agent brief this week:', 'an objective, priorities, your preferred approach'], 'Lessons 6, 33', 'h1'],
+      [['List the irreversible steps in your team’s', 'agent work, and put a gate on each'], 'Lessons 4, 33', 'h2'],
+      [['Pick two paired indicators', 'for one agent workflow'], 'Lessons 3, 34', 'h3'],
+      [['Set autonomy for one task by its track record;', 'write down what would move it up or down'], 'Lessons 23–24, 33', 'h4'],
+      [['In your next one-on-one, ask how', 'your report directs their agents'], 'Lesson 8', 'h5'],
+    ].map(([lines, tag, k], i) => l35Item(p, 225 + i * 102, i + 1, lines, tag, m(k)));
+    hmRule(p, 'Pick one this week, and do it honestly.', m('h5', 5), 750);
+  }],
+
+  ['close', 'Still the manager', (m) => {
+    const p = l35Panel();
+    hmHead(p, 'Same principles, a new kind of team');
+    const bf = G(p, { x: 360, y: 300, o: 0 });
+    mk('circle', { r: 70, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, bf);
+    mk('ellipse', { cx: -14, cy: -6, rx: 32, ry: 25, fill: COL.chalk }, bf);
+    mk('circle', { cx: -14, cy: -6, r: 11, fill: COL.nat }, bf);
+    mk('rect', { x: 10, y: 4, width: 38, height: 34, rx: 6, fill: '#c9a27a' }, bf);
+    mk('rect', { x: 105, y: -24, width: 46, height: 52, rx: 6, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, bf);
+    path(bf, 'M151 -12C168 -12 168 16 151 16', { stroke: COL.dim, 'stroke-width': 3 });
+    show(bf, .4);
+    hmSay(p, '1983: a breakfast factory', 400, 420, .6, { size: 24, fill: COL.dim });
+    [['output', 260, 150], ['leverage', 450, 170], ['indicators', 660, 190], ['delegation', 880, 190], ['maturity', 1090, 170], ['judgment', 1290, 170]].forEach(([s, x, w], i) => l35Chip(p, s, x, 520, COL.chalk, m('same', 1.5 + i * .8), w));
+    hmArrow(p, 610, 300, 880, 300, COL.dim, m('new'), .6);
+    l35Person(p, 1000, 320, m('new', .6)); l35Agent(p, 1110, 322, m('new', .9));
+    l35Person(p, 1220, 320, m('new', 1.2)); l35Agent(p, 1330, 322, m('new', 1.5));
+    hmSay(p, 'today: people and agents', 1165, 420, m('new', 1.8), { size: 24, fill: COL.dim });
+    hmSay(p, 'You are still the manager.', 800, 640, m('end'), { size: 44, weight: 600 });
+    hmSay(p, 'The output is still yours.', 800, 725, m('end', 2.2), { size: 44, fill: COL.task, weight: 700 });
+  }],
+
+  ['q3', 'Quick check', () => { l35Panel(); }, { ask: done => quiz(MID, [{
+    id: 'c-hw', prompt: ['Your team’s agent keeps sending supplier emails that nobody checks first. Which homework item fits?'],
+    build: choice([['Write one agent brief with an objective'], ['List the irreversible steps and gate each one'], ['Pick two paired indicators']], 1,
+      'A sent email cannot be unsent: put a gate before it goes.',
+      ['A better brief helps, but the emails would still go out unchecked.', null, 'Indicators show trouble afterwards; the email has already gone.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = l35Panel();
+    hmSay(p, 'Lesson 35 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Give agents few objectives, dated key results.', 'w1'], ['Agents: consulted, inform. People: decide, ratify.', 'w2'], ['Don’t defer to the machine: ask one more question.', 'w3'], ['Coach agent skills; judge output and judgment.', 'w4'], ['Do the homework.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-okr', prompt: ['You told an agent to “help with the clinical study.” A week later its work is scattered and you can’t tell if it is on track. What was missing? (illustrative)'],
+      build: choice([['An objective with dated key results'], ['More autonomy, so it can do more'], ['A second agent to check the first']], 0,
+        'Dated key results let you, or the agent, see when it is off track, like town A on the way to the airport.',
+        [null, 'More autonomy on a vague goal spreads the work even wider.', 'A checker cannot judge progress toward a goal nobody set.']) },
+    { id: 'p-defer', prompt: ['In a design review, an agent recommends a supplier for a sterile pouch, and the team is ready to adopt it without discussion. What do you do? (illustrative)'],
+      build: choice([['Adopt it: the agent read more data than anyone'], ['Treat it as one voice, ask one more question, and have a named person decide'], ['Let the agent decide and log the result']], 1,
+        'Free discussion first; the agent informs it, and a person makes and owns the call.',
+        ['That is the peer-group syndrome with a machine in the boss’s chair.', null, 'Knowledge is not authority; a regulated choice needs a person accountable.']) },
+    { id: 'p-pings', prompt: ['A report’s agent sends you twenty small, non-urgent approval questions a day. Which fits best? (illustrative)'],
+      build: choice([['Approve each as it arrives'], ['Batch them into regular review times, like a hold file'], ['Switch its questions off']], 1,
+        'Batching keeps the checks without twenty interruptions a day.',
+        ['That is twenty interruptions a day, and rushed approvals.', null, 'Switching off the questions removes the gates along with the noise.']) },
+    { id: 'p-trm', prompt: ['A veteran test engineer has just started using agents to draft test reports. How should your one-on-ones treat this? (illustrative)'],
+      build: choice([['Leave her alone: she is an expert'], ['Ban agents until she is trained'], ['More structure and check-ins on directing the agents, for now']], 2,
+        'She is mature at testing but new at delegating it to software, so match the style to that.',
+        ['Expert at the work is not the same as expert at directing agents on it.', 'That throws away the leverage; coach her instead.', null]) },
+    { id: 'p-hire', prompt: ['You are hiring a regulatory specialist who will work with agents. Which interview question tells you most? (illustrative)'],
+      build: choice([['How many AI tools have you used?'], ['Tell me about a time you caught a tool’s mistake'], ['How fast can you write a prompt?']], 1,
+        'It asks for past behaviour that shows judgment: when to trust and when to verify.',
+        ['A count of tools is activity, not judgment.', null, 'Speed is not the skill; checking and judgment are.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

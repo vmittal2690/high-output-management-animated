@@ -1,0 +1,21 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Bonus lesson three. [[sub]]Managing the people who manage agents, and a homework list for the new era.",
+    "okr": "Give agents objectives and key results, just as Grove did for people. [[obj]]The objective says where. [[kr]]Dated key results say how you'll know it's on track. [[air]]Remember the drive to the airport: if you haven't reached town A by minute twenty, you're lost. An agent with milestones can tell you, or be caught, when it's lost. [[few]]And keep objectives few. An agent told to do everything will focus on nothing.",
+    "decide": "Agents bring knowledge, sometimes a great deal of it. [[pos]]But knowledge is not authority. [[six]]Run Grove's six questions: what, when, who decides, who is consulted, who ratifies, who is told. [[role]]An agent can be consulted. It can inform. [[human]]For consequential calls, a person decides, and a person ratifies. [[reg]]In regulated work, that person's name is on the record.",
+    "free": "Grove's ideal process still applies: free discussion, a clear decision, full support. [[ask]]Treat an agent's analysis as one voice in free discussion, not the last word. [[fear]]And watch for a new version of the peer-group syndrome: people deferring to the machine's answer the way they once deferred to the boss. [[one]]Ask one more question, of the agent and of your team.",
+    "q1": "Quick check.",
+    "oneone": "One-on-ones matter more, not less. [[coach]]Use them to coach your reports on directing agents: how they brief, where they put gates, what they've learned. [[trm]]A report's task-relevant maturity now includes managing agents on that task. Someone expert at the work may still be new at delegating it to software. [[hold]]And batch agent questions into regular times, as Grove batched questions into the hold file.",
+    "review": "Performance reviews judge output, not activity. [[out]]So judge the output a person delivers, with their agents included. [[judge]]And judge the judgment: did they gate what mattered, catch the agent's mistakes, and own the result? [[not]]Running more agents is activity. What they produced is output.",
+    "people": "Hiring and developing people changes too. [[skills]]Look for the skills of managing agents: clear briefing, sound checking, and good judgment about when to trust and when to verify. [[interview]]In interviews, ask about a time they caught a tool's mistake. [[motiv]]And remember Grove on motivation: people need work that stretches them. When agents take the routine, give your people the harder problems.",
+    "q2": "Quick check.",
+    "homework": "Grove ended with homework. [[h0]]Here is ours, for the age of agents. [[h1]]One: write one agent brief this week with an objective, priorities, and your preferred approach. [[h2]]Two: list the irreversible steps in your team's agent work, and put a gate on each. [[h3]]Three: pick two paired indicators for an agent workflow. [[h4]]Four: set autonomy for one task by its track record, and write down what would move it up or down. [[h5]]Five: in your next one-on-one, ask how your report directs their agents.",
+    "close": "Grove wrote about a breakfast factory in 1983. [[same]]The principles haven't changed: output, leverage, indicators, delegation, maturity, judgment. [[new]]What's changed is who, or what, is on your team. [[end]]You are still the manager. The output is still yours.",
+    "q3": "Quick check.",
+    "wrap": "To sum up. [[w1]]Give agents few objectives with dated key results. [[w2]]Agents can be consulted and inform; people decide and ratify. [[w3]]Watch for deferring to the machine; ask one more question. [[w4]]Coach directing agents in one-on-ones; judge output and judgment. [[w5]]Do the homework. Now the lesson practice.",
+    "final1": "Lesson practice. Five situations from a manager's week, with agents.",
+    "finish": "Well done. That is the end of the bonus chapter, and of the book."
+  }
+}

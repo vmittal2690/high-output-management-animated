@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match the style to the maturity</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 23, title: 'Match the style to the maturity', kicker: 'Chapter 12 · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch24/index.html' };
+
+/* Colours: salmon = structured style (low TRM); pink = individual, communicating style (medium TRM);
+   purple = minimal involvement and monitoring (high TRM); blue = ordinary work, people and TRM itself;
+   green = the goal or a good result; red = a problem; amber = the rule. */
+function l23Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l23Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// Grove's table (p. 175), redrawn as three boxes along a TRM axis. Box centres x 330, 800, 1270; box top-left stored for pickEls.
+const L23_X = [330, 800, 1270], L23_W = 420, L23_H = 170;
+const L23_STY = [
+  ['Structured', ['task-oriented: tell', 'what, when and how'], COL.nat, 'low'],
+  ['Individual-oriented', ['two-way communication,', 'support, mutual reasoning'], COL.rat, 'medium'],
+  ['Minimal involvement', ['agree objectives,', 'then monitor'], COL.real, 'high'],
+];
+function l23Scale(p, y, t0s, { axis = true } = {}) {
+  if (axis) {
+    hmArrow(p, 140, y - 140, 1460, y - 140, COL.whole, t0s[0], .8);
+    hmSay(p, 'task-relevant maturity of the report', 800, y - 160, t0s[0] + .3, { size: 22, fill: COL.whole });
+  }
+  return L23_STY.map(([n, sub, c, lev], i) => {
+    if (axis) hmSay(p, lev, L23_X[i], y - 104, t0s[i + 1], { size: 24, fill: c, weight: 600 });
+    const g = hmBox(p, L23_X[i], y, L23_W, L23_H, c, t0s[i + 1], n, { size: 30, fill: c, sub });
+    return { g, box: [L23_X[i] - L23_W / 2, y - L23_H / 2, L23_W, L23_H], label: n };
+  });
+}
+
+const BEATS = [
+  ['intro', 'Match the style to the maturity', (m, D) => hmTitle(m, D, 'Chapter 12 · Task-Relevant Maturity · Lesson 1 of 2', 'Match the style to the maturity', 'Why no style is best, and the one variable that decides')],
+
+  ['nobest', 'Is there one best style?', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Is there one best management style?');
+    hmSay(p, 'the favoured style followed the motivation theory of the day', 800, 180, m('fashion'), { size: 24, fill: COL.dim });
+    hmChain(p, ['About 1900', '1950s', 'Later'], [330, 800, 1270], 330, 380, 170, COL.whole, [m('y1900'), m('fifties'), m('lab')],
+      { size: 30, subs: [['told what to do: do it and', 'be paid, or be fired'], ['humanistic: a nicer way', 'to get people to work'], ['behavioural scientists', 'test the theories']] });
+    hmSay(p, 'Result: no style proved better than the others.', 800, 520, m('none'), { size: 32, weight: 700 });
+    hmSay(p, 'Grove’s own observations agree.', 800, 580, m('none', 2.5), { size: 24, fill: COL.dim });
+    hmRule(p, 'There is no single best management style.', m('rule'), 745);
+  }],
+
+  ['rotate', 'Intel’s rotations', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Swap the managers, and watch the output');
+    const GX = [480, 1120], base = 520;
+    GX.forEach((gx, k) => {
+      [-60, 0, 60].forEach((dx, i) => show(l23Person(p, gx + dx, 470, COL.whole, .7), m('rot', .2 + k * .4 + i * .1)));
+      hmSay(p, 'group ' + (k + 1), gx, 560, m('rot', .3 + k * .4), { size: 22, fill: COL.whole });
+    });
+    const A = l23Person(p, GX[0], 300, COL.chalk), B = l23Person(p, GX[1], 300, COL.chalk);
+    T(A, 'manager A', { x: 0, y: -56, size: 22, fill: COL.dim, anchor: 'middle' });
+    T(B, 'manager B', { x: 0, y: -56, size: 22, fill: COL.dim, anchor: 'middle' });
+    show(A, m('rot')); show(B, m('rot', .2));
+    // output bars, illustrative heights (px)
+    const b1 = hmBarUp(p, GX[0] + 120, base, 48, 170, COL.good, m('rot', 3));
+    const b2 = hmBarUp(p, GX[1] + 120, base, 48, 60, COL.whole, m('rot', 3.3));
+    hmSay(p, 'output (illustrative)', 1450, 560, m('rot', 3.3), { size: 18, fill: COL.faint, anchor: 'end' });
+    tw(A, { x: GX[1] }, m('swap'), 1.4); tw(B, { x: GX[0] }, m('swap'), 1.4);
+    tw(b1, { a_y: base - 80, a_height: 80, c_fill: COL.whole }, m('after'), .8);
+    tw(b2, { a_y: base - 110, a_height: 110 }, m('after'), .8);
+    hmSay(p, 'High output belongs to a pairing: this manager with this group.', 800, 640, m('pair'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'A style that works in one place may fail in another.', m('style'), 745);
+  }],
+
+  ['trm', 'Task-relevant maturity', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Task-relevant maturity (TRM)');
+    l23Chip(p, 'achievement orientation', 470, 200, COL.whole, m('mix'), 330);
+    l23Chip(p, 'readiness to take responsibility', 1110, 200, COL.whole, m('mix', 1.5), 440);
+    [['education', 520, 180], ['training', 800, 170], ['experience', 1080, 200]].forEach(([s, x, w], i) => l23Chip(p, s, x, 270, COL.whole, m('edu', i * .5), w));
+    hmArrow(p, 800, 300, 800, 352, COL.dim, m('edu', 2), .4);
+    hmBox(p, 800, 395, 560, 80, COL.chalk, m('trm'), 'task-relevant maturity', { size: 32 });
+    hmSay(p, '… specific to the task at hand', 800, 475, m('task'), { size: 26, fill: COL.dim });
+    show(l23Person(p, 250, 590, COL.chalk), m('two'));
+    hmSay(p, 'one person', 250, 650, m('two'), { size: 20, fill: COL.dim });
+    hmSay(p, 'TRM in one job', 560, 562, m('two', .3), { size: 22, anchor: 'end' });
+    hmSay(p, 'TRM in another', 560, 632, m('two', 1), { size: 22, anchor: 'end' });
+    const r1 = mk('rect', { x: 580, y: 536, width: 0, height: 34, rx: 6, fill: COL.whole }, p); put(r1, { a_width: 0 }); tw(r1, { a_width: 640 }, m('two', .3), .8, out);
+    const r2 = mk('rect', { x: 580, y: 606, width: 0, height: 34, rx: 6, fill: COL.whole }, p); put(r2, { a_width: 0 }); tw(r2, { a_width: 130 }, m('two', 1), .5, out);
+    hmSay(p, 'high', 1240, 562, m('two', 1), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'low', 730, 632, m('two', 1.4), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'TRM belongs to the task, not to the person.', m('back'), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-trm', prompt: ['For the task named, is the person’s TRM high or low? (Illustrative cases.)'],
+    build: grid([
+      { parts: ['A regulatory specialist preparing her tenth device submission'], ans: ['h'], why: 'She has done this exact task many times.' },
+      { parts: ['A star firmware engineer leading his first clinical study'], ans: ['l'], why: 'Strong in general, but new to this task.' },
+      { parts: ['A field service lead, years in the role, fixing a familiar fault'], ans: ['h'], why: 'Familiar task, familiar setting.' },
+      { parts: ['A veteran sales manager now running a production line'], ans: ['l'], why: 'Grove’s own case: competence does not carry over to a new task.' },
+    ], [['h', 'High', COL.real, 'H'], ['l', 'Low', COL.nat, 'L']], { multi: false, text: true }),
+  }], done) }],
+
+  ['sales', 'A star in the factory', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A star, moved to the factory');
+    path(p, 'M200 200V560H1400', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'performance', 215, 190, .3, { size: 20, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'time', 1400, 592, .3, { size: 20, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'schematic', 1400, 620, .3, { size: 18, fill: COL.faint, anchor: 'end' });
+    draw(path(p, 'M210 270H600', { stroke: COL.good, 'stroke-width': 6 }, { d: 0 }), m('star'), .8);
+    hmSay(p, 'in the field: top performer', 405, 248, m('star', .4), { size: 22, fill: COL.good });
+    draw(path(p, 'M612 220V556', { stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '8 6' }, { d: 0 }), m('star', 3), .4);
+    hmSay(p, 'moved to run a factory unit', 630, 230, m('star', 3), { size: 22, fill: COL.dim, anchor: 'start' });
+    draw(path(p, 'M600 270L620 520', { stroke: COL.bad, 'stroke-width': 6 }, { d: 0 }), m('drop'), .5);
+    hmSay(p, 'overwhelmed', 590, 470, m('drop', .5), { size: 24, fill: COL.bad, weight: 600, anchor: 'end' });
+    hmLines(p, ['same personal maturity;', 'new environment, content, tasks'], 920, 505, m('why'), { size: 22, fill: COL.dim, anchor: 'start', lh: 30 });
+    draw(path(p, 'M620 520C800 520 1000 330 1380 285', { stroke: COL.whole, 'stroke-width': 6 }, { d: 0 }), m('grow'), 1.6);
+    hmSay(p, 'TRM grows; performance returns', 1380, 255, m('grow', 1.2), { size: 22, fill: COL.whole, anchor: 'end' });
+    hmSay(p, 'Intel confused his general competence with his TRM.', 800, 660, m('conf', 1.5), { size: 28, weight: 600 });
+    hmRule(p, 'Don’t mistake general competence for task-relevant maturity.', m('conf', 4), 745);
+  }],
+
+  ['freeway', 'When the pace changes', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When the pace or the job changes');
+    hmSay(p, 'same complexity and uncertainty: fine. Faster pace, or a new job: TRM drops.', 800, 180, m('pace'), { size: 24, fill: COL.dim });
+    // country road
+    const rd = path(p, 'M220 440C330 300 470 420 680 270', { stroke: '#33463f', 'stroke-width': 34 }, { d: 0 }); draw(rd, m('road'), .8);
+    const rc = path(p, 'M220 440C330 300 470 420 680 270', { stroke: COL.dim, 'stroke-width': 2, 'stroke-dasharray': '12 12' }, { d: 0 }); draw(rc, m('road', .2), .8);
+    const car = hmDot(p, 420, 365, COL.whole, 13); show(car, m('road', 1));
+    hmSay(p, 'quiet country road', 450, 500, m('road'), { size: 24, fill: COL.dim });
+    // freeway: four lanes
+    for (let i = 0; i < 5; i++) draw(path(p, `M900 ${250 + i * 45}H1420`, i % 4 ? { stroke: COL.dim, 'stroke-width': 2, 'stroke-dasharray': '14 10' } : { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), m('fwy', i * .08), .6);
+    [[960, 0], [1050, 2], [1120, 1], [1190, 3], [1260, 0], [1310, 2], [1370, 1], [1000, 3], [1230, 1], [1400, 3]].forEach(([x, l], i) => {
+      const c = mk('rect', { x: x - 22, y: 258 + l * 45, width: 44, height: 28, rx: 6, fill: i === 4 ? COL.whole : COL.faint }, p); put(c, { o: 0 }); show(c, m('fwy', .5 + i * .08));
+    });
+    hmSay(p, 'crowded city freeway', 1160, 500, m('fwy'), { size: 24, fill: COL.dim });
+    hmSay(p, 'TRM', 280, 580, m('drop'), { size: 24, fill: COL.whole, weight: 600, anchor: 'end' });
+    const b1 = mk('rect', { x: 300, y: 560, width: 0, height: 32, rx: 6, fill: COL.whole }, p); put(b1, { a_width: 0 }); tw(b1, { a_width: 330 }, m('drop'), .6, out);
+    hmSay(p, 'TRM', 960, 580, m('drop', .8), { size: 24, fill: COL.whole, weight: 600, anchor: 'end' });
+    const b2 = mk('rect', { x: 980, y: 560, width: 0, height: 32, rx: 6, fill: COL.bad }, p); put(b2, { a_width: 0 }); tw(b2, { a_width: 70 }, m('drop', .8), .4, out);
+    hmSay(p, 'same car, same driver', 800, 660, m('drop', 1.5), { size: 26, weight: 600 });
+    hmRule(p, 'When the pace or the job changes, TRM drops.', m('drop', 3.5), 745);
+  }],
+
+  ['styles', 'Three styles', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Match the style to the TRM');
+    l23Scale(p, 400, [m('axis'), m('low'), m('med'), m('high')]);
+    hmSay(p, 'after Grove’s table, 1983', 1460, 520, m('axis', .5), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'attention moves from the task to the person', 800, 580, m('med', 6), { size: 24, fill: COL.rat });
+    hmSay(p, 'Judge the maturity first. The style follows.', 800, 650, m('first'), { size: 30, weight: 700 });
+    hmRule(p, 'Low TRM: tell. Medium: talk it through. High: agree goals, monitor.', m('first', 2.5), 745);
+  }],
+
+  ['monitor', 'Always monitor', (m) => {
+    const p = panel(0);
+    hmHead(p, 'At every level: monitor');
+    l23Scale(p, 320, [.3, .3, .4, .5]);
+    const band = G(p, { o: 0 });
+    mk('rect', { x: 120, y: 450, width: 1360, height: 64, rx: 14, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, band);
+    T(band, 'monitor closely enough to avoid surprises', { x: 800, y: 492, size: 28, fill: COL.good, weight: 600, anchor: 'middle' });
+    show(band, m('band'));
+    hmBox(p, 520, 620, 520, 100, COL.good, m('del'), 'monitoring: delegating', { size: 28, fill: COL.good });
+    hmBox(p, 1080, 620, 520, 100, COL.bad, m('abd'), 'no monitoring: abdicating', { size: 28, fill: COL.bad });
+    hmRule(p, 'At every level of TRM, monitor enough to avoid surprises.', m('abd', 1.8), 745);
+  }],
+
+  ['q2', 'Quick check', () => {
+    const p = panel(0);
+    S.l23q = l23Scale(p, 380, [.3, .3, .4, .5]);
+  }, { ask: done => quiz(BAND, [{
+    id: 'c-style', prompt: ['New hire, first design history file. Click the style for that task.'],
+    build: pickEls(S.l23q.map(b => ({ el: b.g, box: b.box, label: b.label })), 0,
+      'Her TRM on this task is low: tell her what, when and how.',
+      i => i === 1 ? 'Talking it through comes once she knows this task’s basics.' : 'Minimal involvement fits high TRM. Hers is low here.'),
+  }], done) }],
+
+  ['nice', 'Effective, not nice', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Effective, not nice');
+    hmSay(p, 'nice', 420, 270, m('nice'), { size: 34, fill: COL.dim, weight: 600 });
+    hmArrow(p, 520, 260, 1060, 260, COL.dim, m('nice', .3), .5); hmArrow(p, 1060, 260, 520, 260, COL.dim, m('nice', .3), .5);
+    hmSay(p, 'not nice', 1180, 270, m('nice'), { size: 34, fill: COL.dim, weight: 600 });
+    pop(hmCross(p, 790, 260, COL.bad, 22), m('nice', 1.6));
+    hmSay(p, 'A structured style is not less worthy than a communicating one.', 800, 390, m('worthy'), { size: 28 });
+    hmSay(p, 'effective', 420, 520, m('eff'), { size: 34, fill: COL.good, weight: 700 });
+    hmArrow(p, 560, 510, 1000, 510, COL.good, m('eff', .3), .5); hmArrow(p, 1000, 510, 560, 510, COL.good, m('eff', .3), .5);
+    hmSay(p, 'not effective', 1180, 520, m('eff'), { size: 34, fill: COL.good, weight: 700 });
+    hmSay(p, 'the only scale that counts', 800, 580, m('eff', 1.2), { size: 24, fill: COL.dim });
+    hmRule(p, 'Judge a style by whether it works, not by how it feels.', m('eff', 2.5), 745);
+  }],
+
+  ['parent', 'Parent and child', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Like a parent with a growing child');
+    hmArrow(p, 110, 200, 1490, 200, COL.whole, m('age'), .8);
+    hmSay(p, '“life-relevant maturity”: the child’s age', 800, 180, m('age', .3), { size: 22, fill: COL.whole });
+    const xs = [245, 615, 985, 1355], st = [
+      ['Toddler', ['“no”, without', 'the reasons'], COL.nat, 'tod'], ['First two-wheeler', ['run alongside,', 'talk about safety'], COL.rat, 'bike'],
+      ['Rides alone', ['no more litany', 'of rules'], COL.rat, 'alone'], ['Off to college', ['the parent', 'just monitors'], COL.real, 'coll']];
+    st.forEach(([n, sub, c, k], i) => {
+      if (i) hmArrow(p, xs[i - 1] + 152, 330, xs[i] - 154, 330, COL.dim, m(k, -.2), .3);
+      hmBox(p, xs[i], 330, 290, 160, c, m(k), n, { size: 26, fill: c, sub });
+    });
+    draw(path(p, 'M1355 420C1355 540 615 540 615 432', { stroke: COL.chalk, 'stroke-width': 3.5, 'stroke-dasharray': '10 8' }, { d: 0 }), m('back'), 1);
+    draw(path(p, 'M603 446L615 426L627 446', { stroke: COL.chalk, 'stroke-width': 3.5 }, { d: 0 }), m('back', .9), .2);
+    hmSay(p, 'severe trouble at school: back to an earlier style', 985, 590, m('back', .8), { size: 24 });
+    hmRule(p, 'As maturity grows, move along; if it drops, move back.', m('back', 3), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-back', prompt: ['Your seasoned verification lead, whom you supervise lightly, moves to a new AI software project under rules she has not worked with. What now? (Illustrative.)'],
+    build: choice([['Keep the same light touch: she is senior'], ['Move back toward more structure on this task, for now'], ['Leave her alone so she can prove herself']], 1,
+      'A new task under new rules: her TRM for it is low, so the style moves back for now.',
+      ['That confuses her general competence with her TRM on this task.', null, 'You monitor even at high TRM. Here she needs more than that.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 23 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['No single management style is best.', 'w1'], ['The variable: TRM, specific to each task.', 'w2'], ['Low: tell. Medium: talk. High: goals, monitor.', 'w3'], ['Always monitor enough to avoid surprises.', 'w4'], ['Judge by effect; move back when TRM drops.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-best', prompt: ['A peer asks which management style is “the best one” to learn. What does Grove’s chapter say?'],
+      build: choice([['Structured: it is the most reliable'], ['Communicating: it is the most modern'], ['None is best: it depends on the person’s task-relevant maturity']], 2,
+        'Research found no best style. The effective one depends on TRM, task by task.',
+        ['Structured is effective only when TRM is low.', 'Communicating fits medium TRM; it is not best everywhere.', null]) },
+    { id: 'p-promo', prompt: ['Your best clinical research associate is promoted to manage site budgets, and is struggling. What is the most likely cause?'],
+      build: choice([['She has lost her motivation'], ['Her TRM for the new task is low, though her competence is not'], ['She was never as good as she seemed']], 1,
+        'Like Grove’s sales manager in the factory: new environment, new content, low TRM for now.',
+        ['Her personal maturity and drive have not changed; the task has.', null, 'Her past results were real. The task is what changed.']) },
+    { id: 'p-high', prompt: ['An experienced engineer is running a device software release she has run many times. What is your role?'],
+      build: choice([['Tell her each step and deadline'], ['Agree the objectives, and monitor enough to avoid surprises'], ['Stay out of it entirely until release day']], 1,
+        'High TRM: minimal involvement, built on agreed objectives and monitoring.',
+        ['Detailed instructions fit low TRM and waste both your time.', null, 'No monitoring at all is abdication, not delegation.']) },
+    { id: 'p-nice', prompt: ['A colleague feels guilty giving a new hire step-by-step instructions, as if it were “not nice.” Your advice?'],
+      build: choice([['Stop: people resent being told what to do'], ['If her TRM on the task is low, structure is the effective choice'], ['Ask the new hire how she would like to do it']], 1,
+        'Nice or not nice has no place here. The question is what is effective.',
+        ['Grove: judge a style by its effect, not by how it feels.', null, 'Mutual reasoning fits medium TRM; she lacks the basics so far.']) },
+    { id: 'p-grow', prompt: ['You met a report weekly on a task that was new to her. Months later she runs it well. What changes?'],
+      build: choice([['Nothing: keep the same weekly detail'], ['Move toward agreeing objectives and monitoring, and meet less often'], ['Stop checking on it altogether']], 1,
+        'As her TRM grows, the effective style moves along, and so does how often you meet.',
+        ['Detailed supervision now costs time and holds her back.', null, 'Even at high TRM you monitor, to avoid surprises.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

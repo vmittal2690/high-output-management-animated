@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The drive to achieve, and work as a sport</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 22, title: 'The drive to achieve, and work as a sport', kicker: 'Chapter 11 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch23/index.html' };
+
+/* Colours: pink = competence-driven (mastery); purple = achievement-driven, and money as a measure of it;
+   salmon = money as a need; blue = ordinary work and training; green = the goal or a good result;
+   red = a problem; amber = the rule. */
+function l22Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l22Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A peg standing on the floor line at (x, floor).
+function l22Peg(p, x, floor, t0) {
+  const g = G(p, { o: 0 });
+  path(g, `M${x} ${floor}V${floor - 60}`, { stroke: COL.chalk, 'stroke-width': 6 });
+  mk('ellipse', { cx: x, cy: floor, rx: 22, ry: 6, fill: COL.faint }, g);
+  show(g, t0); return g;
+}
+const l22Ring = (p, x, y, color, t0) => { const r = G(p, { x, y, o: 0 }); mk('ellipse', { rx: 20, ry: 7, fill: 'none', stroke: color, 'stroke-width': 4 }, r); show(r, t0); return r; };
+
+const BEATS = [
+  ['intro', 'The drive to achieve, and work as a sport', (m, D) => hmTitle(m, D, 'Chapter 11 · The Sports Analogy · Lesson 2 of 2', 'The drive to achieve, and work as a sport', 'Stretch goals, money, feedback, and the manager as coach')],
+
+  ['drives', 'Two forms of the drive', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Self-actualization: two forms');
+    hmBox(p, 440, 250, 600, 130, COL.rat, m('comp'), 'Competence-driven', { size: 32, fill: COL.rat, sub: ['wants mastery of the task'] });
+    hmBox(p, 1160, 250, 600, 130, COL.real, m('ach'), 'Achievement-driven', { size: 32, fill: COL.real, sub: ['needs to achieve in all things'] });
+    l22Chip(p, 'a violinist practising every day', 440, 400, COL.rat, m('violin'), 420);
+    l22Chip(p, 'a skateboarder: one trick, again', 440, 480, COL.rat, m('skate'), 420);
+    hmSay(p, 'homework? not ten minutes', 440, 550, m('skate', 3), { size: 22, fill: COL.dim });
+    hmSay(p, 'not most people, but some', 1160, 400, m('few'), { size: 24, fill: COL.dim });
+    hmRule(p, 'The top need drives toward mastery or achievement.', m('few', 2.5), 745);
+  }],
+
+  ['rings', 'The ring-toss experiment', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The ring-toss experiment');
+    draw(path(p, 'M160 560H1460', { stroke: COL.faint, 'stroke-width': 3 }, { d: 0 }), m('room'), .8);
+    l22Peg(p, 1300, 560, m('room', .5));
+    const P = [[300, COL.bad, 'gamb', 'Gamblers', 'far: high risk, no control'], [1220, COL.whole, 'cons', 'Conservatives', 'right above: no risk'], [880, COL.good, 'achv', 'Achievers', 'just far enough: a challenge']];
+    P.forEach(([x, c, k, n, d]) => {
+      show(l22Person(p, x, 534, c), m(k));
+      hmSay(p, n, x, 605, m(k), { size: 26, fill: c, weight: 700 });
+      hmSay(p, d, x, 640, m(k, .3), { size: 22, fill: COL.dim });
+    });
+    draw(path(p, 'M320 490Q800 180 1290 500', { stroke: COL.bad, 'stroke-width': 2.5, 'stroke-dasharray': '8 8' }, { d: 0 }), m('gamb', .6), .9);
+    draw(path(p, 'M900 490Q1100 360 1296 495', { stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '8 8' }, { d: 0 }), m('achv', .6), .7);
+    // misses first, then rings
+    [COL.bad, COL.bad, COL.good, COL.good, COL.good].forEach((c, i) => show(hmDot(p, 820 + i * 30, 300, c, 10), m('miss', .3 + i * .4), .2));
+    hmSay(p, 'miss, miss, then steady', 880, 270, m('miss', .3), { size: 22, fill: COL.dim });
+    hmRule(p, 'Achievers work at the edge of their ability.', m('edge', 1.5), 745);
+  }],
+
+  ['fifty', 'Fifty-fifty objectives', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Set objectives at fifty-fifty');
+    // illustrative: chance of making an objective falls as it is set higher. y = 560 − 340 × chance.
+    path(p, 'M300 200V560H1300', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'chance of making it', 320, 195, m('mbo'), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'how high the objective is set →', 800, 600, m('mbo'), { size: 22, fill: COL.dim });
+    hmSay(p, '100%', 288, 228, m('mbo'), { size: 18, fill: COL.dim, anchor: 'end' });
+    hmSay(p, '50%', 288, 396, m('mbo'), { size: 18, fill: COL.dim, anchor: 'end' });
+    let d = ''; for (let x = 300; x <= 1300; x += 20) { const c = 1 / (1 + Math.exp((x - 800) / 110)); d += (x === 300 ? 'M' : 'L') + x + ' ' + (560 - 340 * c).toFixed(1); }
+    draw(path(p, d, { stroke: COL.whole, 'stroke-width': 5 }, { d: 0 }), m('mbo', .4), 1.4);
+    draw(path(p, 'M300 390H800V560', { stroke: COL.good, 'stroke-width': 2, 'stroke-dasharray': '8 6' }, { d: 0 }), m('half'), .8);
+    const dot = hmDot(p, 800, 390, COL.good, 13); show(dot, m('half', .6));
+    hmSay(p, 'set it here', 830, 380, m('half', .8), { size: 26, fill: COL.good, weight: 700, anchor: 'start' });
+    hmSay(p, 'sure thing', 400, 290, m('half', 2), { size: 22, fill: COL.dim });
+    hmSay(p, 'out of reach', 1180, 520, m('half', 2), { size: 22, fill: COL.dim });
+    hmSay(p, 'illustrative', 1300, 640, m('mbo'), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Miss half the time, yet produce more overall.', 800, 680, m('more'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Set objectives you’d make about half the time.', m('more', 4), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-fifty', prompt: ['Your verification team met all five quarterly objectives, with weeks to spare. What does Grove suggest for next quarter? (illustrative)'],
+    build: choice([['Keep the same level: it clearly works'], ['Set them so a hard push gives about even odds'], ['Set them so high no one could reach them']], 1,
+      'Output is greater when people reach beyond their grasp, even missing half the time.',
+      ['Comfortable objectives leave output on the table.', null, 'Impossible goals give no satisfaction of ringing the peg. Aim for fifty-fifty.']),
+  }], done) }],
+
+  ['output', 'Value output', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Value output, not knowing');
+    hmBox(p, 440, 270, 600, 150, COL.bad, m('lab'), 'A research lab', { size: 30, sub: ['Grove’s first job', 'driven to know more, not to produce'] });
+    hmSay(p, 'little got done', 440, 390, m('little'), { size: 26, fill: COL.bad, weight: 600 });
+    hmBox(p, 1160, 270, 600, 150, COL.good, m('intel'), 'Intel', { size: 30, fill: COL.good, sub: ['the reverse:', 'driven to produce results'] });
+    show(l22Person(p, 440, 520, COL.dim), m('phd'));
+    hmLines(p, ['Ph.D., answer in the abstract,', 'never applied: little recognition'], 440, 600, m('phd'), { size: 22, fill: COL.dim });
+    show(l22Person(p, 1160, 520, COL.good), m('junior'));
+    hmLines(p, ['junior engineer who delivers:', 'valued and esteemed'], 1160, 600, m('junior'), { size: 22, fill: COL.good });
+    hmRule(p, 'Reward results, not knowledge for its own sake.', m('junior', 4), 745);
+  }],
+
+  ['money', 'Money: need or measure', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Money: a need, then a measure');
+    hmBox(p, 440, 240, 600, 120, COL.nat, m('need'), 'Money as a need', { size: 30, fill: COL.nat, sub: ['buys necessities; stops once there is enough'] });
+    // Caribbean plant: savings rise to a set sum, then the person leaves (illustrative shape)
+    path(p, 'M240 540H640', { stroke: COL.faint, 'stroke-width': 2 });
+    hmBarUp(p, 300, 540, 70, 150, COL.nat, m('carib', 1), .9);
+    draw(path(p, 'M280 390H400', { stroke: COL.chalk, 'stroke-width': 2, 'stroke-dasharray': '8 6' }, { d: 0 }), m('carib', 1), .5);
+    hmLines(p, ['saved a set sum,', 'then quit'], 420, 440, m('carib', 3), { size: 24, fill: COL.nat, anchor: 'start' });
+    hmSay(p, 'Intel’s Caribbean plant, early years', 440, 590, m('carib'), { size: 22, fill: COL.dim });
+    hmBox(p, 1160, 240, 600, 120, COL.real, m('measure'), 'Money as a measure', { size: 30, fill: COL.real, sub: ['of achievement: no limit'] });
+    // venture capitalist: the second ten million drawn the same size as the first (to scale)
+    path(p, 'M960 540H1360', { stroke: COL.faint, 'stroke-width': 2 });
+    hmBarUp(p, 1020, 540, 120, 130, COL.real, m('vc'), .7);
+    hmBarUp(p, 1180, 540, 120, 130, COL.real, m('vc', 2.5), .7);
+    hmSay(p, '$10M', 1080, 395, m('vc'), { size: 24, fill: COL.real, weight: 600 });
+    hmSay(p, '+ $10M more', 1240, 395, m('vc', 2.5), { size: 24, fill: COL.real, weight: 600 });
+    hmSay(p, 'a venture capitalist, still working', 1160, 590, m('vc'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Money as a need runs out. As a measure, it doesn’t.', m('measure', 4), 745);
+  }],
+
+  ['raise', 'The raise test', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The raise test');
+    show(l22Person(p, 440, 330, COL.nat, 1.4), m('abs'));
+    hmSay(p, '“How much is my raise?”', 440, 230, m('abs'), { size: 28, fill: COL.nat, weight: 600 });
+    hmLines(p, ['the dollars matter:', 'physiological or security'], 440, 450, m('abs', 1.5), { size: 24, fill: COL.nat });
+    show(l22Person(p, 1160, 330, COL.real, 1.4), m('rel'));
+    hmSay(p, '“How does it compare with theirs?”', 1160, 230, m('rel'), { size: 28, fill: COL.real, weight: 600 });
+    hmLines(p, ['money as a measure:', 'esteem or self-actualization'], 1160, 450, m('rel', 2), { size: 24, fill: COL.real });
+    // illustrative raises of peers, the person's own bar highlighted
+    [60, 90, 75, 110].forEach((h, i) => hmBarUp(p, 1040 + i * 64, 660, 44, h, i === 2 ? COL.real : COL.faint, m('rel', 1 + i * .2), .5));
+    hmSay(p, 'illustrative', 1340, 660, m('rel', 1), { size: 18, fill: COL.faint, anchor: 'start' });
+    hmRule(p, 'Absolute or relative? The raise shows the mode.', m('rel', 5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-measure', prompt: ['Money as a need, or as a measure? (illustrative)'],
+    build: grid([
+      { parts: ['“The raise covers my new childcare costs, so I’m fine.”'], ans: ['n'], why: 'The absolute amount matters: a lower need.' },
+      { parts: ['“Was my raise in the top group this year?”'], ans: ['m'], why: 'Comparing with others: money as a measure.' },
+      { parts: ['A founder, already rich, still chases a bigger exit'], ans: ['m'], why: 'Like the venture capitalist: the second ten million measures achievement.' },
+      { parts: ['A technician who leaves once he has saved for a house'], ans: ['n'], why: 'Like the Caribbean plant: a set sum, then the motive is gone.' },
+    ], [['n', 'Need', COL.nat, 'N'], ['m', 'Measure', COL.real, 'M']], { multi: false, text: true }),
+  }], done) }],
+
+  ['feedback', 'Feedback', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The drive needs feedback');
+    hmSay(p, 'Above all: feedback on their performance', 800, 190, m('fb'), { size: 30, fill: COL.good, weight: 700 });
+    hmBox(p, 440, 330, 600, 130, COL.rat, m('inner'), 'Competence: it is inside', { size: 28, fill: COL.rat, sub: ['the violinist knows how it should sound'] });
+    hmBox(p, 1160, 330, 600, 130, COL.bad, m('nofb'), 'No room to improve', { size: 28, fill: COL.bad, sub: ['the drive to practise vanishes'] });
+    // the fencer's skill, as he felt it: rising, then slipping (schematic)
+    path(p, 'M900 640H1420', { stroke: COL.faint, 'stroke-width': 2 });
+    draw(path(p, 'M900 620Q1050 460 1160 470Q1300 490 1420 600', { stroke: COL.bad, 'stroke-width': 4 }, { d: 0 }), m('fence', 2), 1.2);
+    hmSay(p, 'skill, as he felt it', 1420, 670, m('fence', 2), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmLines(p, ['A Hungarian Olympic fencing champion', 'moved to the U.S. and quit:', 'no one could give him a contest'], 440, 500, m('fence'), { size: 24, fill: COL.dim });
+    hmRule(p, 'No room to improve, no drive to practise.', m('fence', 6), 745);
+  }],
+
+  ['relevant', 'Task-relevant feedback', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Task-relevant feedback');
+    hmSay(p, 'The best measures tie their performance to the organization’s', 800, 190, .3, { size: 28 });
+    l22Chip(p, 'indicators', 1150, 290, COL.good, m('ind'), 260);
+    l22Chip(p, 'objectives’ milestones', 1150, 370, COL.good, m('ind', 1), 320);
+    l22Chip(p, 'office size', 450, 290, COL.bad, m('irr'), 240);
+    l22Chip(p, 'decor', 450, 370, COL.bad, m('irr', .8), 240);
+    pop(hmCross(p, 620, 290, COL.bad, 14), m('irr', 1.5)); pop(hmCross(p, 620, 370, COL.bad, 14), m('irr', 1.8));
+    hmArrow(p, 680, 330, 950, 330, COL.dim, m('rel'), .6);
+    hmSay(p, 'steer', 815, 315, m('rel'), { size: 22, fill: COL.dim });
+    hmBox(p, 1150, 500, 460, 110, COL.good, m('review'), 'The performance review', { size: 28, fill: COL.good, sub: ['the most important; a later chapter'] });
+    hmRule(p, 'Reward what ties to the work, not the office.', m('review', 4), 745);
+  }],
+
+  ['failfear', 'Fear of failure', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Fear of failure');
+    l22Chip(p, 'on one task: a spur', 450, 200, COL.good, m('spur'), 320);
+    l22Chip(p, 'as a preoccupation: playing safe', 1120, 200, COL.bad, m('pre'), 440);
+    draw(path(p, 'M300 560H1460', { stroke: COL.faint, 'stroke-width': 3 }, { d: 0 }), .3, .6);
+    l22Peg(p, 1300, 560, .4);
+    const a = l22Person(p, 880, 534, COL.good); show(a, .5);
+    const z = path(p, 'M880 380L860 430H884L862 480', { stroke: COL.bad, 'stroke-width': 6 }, { d: 0 }); draw(z, m('shock'), .3);
+    hmSay(p, 'a shock for every miss', 880, 360, m('shock'), { size: 22, fill: COL.bad, weight: 600 });
+    tw(a, { x: 1240 }, m('shock', 3), 1.2);
+    hmSay(p, '…so they drop it from above', 1240, 605, m('shock', 4), { size: 22, fill: COL.whole });
+    hmSay(p, 'Up here, the fear comes from within: letting yourself down.', 800, 670, m('inner'), { size: 26 });
+    hmRule(p, 'Don’t let fear of failure make achievers play safe.', m('inner', 5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-fear', prompt: ['A manager reviews every missed milestone of a device-software team in public. Soon the team proposes only easy goals. Why? (illustrative)'],
+    build: choice([['They have become less capable'], ['Fear of failure made them play safe, like the shocked ring tossers'], ['Easy goals show they are self-actualized']], 1,
+      'Preoccupied with failure, achievers walk up to the peg and drop the ring.',
+      ['Their skills did not shrink. Their willingness to stretch did.', null, 'Self-actualized people stretch. Easy goals are a retreat.']),
+  }], done) }],
+
+  ['sport', 'The manager’s two jobs', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The manager’s two jobs');
+    const o = hmDot(p, 300, 520, COL.chalk, 10); show(o, .3);
+    hmArrow(p, 310, 520, 620, 520, COL.whole, m('train'), .7);
+    hmSay(p, '1 train', 465, 560, m('train', .3), { size: 26, fill: COL.whole, weight: 700 });
+    hmArrow(p, 630, 510, 630, 240, COL.real, m('self'), .8);
+    hmLines(p, ['2 bring them to', 'self-actualization'], 660, 360, m('self', .4), { size: 26, fill: COL.real, weight: 700, anchor: 'start' });
+    // stopwatch
+    const sw = G(p, { x: 1200, y: 360, o: 0 });
+    mk('circle', { r: 100, fill: '#16211d', stroke: COL.good, 'stroke-width': 5 }, sw);
+    mk('rect', { x: -14, y: -128, width: 28, height: 22, rx: 4, fill: COL.good }, sw);
+    path(sw, 'M0 0L0 -70M0 0L46 26', { stroke: COL.good, 'stroke-width': 5 });
+    show(sw, m('how'));
+    hmSay(p, 'the marathon runner', 1200, 500, m('how', .5), { size: 24, fill: COL.dim });
+    hmSay(p, 'beat the clock, or other runners', 1200, 540, m('beat'), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, 'not for money', 1200, 580, m('beat', 2.5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Joe Frazier: fighting is his job, what he is. Money matters, but not most.', 800, 660, m('frazier'), { size: 24 });
+    hmRule(p, 'Self-actualization sustains itself: aim people there.', m('frazier', 7), 745);
+  }],
+
+  ['prejudice', 'Give work the pull of sport', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Sport is admired. Long work hours?');
+    hmBox(p, 440, 260, 560, 120, COL.good, m('prej'), 'Throwing yourself into sport', { size: 28, fill: COL.good, sub: ['admired, fun'] });
+    hmBox(p, 1160, 260, 560, 120, COL.bad, m('prej', 3), 'Throwing yourself into work', { size: 28, fill: COL.bad, sub: ['a “workaholic”; drudgery'] });
+    hmSay(p, 'If you can’t beat them, join them:', 800, 430, m('join'), { size: 32, weight: 700 });
+    l22Chip(p, 'rules of the game', 400, 520, COL.good, m('rules'), 280);
+    l22Chip(p, 'ways to measure yourself', 800, 520, COL.good, m('rules', 1.5), 360);
+    l22Chip(p, 'something to beat', 1200, 520, COL.good, m('against'), 280);
+    hmRule(p, 'Give work rules of the game and a score.', m('against', 3), 745);
+  }],
+
+  ['czar', 'The building czar', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Intel’s building czars');
+    const X = [320, 640, 960, 1280], before = [40, 50, 35, 45], after = [150, 170, 140, 160];
+    X.forEach((x, i) => {
+      const b = G(p, { o: 0 });
+      path(b, `M${x - 80} 520V400L${x} 340L${x + 80} 400V520Z`, { fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 });
+      show(b, m('maint', .2 * i));
+      hmSay(p, 'building ' + 'ABCD'[i], x, 555, m('maint', .2 * i), { size: 20, fill: COL.dim });
+      // upkeep score bars, illustrative: before (red), then after (green)
+      const r = mk('rect', { x: x - 20, y: 520 - before[i], width: 40, height: before[i], rx: 4, fill: COL.bad, opacity: .9 }, p); put(r, { o: 0 }); show(r, m('czar', 1 + i * .2));
+      hmBarUp(p, x - 20, 520, 40, after[i], COL.good, m('jump', i * .2), .8);
+    });
+    hmSay(p, 'a senior manager scores each building', 800, 240, m('czar'), { size: 26, weight: 600 });
+    hmSay(p, 'scores compared across buildings', 800, 280, m('compare'), { size: 24, fill: COL.dim });
+    hmSay(p, 'upkeep scores: illustrative', 1500, 590, m('czar', 1), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'No more money. No rewards. Just a racetrack.', 800, 630, m('nothing'), { size: 30, fill: COL.good, weight: 700 });
+    hmSay(p, 'see the work as they see it; build indicators they can watch', 800, 680, m('see'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Give people a racetrack: a score they can watch.', m('see', 5), 745);
+  }],
+
+  ['merger', 'Competition and losing', (m) => {
+    const p = panel(0);
+    hmHead(p, 'No rival, no race; and losing is normal');
+    const a = G(p, { x: 260, y: 260, o: 0 }), b = G(p, { x: 520, y: 260, o: 0 });
+    [a, b].forEach((g, i) => {
+      mk('rect', { x: -70, y: -90, width: 140, height: 180, rx: 6, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, g);
+      for (let j = 0; j < 5; j++) mk('rect', { x: -50, y: -64 + j * 28, width: j ? 100 : 70, height: j ? 6 : 14, rx: 2, fill: COL.faint }, g);
+    });
+    show(a, m('col')); show(b, m('col'));
+    tw(a, { x: 390 }, m('col', 3.5), .8); tw(b, { x: 390 }, m('col', 3.5), .8);
+    hmSay(p, 'the two papers merge', 390, 390, m('col', 3.5), { size: 22, fill: COL.dim });
+    hmSay(p, '“No one left to beat.”', 390, 450, m('col', 4.5), { size: 30, fill: COL.bad, weight: 700 });
+    hmSay(p, 'a columnist, as Grove quotes him', 390, 495, m('col', 4.5), { size: 20, fill: COL.dim });
+    // a season of matches, at least half lost
+    const R = 'WLWLLWLWWL';
+    R.split('').forEach((r, i) => {
+      const x = 960 + (i % 5) * 100, y = 230 + Math.floor(i / 5) * 100;
+      const c = G(p, { x, y, o: 0 }); mk('circle', { r: 36, fill: '#16211d', stroke: r === 'W' ? COL.good : COL.bad, 'stroke-width': 3 }, c);
+      T(c, r, { x: 0, y: 10, size: 28, fill: r === 'W' ? COL.good : COL.bad, weight: 700, anchor: 'middle' });
+      show(c, m('half', .2 + i * .15));
+    });
+    hmLines(p, ['at least half of all matches', 'are lost, and players rarely quit'], 1160, 450, m('keep'), { size: 24 });
+    hmRule(p, 'Remove the rival and the drive goes. Losses are part of it.', m('keep', 3), 745);
+  }],
+
+  ['coach', 'The manager as coach', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The manager as coach');
+    hmBox(p, 320, 300, 420, 150, COL.good, m('credit'), 'No personal credit', { size: 28, fill: COL.good, sub: ['so the players trust him'] });
+    hmBox(p, 800, 300, 420, 150, COL.good, m('tough'), 'Tough on the team', { size: 28, fill: COL.good, sub: ['critical, to get their best'] });
+    hmBox(p, 1280, 300, 420, 150, COL.good, m('player'), 'Knows the game', { size: 28, fill: COL.good, sub: ['was a good player once'] });
+    const f = G(p, { o: 0 });
+    mk('rect', { x: 500, y: 450, width: 600, height: 200, rx: 10, fill: 'none', stroke: COL.dim, 'stroke-width': 3 }, f);
+    path(f, 'M800 450V650', { stroke: COL.dim, 'stroke-width': 2 });
+    mk('circle', { cx: 800, cy: 550, r: 40, fill: 'none', stroke: COL.dim, 'stroke-width': 2 }, f);
+    show(f, m('field'));
+    [600, 690, 910, 1000].forEach((x, i) => show(l22Person(p, x, i % 2 ? 590 : 530, COL.real, .7), m('field', .8 + i * .2)));
+    hmRule(p, 'Be the coach: no credit, high standards, know the game.', m('field', 4), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-coach', prompt: ['Your team files a key regulatory submission early. At the all-hands, what would a good coach do? (illustrative)'],
+    build: choice([['Present it as the result of his own plan'], ['Credit the team, then push on what could be sharper next time'], ['Skip any critique: they did well']], 1,
+      'A coach takes no personal credit, and stays tough to get the best next time.',
+      ['Taking the credit costs the players’ trust.', null, 'A good coach is critical even after a win, to raise the level.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 22 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Achievers work at the edge of their ability.', 'w1'], ['Set objectives at fifty-fifty; value output.', 'w2'], ['Money as a need runs out; as a measure, never.', 'w3'], ['Give task-relevant feedback; don’t punish misses.', 'w4'], ['Give work a racetrack, and be the coach.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-fifty', prompt: ['You are setting next quarter’s objectives for a clinical data team. How hard should they be?'],
+      build: choice([['Easy enough to be sure of hitting them all'], ['Hard enough that a real push gives about even odds'], ['As high as possible, to show ambition']], 1,
+        'Fifty-fifty objectives get the most output, even though half are missed.',
+        ['Sure things leave people short of their best.', null, 'Out-of-reach goals bring no satisfaction and teach people to give up.']) },
+    { id: 'p-raise', prompt: ['Two engineers get the same raise. One is pleased; the other is upset to learn a peer got more. What does that tell you?'],
+      build: choice([['The upset one cares about the money itself'], ['The upset one treats money as a measure of achievement'], ['Nothing: raises never motivate']], 1,
+        'Caring how a raise compares, not its size, shows esteem or self-actualization at work.',
+        ['Caring about the dollars themselves points to the lower needs, not to comparison.', null, 'Money as a measure motivates without limit.']) },
+    { id: 'p-czar', prompt: ['Quality of device-history records is mediocre at three sites, and reminders haven’t helped. A Grove-style fix?'],
+      build: choice([['Pay a bonus for good records'], ['Have a senior person score each site regularly and compare the scores'], ['Send more reminders, signed by a vice president']], 1,
+        'Like the building czars: a racetrack, with no extra money, lifted every building.',
+        ['Grove’s buildings improved with no money or rewards at all.', null, 'More pressure had already failed, as it did for Intel’s maintenance group.']) },
+    { id: 'p-office', prompt: ['A strong engineer asks for a corner office as recognition for her work. What does Grove advise?'],
+      build: choice([['Give it: any reward helps'], ['Steer recognition toward task-relevant feedback and results'], ['Refuse and say nothing more']], 1,
+        'Office size is an irrelevant reward. Tie recognition to her performance and its effect on the organization.',
+        ['Irrelevant rewards point the drive at the wrong target.', null, 'She still needs recognition, just the relevant kind.']) },
+    { id: 'p-miss', prompt: ['Your team missed an ambitious objective you set at fifty-fifty. How should you treat it?'],
+      build: choice([['Lower the targets next quarter'], ['As expected some of the time: review it and keep stretching'], ['Mark it as a failure in their reviews']], 1,
+        'In sport, half of all matches are lost. A miss on a stretch goal is part of playing at the limit.',
+        ['Lower targets give up the extra output.', null, 'Punishing misses breeds the fear that makes achievers play safe.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

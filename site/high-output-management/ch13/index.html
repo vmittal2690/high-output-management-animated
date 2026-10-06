@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What planning produces, and OKRs</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 13, title: 'What planning produces, and OKRs', kicker: 'Chapter 6 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch14/index.html' };
+
+/* Colours: green = the objective (the goal) and actions planning produces; blue = key results and ordinary work;
+   purple = the plan on paper and the planning horizon; red = a problem or a miss; amber = the rule. */
+function l13Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l13Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A tick mark centred on (x, y).
+function l13Tick(p, x, y, t0, color = COL.good) {
+  const e = path(p, `M${x - 14} ${y}L${x - 4} ${y + 11}L${x + 15} ${y - 12}`, { stroke: color, 'stroke-width': 5 }, { d: 0 });
+  draw(e, t0, .3); return e;
+}
+
+const BEATS = [
+  ['intro', 'What planning produces, and OKRs', (m, D) => hmTitle(m, D, 'Chapter 6 · Planning: Today’s Actions for Tomorrow’s Output · Lesson 2 of 2', 'What planning produces', 'And how objectives and key results turn a plan into daily work')],
+
+  ['output', 'The output of planning', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What does planning produce?');
+    hmSay(p, 'Tasks done now, to change what happens later', 800, 190, m('tasks'), { size: 30, fill: COL.good, weight: 700 });
+    hmBox(p, 400, 320, 480, 120, COL.bad, m('past'), 'today’s gap', { size: 30, sub: ['a failure of planning', 'some time in the past'] });
+    hmLines(p, ['like hunting for gas after', 'the car has run dry'], 400, 430, m('gas'), { size: 24, fill: COL.bad });
+    const bk = G(p, { x: 1060, y: 320, o: 0 });
+    mk('rect', { x: -60, y: -75, width: 120, height: 150, rx: 6, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, bk);
+    mk('rect', { x: -60, y: -75, width: 18, height: 150, rx: 4, fill: COL.real, opacity: .6 }, bk);
+    T(bk, 'Annual', { x: 10, y: -10, size: 20, fill: COL.real, anchor: 'middle', weight: 600 });
+    T(bk, 'Plan', { x: 10, y: 16, size: 20, fill: COL.real, anchor: 'middle', weight: 600 });
+    show(bk, m('book'));
+    hmSay(p, 'hardly ever opened', 1060, 430, m('book', .5), { size: 22, fill: COL.dim });
+    hmArrow(p, 1130, 320, 1210, 320, COL.dim, m('book', 3), .3);
+    l13Chip(p, 'actions taken', 1340, 285, COL.good, m('book', 3.4), 220);
+    l13Chip(p, 'changes made', 1340, 355, COL.good, m('book', 3.8), 220);
+    hmLines(p, ['What do I have to do today to solve,', 'or better, avoid, tomorrow’s problem?'], 800, 560, m('q'), { size: 32, fill: COL.good, weight: 700, lh: 44 });
+    hmRule(p, 'Planning’s output is what you do today.', m('book', 5.5), 745);
+  }],
+
+  ['horizon', 'How far ahead', (m) => {
+    const p = panel(0);
+    hmHead(p, 'How far ahead? Plan five years, act on one');
+    const X = i => 200 + i * 170;
+    const h1 = mk('rect', { x: X(0), y: 300, width: 160, height: 70, rx: 8, fill: '#2f5446' }, p); put(h1, { o: 0 }); show(h1, m('one'));
+    const h2 = mk('rect', { x: X(1), y: 300, width: 160, height: 70, rx: 8, fill: '#2f5446' }, p); put(h2, { o: 0 }); show(h2, m('roll', 1.4));
+    for (let i = 0; i < 7; i++) {
+      const c = mk('rect', { x: X(i), y: 300, width: 160, height: 70, rx: 8, fill: 'none', stroke: COL.faint, 'stroke-width': 2.5 }, p);
+      put(c, { o: 0 }); show(c, .3 + i * .05);
+      hmSay(p, 'year ' + (i + 1), X(i) + 80, 344, .3 + i * .05, { size: 24, fill: COL.dim });
+    }
+    const win = G(p, { o: 0 });
+    mk('rect', { x: X(0) - 10, y: 286, width: 5 * 170 + 10, height: 98, rx: 12, fill: 'none', stroke: COL.real, 'stroke-width': 4 }, win);
+    T(win, 'this year’s five-year plan', { x: X(0) + 420, y: 268, size: 24, fill: COL.real, anchor: 'middle', weight: 600 });
+    show(win, m('five'));
+    const act = G(p, { o: 0 });
+    T(act, 'acted on', { x: X(0) + 80, y: 412, size: 22, fill: COL.good, anchor: 'middle', weight: 600 });
+    show(act, m('one', .5));
+    tw(win, { x: 170 }, m('roll'), 1.4, io); tw(act, { x: 170 }, m('roll'), 1.4, io);
+    hide(h1, m('roll', .2), .6);
+    hmSay(p, 'a year later: replan, and year 2 becomes year one', 800, 455, m('roll', 1.6), { size: 24, fill: COL.real });
+    hmSay(p, 'Act only on what comes before your next planning cycle.', 800, 530, m('only'), { size: 30, weight: 600 });
+    hmSay(p, 'But don’t replan too often: give decisions time to show results.', 800, 610, m('often'), { size: 26, fill: COL.dim });
+    hmRule(p, 'Look years ahead; act on what comes before the next plan.', m('often', 5), 745);
+  }],
+
+  ['who', 'Who should plan', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who should plan?');
+    [340, 440, 540].forEach((x, i) => show(l13Person(p, x, 300, COL.good), m('ops', i * .2)));
+    hmLines(p, ['the managers who will', 'carry the plan out'], 440, 380, m('ops', .5), { size: 26, fill: COL.good, weight: 600 });
+    const room = G(p, { o: 0 });
+    mk('rect', { x: 980, y: 220, width: 360, height: 150, rx: 12, fill: 'none', stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, room);
+    show(room, m('apart'));
+    [1080, 1160, 1240].forEach((x, i) => show(l13Person(p, x, 310, COL.dim, .8), m('apart', .2 + i * .1)));
+    pop(hmCross(p, 1340, 220, COL.bad, 18), m('apart', 2));
+    hmLines(p, ['planners apart from', 'the implementers'], 1160, 410, m('apart', .5), { size: 24, fill: COL.bad });
+    hmSay(p, 'Enormous leverage, but only married to implementation', 800, 510, m('lev'), { size: 28, weight: 600 });
+    l13Chip(p, 'yes to this', 560, 590, COL.good, m('yes'), 220);
+    hmSay(p, '=', 800, 600, m('yes', .6), { size: 34, fill: COL.dim });
+    l13Chip(p, 'no to something else', 1040, 590, COL.bad, m('yes', .9), 300);
+    hmSay(p, 'the guts and discipline to drop projects, as well as start them', 800, 668, m('drop'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Those who carry out the plan must make it, and drop things too.', m('drop', 3.6), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-who', prompt: ['Your company asks a separate strategy team to write your department’s plan for a new surgical device (illustrative), while your team “focuses on execution.” What would Grove say?'],
+    build: choice([['Good: it frees your managers to execute'], ['It won’t work: the managers who implement the plan must make it'], ['Fine, as long as the plan covers five years']], 1,
+      'Planners apart from the implementers don’t work. Planning’s leverage comes from being married to doing.',
+      ['Separating them loses the leverage: the plan and the work drift apart.', null, 'The length of the plan doesn’t fix who makes it.']),
+  }], done) }],
+
+  ['mbo', 'Management by objectives', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Management by objectives: planning for daily work');
+    l13Chip(p, '1 demand', 470, 200, COL.faint, m('short'), 200);
+    l13Chip(p, '2 present status', 760, 200, COL.chalk, m('short', 1.5), 260);
+    l13Chip(p, '3 close the gap', 1070, 200, COL.chalk, m('short', 1.5), 260);
+    hmSay(p, 'short range: demand already known', 440, 252, m('short', 2.5), { size: 20, fill: COL.dim });
+    draw(path(p, 'M640 244V256H1190V244', { stroke: COL.chalk, 'stroke-width': 3 }, { d: 0 }), m('short', 3.5), .5);
+    hmSay(p, 'MBO makes these specific', 915, 290, m('short', 4), { size: 22, fill: COL.chalk, weight: 600 });
+    hmSay(p, '“If you don’t know where you’re going, any road will get you there.”', 800, 370, m('road'), { size: 28, fill: COL.dim });
+    hmSay(p, 'an old saying, as Grove quotes it', 800, 405, m('road', .5), { size: 20, fill: COL.faint });
+    hmSay(p, 'Two questions', 800, 470, m('two'), { size: 26, weight: 700 });
+    hmBox(p, 480, 580, 520, 120, COL.good, m('obj'), 'Where do I want to go?', { size: 28, sub: ['the objective'] });
+    hmBox(p, 1120, 580, 560, 120, COL.whole, m('kr'), 'How will I pace myself?', { size: 28, sub: ['the key results: milestones'] });
+    hmRule(p, 'Objective: where to go. Key results: how you pace yourself.', m('kr', 4), 745);
+  }],
+
+  ['airport', 'To the airport', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Objective: catch a flight in an hour');
+    // time scale: 60 minutes = 1100 px from x 200 (towns placed at the times you should reach them)
+    const X = t => 200 + t * 1100 / 60, y = 320;
+    draw(path(p, `M${X(0)} ${y}H${X(60)}`, { stroke: COL.faint, 'stroke-width': 6 }, { d: 0 }), .3, .8);
+    hmSay(p, 'start', X(0), y + 50, .3, { size: 22, fill: COL.dim });
+    const ap = G(p, { x: X(60), y, o: 0 });
+    mk('circle', { r: 30, fill: '#16211d', stroke: COL.good, 'stroke-width': 4 }, ap);
+    path(ap, 'M-16 4L16 -4M0 -14L4 14', { stroke: COL.good, 'stroke-width': 5 });
+    show(ap, m('obj', -.3));
+    hmSay(p, 'airport', X(60), y + 62, m('obj', -.3), { size: 22, fill: COL.good, weight: 600 });
+    hmSay(p, 'the objective', X(60), y - 48, m('obj'), { size: 22, fill: COL.good, weight: 600 });
+    [['A', 10], ['B', 20], ['C', 30]].forEach(([n, t], i) => {
+      const d = hmDot(p, X(t), y, COL.whole, 14); show(d, m('a', i * .4));
+      hmSay(p, n, X(t), y - 30, m('a', i * .4), { size: 26, fill: COL.whole, weight: 700 });
+      hmSay(p, t + ' min', X(t), y + 50, m('times', i * .5), { size: 22, fill: COL.whole });
+    });
+    hmSay(p, 'key results: reach each town on time', X(20), y + 92, m('times', 2), { size: 22, fill: COL.whole, weight: 600 });
+    const car = G(p, { x: X(0), y: y - 4, o: 0 });
+    mk('rect', { x: -26, y: -14, width: 52, height: 22, rx: 7, fill: COL.chalk }, car);
+    show(car, m('lost', -2.5)); tw(car, { x: X(6) }, m('lost', -2.3), 2, io);
+    hmSay(p, '20 minutes driven, no town A yet', 240, 500, m('lost'), { size: 28, fill: COL.bad, anchor: 'start', weight: 700 });
+    hmSay(p, '→ you are lost', 800, 500, m('lost', 1.5), { size: 28, fill: COL.bad, anchor: 'start', weight: 700 });
+    hmSay(p, 'Get off the highway and ask for directions now, or miss the flight.', 800, 600, m('ask'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'A missed key result warns you while you can still fix it.', m('ask', 3.2), 745);
+  }],
+
+  ['period', 'Keep the period short', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Feedback must come soon after the work');
+    // 1200 px = one year
+    const x0 = 200, W = 1200;
+    const yr = mk('rect', { x: x0, y: 230, width: W, height: 60, rx: 8, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, p); put(yr, { o: 0 }); show(yr, .3);
+    hmSay(p, 'the yearly plan', 800, 270, .3, { size: 24, fill: COL.real, weight: 600 });
+    hmSay(p, 'objectives:', x0 - 20, 400, m('short'), { size: 22, fill: COL.dim, anchor: 'end' });
+    for (let i = 0; i < 4; i++) {
+      const q = mk('rect', { x: x0 + i * W / 4 + 4, y: 370, width: W / 4 - 8, height: 50, rx: 6, fill: COL.whole, opacity: .8 }, p); put(q, { o: 0 }); show(q, m('short', .3 + i * .2));
+      hmSay(p, 'Q' + (i + 1), x0 + i * W / 4 + W / 8, 404, m('short', .3 + i * .2), { size: 22, fill: COL.board, weight: 700 });
+    }
+    hmSay(p, 'quarterly', x0 + W + 20, 404, m('short', 1.2), { size: 22, fill: COL.whole, anchor: 'start' });
+    for (let i = 0; i < 12; i++) {
+      const q = mk('rect', { x: x0 + i * W / 12 + 3, y: 470, width: W / 12 - 6, height: 40, rx: 5, fill: COL.whole, opacity: .55 }, p); put(q, { o: 0 }); show(q, m('q', .8 + i * .08));
+    }
+    hmSay(p, 'or monthly', x0 + W + 20, 498, m('q', 1.5), { size: 22, fill: COL.whole, anchor: 'start' });
+    hmSay(p, 'each period ends with feedback you can still act on', 800, 600, m('q', 2.5), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'Short periods: feedback arrives in time to adjust.', m('q', 4), 745);
+  }],
+
+  ['focus', 'Few objectives', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Objectives should give focus');
+    ['objective 1', 'objective 2', 'objective 3'].forEach((s, i) => l13Chip(p, s, 380, 240 + i * 75, COL.good, m('few', i * .4), 230));
+    hmSay(p, 'a few', 380, 480, m('few', 1.4), { size: 24, fill: COL.good, weight: 600 });
+    for (let i = 0; i < 15; i++) {
+      const x = 820 + (i % 5) * 140, y = 220 + Math.floor(i / 5) * 75;
+      const g = G(p, { o: 0 }); mk('rect', { x: x - 60, y: y - 20, width: 120, height: 40, rx: 20, fill: '#16211d', stroke: COL.bad, 'stroke-width': 2 }, g);
+      show(g, m('many', i * .2));
+    }
+    hmSay(p, 'we can’t say no, so the list grows', 1100, 480, m('many', 1), { size: 24, fill: COL.bad });
+    hmSay(p, 'Focus on everything, and you focus on nothing.', 800, 570, m('nothing'), { size: 32, fill: COL.bad, weight: 700 });
+    hmSay(p, 'A few well-chosen objectives say what is yes, and what is no.', 800, 650, m('clear'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Keep objectives few: focus means saying no.', m('clear', 4.5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-airport', prompt: ['Your key results are to reach towns A, B and C at 10, 20 and 30 minutes, on the way to a flight in an hour. You have driven 20 minutes and haven’t reached town A. What do you know?'],
+    build: choice([['You are a little behind but probably fine'], ['You are lost: stop and ask for directions now'], ['Nothing yet: judge at the 60-minute mark']], 1,
+      'That is what key results are for: an early warning while there is still time to fix it.',
+      ['You were due at town B by now and haven’t reached A: this is not a small delay.', null, 'At 60 minutes the flight is gone. The key result tells you now.']),
+  }], done) }],
+
+  ['columbus', 'Columbus, by MBO', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Columbus, in MBO terms (Grove’s loose retelling)');
+    l13Chip(p, 'Spain’s 1491 plan: the war needs money', 800, 190, COL.bad, m('plan'), 520);
+    hmBox(p, 760, 295, 640, 100, COL.good, m('isa'), 'Queen Isabella’s objective', { size: 28, sub: ['increase Spain’s wealth through trade'] });
+    hmSay(p, 'free discussion, then a clear decision', 760, 382, m('talk'), { size: 22, fill: COL.dim });
+    hmBox(p, 760, 460, 640, 100, COL.good, m('route'), 'Columbus’s objective', { size: 28, sub: ['find a new route to the Orient'] });
+    [['get ships', 330, 170], ['train crews', 570, 190], ['shakedown cruise', 840, 250], ['set sail', 1080, 150]].forEach(([s, x, w], i) => l13Chip(p, s, x, 585, COL.whole, m('krs', i * .9), w));
+    hmSay(p, 'key results, each with a deadline', 760, 645, m('krs', 4), { size: 22, fill: COL.whole });
+    hmArrow(p, 1130, 460, 1130, 305, COL.good, m('nest'), .6);
+    hmLines(p, ['nested: meet his,', 'and hers is met'], 1160, 370, m('nest', .5), { size: 24, fill: COL.good, anchor: 'start', weight: 600 });
+    hmRule(p, 'Objectives nest: meet yours, and your boss’s is met.', m('nest', 3), 745);
+  }],
+
+  ['missed', 'Key results met, objective missed', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Every key result met, the objective missed');
+    ['get ships', 'train crews', 'shakedown cruise', 'set sail'].forEach((s, i) => {
+      hmSay(p, s, 250, 220 + i * 52, .3 + i * .1, { size: 24, fill: COL.whole, anchor: 'start' });
+      l13Tick(p, 220, 212 + i * 52, .4 + i * .15);
+    });
+    hmBox(p, 1000, 230, 520, 90, COL.bad, m('miss'), 'objective: a new route to the Orient', { size: 24, sub: ['no route to China'] });
+    pop(hmCross(p, 1270, 190, COL.bad, 16), m('miss', .6));
+    hmBox(p, 1000, 360, 520, 90, COL.good, m('found'), 'found: the New World', { size: 26, sub: ['enormous wealth for Spain'] });
+    hmSay(p, 'You can perform well and still miss a stated objective.', 800, 480, m('well'), { size: 30, weight: 700 });
+    const sw = G(p, { x: 420, y: 590, o: 0 });
+    mk('circle', { r: 44, fill: '#16211d', stroke: COL.whole, 'stroke-width': 4 }, sw);
+    mk('rect', { x: -10, y: -62, width: 20, height: 14, rx: 3, fill: COL.whole }, sw);
+    path(sw, 'M0 0V-30', { stroke: COL.whole, 'stroke-width': 4 });
+    show(sw, m('stop'));
+    hmLines(p, ['a stopwatch', 'in your own hand'], 490, 582, m('stop', .3), { size: 24, fill: COL.whole, anchor: 'start', weight: 600 });
+    const doc = G(p, { x: 930, y: 590, o: 0 });
+    mk('rect', { x: -38, y: -48, width: 76, height: 96, rx: 6, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, doc);
+    for (let j = 0; j < 4; j++) mk('rect', { x: -24, y: -30 + j * 18, width: 48, height: 5, rx: 2, fill: COL.faint }, doc);
+    show(doc, m('legal'));
+    pop(hmCross(p, 960, 550, COL.bad, 14), m('legal', .5));
+    hmLines(p, ['not a legal document', 'for performance reviews'], 1000, 582, m('legal', .3), { size: 24, fill: COL.bad, anchor: 'start', weight: 600 });
+    hmSay(p, 'rating by it mechanically, or skipping an opportunity “not on the list”: petty', 800, 690, m('petty'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Key results are a stopwatch, not a legal document.', m('petty', 4.5), 745);
+  }],
+
+  ['plant', 'The Philippine plant', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s Philippine plant, written as MBO');
+    hmBox(p, 800, 210, 1000, 80, COL.good, m('obj'), 'Objective: obtain a decision on the plant expansion', { size: 28 });
+    [['1. Study land near the plant and elsewhere', 'k1', 'June'], ['2. Financial analyses: land, construction, operating costs', 'k2', ''],
+      ['3. Present to the steering group; get its decision', 'k3', ''], ['4. Grove ratifies the decision', 'k4', 'October']].forEach(([s, k, d], i) => {
+      const y = 320 + i * 68;
+      hmSay(p, s, 280, y, m(k), { size: 26, anchor: 'start', fill: COL.whole });
+      if (d) l13Chip(p, 'by ' + d, 1300, y - 9, COL.whole, m(k, 1.8), 180);
+      l13Tick(p, 240, y - 9, m('met', .3 + i * .3));
+    });
+    hmSay(p, '✓ objective met', 800, 600, m('met', 1.8), { size: 28, fill: COL.good, weight: 700 });
+    hmSay(p, 'Specific words and dates: at the deadline, no doubt whether it was done.', 800, 670, m('spec'), { size: 26 });
+    hmRule(p, 'Key results: specific wording, specific dates.', m('spec', 5), 745);
+  }],
+
+  ['nest', 'Objectives link up', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Objectives link up the chain');
+    hmBox(p, 800, 220, 820, 100, COL.good, .3, 'Supervisor’s objective', { size: 28, sub: ['keep all plant expansions on schedule'] });
+    hmBox(p, 800, 352, 820, 70, COL.whole, m('kr'), 'his key result: Philippine decision by October', { size: 26 });
+    hmSay(p, '≈', 800, 425, m('kr', 3), { size: 36, fill: COL.dim, weight: 700 });
+    hmSay(p, 'much the same', 830, 420, m('kr', 3), { size: 20, fill: COL.dim, anchor: 'start' });
+    hmBox(p, 800, 490, 820, 100, COL.good, m('kr', 3), 'Construction manager’s objective', { size: 28, sub: ['obtain a decision on the plant expansion'] });
+    hmArrow(p, 360, 490, 360, 230, COL.good, m('link'), .6);
+    hmLines(p, ['like Isabella', 'and Columbus'], 230, 350, m('link', .4), { size: 22, fill: COL.good });
+    hmSay(p, 'Run with judgment and common sense, not by a computer', 800, 602, m('judge'), { size: 28, weight: 600 });
+    l13Chip(p, 'beyond the book', 270, 668, COL.dim, m('okr'), 220, 20);
+    hmSay(p, 'Grove’s objectives and key results are widely seen as the origin of today’s OKRs.', 400, 675, m('okr', .3), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'Link objectives up the chain, and use judgment.', m('okr', 5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-columbus', prompt: ['Columbus met every key result but missed his objective, and found the New World instead. How does Grove judge his performance?'],
+    build: choice([['Poorly: he missed the stated objective'], ['Well: MBO paces a person; it is not a legal document for the review'], ['Perfectly: every key result was met, so the objective doesn’t matter']], 1,
+      'A person can perform well while missing an objective. MBO is one input to judging performance, not the verdict.',
+      ['Rating mechanically by the objective is what Grove calls petty.', null, 'Key results serve the objective; meeting them alone isn’t the point.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 13 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Planning’s output is what you do today.', 'w1'], ['Plan years ahead; act only until the next plan.', 'w2'], ['Those who implement must plan, and drop things.', 'w3'], ['Objectives say where; key results pace you.', 'w4'], ['Key results are a stopwatch, not a legal document.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-gap', prompt: ['A key component supplier just failed an audit, and your team is scrambling for a replacement (illustrative). What does Grove’s view of planning say?'],
+      build: choice([['Bad luck: no plan could have helped'], ['Today’s gap is a failure of past planning: ask what to do today to avoid tomorrow’s'], ['Planning should give way to faster decisions']], 1,
+        'Scrambling now is like hunting for gas after the tank is empty. Planning acts earlier.',
+        ['Supplier risk can be seen and planned for, such as by qualifying a second source.', null, 'Fast decisions fix today’s gap; only planning avoids the next one.']) },
+    { id: 'p-horizon', prompt: ['Your five-year roadmap for a device-software platform is done (illustrative). Which part do you act on now?'],
+      build: choice([['All five years, starting now'], ['Only what falls before the next planning cycle'], ['None: roadmaps are just documents']], 1,
+        'You will replan next year, when year two becomes year one. Act on the window before then.',
+        ['Later years will be replanned; committing to them now wastes effort.', null, 'The output of planning is action now, so act on the first part.']) },
+    { id: 'p-focus', prompt: ['Your team has fourteen objectives this quarter. What would Grove say?'],
+      build: choice([['Good coverage of everything that matters'], ['Cut to a few: focus on everything and you focus on nothing'], ['Add key results to all fourteen']], 1,
+        'A few well-chosen objectives say clearly what is yes and what is no.',
+        ['Fourteen objectives give no focus at all.', null, 'More key results make the list heavier, not more focused.']) },
+    { id: 'p-kr', prompt: ['Which is the best key result for a clinical study objective (illustrative)?'],
+      build: choice([['Improve study enrollment'], ['Enroll the first 20 patients at three sites by March 31'], ['Work harder on enrollment']], 1,
+        'Specific wording and a date: at the deadline there is no doubt whether it was done.',
+        ['“Improve” has no number and no date, so you can’t tell when it is met.', null, 'Effort is not a milestone you can check.']) },
+    { id: 'p-opp', prompt: ['Mid-quarter, an engineer spots a way to halve test time, but it isn’t one of her objectives. What should she do?'],
+      build: choice([['Ignore it: it isn’t an objective'], ['Raise it and pursue it if it is worth it: MBO paces, it doesn’t forbid'], ['Wait for next year’s plan']], 1,
+        'Passing up an emerging opportunity because it wasn’t listed is what Grove calls petty and unprofessional.',
+        ['That uses MBO rigidly, exactly what Grove warns against.', null, 'A year’s wait may lose the opportunity.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

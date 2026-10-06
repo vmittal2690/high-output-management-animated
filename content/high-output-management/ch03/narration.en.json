@@ -1,0 +1,22 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Lesson three. [[sub]]How to see what your team is producing, and where it is heading.",
+    "five": "Now you run the whole breakfast factory. Your output is no longer the breakfasts you carry, but everything the factory delivers. You cannot watch every plate, so you need a few indicators. [[f]]A forecast: how much is due today, and how far off was yesterday. [[mat]]Materials: do we have what we need. [[eq]]Equipment: is anything broken. [[ppl]]People: who is out. [[q]]And quality: are customers complaining. [[you]]Look at them first thing, and you can fix a problem before it becomes one.",
+    "pair": "Indicators have a catch. [[steer]]You steer toward whatever you measure, like a cyclist drifting toward where he looks. [[push]]Watch inventory closely and you will drive it down. [[short]]Push too far, and you start running out. [[pair]]So measure in pairs: the effect you want, and the side effect you do not. [[ex]]A completion date with what was delivered. Volume with quality.",
+    "q1": "Quick check. Choose the paired indicator.",
+    "output": "Any measurement is better than none. But a good indicator counts output, not activity, and it counts something you can physically count. [[a1]]Calls made is activity. [[o1]]Orders won is output. [[a2]]Interviews held, [[o2]]people hired. [[a3]]Meetings run, [[o3]]decisions made. [[rule]]Being busy is the left column. Results are the right. Measure the right.",
+    "admin": "This works for office work too. Count the output, then pair it with quality. [[ap]]Accounts payable: invoices processed, with errors found. [[cust]]Cleaning: square feet cleaned, with a quality rating. [[hire]]Recruiting: people hired, by type of role. [[use]]Numbers like these spell out what a team is aiming for and make judgments more objective. [[comp]]They also let teams doing the same job compare results, and that kind of contest lifts everyone.",
+    "q2": "Quick check. Activity or output?",
+    "box": "Think of your team as a black box. [[in]]Inputs go in, [[lab]]people do the work, [[out]]and output comes out. The trouble is, you only see the output at the end. [[win]]A leading indicator cuts a window in the box, so you can see trouble coming. [[believe]]But it only helps if you believe it. If you will not act on an early warning, all you get from watching is worry.",
+    "linear": "Here is one window you can build today, called a linearity indicator. [[goal]]Say your goal is sixty hires by June. [[line]]Draw a straight line from zero to the goal. [[act]]Then plot what actually happens each month. [[apr]]By April you should be at forty. You are at twenty-two. [[miss]]Keep this pace and you will land near thirty-three. [[warn]]The line told you in April, while there was still time to act. Without it, you would find out in June.",
+    "q3": "Quick check. Work out the pace you need now.",
+    "trend": "A second window is the trend indicator. [[plot]]Plot output month by month, [[std]]against a standard you expect to meet. [[ext]]Your eye extends the line into the future almost by itself. [[why]]And the gap from the standard makes you ask why.",
+    "stagger": "The third window is the stagger chart. [[r1]]In January you forecast the months ahead. [[r2]]In February you forecast again, on a new row, [[r3]]and again in March. [[col]]Now read down one column. The forecast for April slid from forty, to thirty-six, to thirty-one. [[act]]The actual came in at twenty-seven. [[why]]That drift is the earliest warning you will get, and it makes forecasters take the job seriously. [[bank]]Keep all these numbers on file. When something goes wrong, the history shows where it began.",
+    "q4": "Quick check. Read the stagger chart.",
+    "wrap": "To sum up. [[w1]]Watch a few indicators daily, in pairs. [[w2]]Measure countable output, not activity. [[w3]]Leading indicators only help if you act on them. [[w4]]A straight-line plan shows a miss months early. [[w5]]Watch how forecasts drift, and keep the history. [[end]]Now try the lesson practice.",
+    "final1": "Lesson practice. Four situations from a manager's week.",
+    "finish": "Well done. That is the end of lesson three."
+  }
+}

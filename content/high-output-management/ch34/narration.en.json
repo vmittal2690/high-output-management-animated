@@ -1,0 +1,20 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Bonus lesson two. [[sub]]Running a workforce of agents with Grove's production principles.",
+    "limit": "Start with the limiting step. [[fast]]Agents make most steps of the work fast. Drafting, research, form-filling. [[you]]So the slowest step becomes you: your review and your approval. [[pile]]Ten agents waiting on one person is a queue at the toaster. [[plan]]Plan around it. Set aside review blocks, batch approvals the way Grove batched questions into a hold file, [[raise]]and raise each agent's maturity on routine tasks so fewer things need you.",
+    "indicators": "Grove managed by indicators, and paired them, so pushing one couldn't hide damage to another. [[pair]]For agents, pair output with quality: tasks completed, with errors caught; speed, with rework. [[window]]And look inside the black box. Progress updates, a screen you can open, an audit trail: [[lead]]these are windows that show trouble early, before it reaches the output.",
+    "inspect": "Grove placed inspection where it was cheapest and most effective. [[sta]]Agent products now build in inspection stations. [[sent]]Muse has a separate Sentinel agent that must approve anything Muse sends to the internet. [[auto]]Dots must pass an automatic review before touching your accounts, and a monitor can pause or stop one. [[hall]]Instinct says it runs a system to catch subtle hallucinations. [[rule]]And Grove's reliability rule applies in full: never pass a possible safety failure. In medtech, that check belongs to a person.",
+    "q1": "Quick check.",
+    "control": "Grove's three modes of control: [[mkt]]the free market, [[con]]contracts, [[cult]]and culture. [[nocult]]Culture works when people share values and put the group first. Agents don't share your culture, and they have no motivation of their own. [[contract]]So control them by contract: a defined job, scoped permissions, and limits on what they can spend or touch. [[ex]]One-time-use payment cards. Short-lived credentials. Access granted app by app. [[cua]]The more complex, uncertain or ambiguous the task, the tighter the job definition must be.",
+    "hybrid": "Grove's Law: all large organizations with a common business purpose end up in a hybrid form. [[central]]Agents follow it too. Centralize what needs scale and safety: identity, credentials, security, and the rules. [[local]]Let each team configure its own agents for its own work, for responsiveness. [[spec]]OpenAI's specialist agents show the pattern: the employer gives each its own identity and credentials for one defined job, starting with focused pilots.",
+    "dual": "That creates dual reporting. [[mission]]A specialist agent serves a team: that is its mission boss. [[func]]It also answers to a functional group: IT and security, through governance tools such as Microsoft's Agent 365. [[both]]As with people, it works when both planes are clear about who decides what.",
+    "q2": "Quick check. Which mode of control?",
+    "regular": "Finally, regularity. [[pings]]Agents can interrupt you constantly with questions. [[std]]Use Grove's cures: standard answers, written once, that the agent can reuse. [[batch]]Batch its questions into set times. [[proact]]And when an agent works unprompted, as Dots do when looking for ways to help, keep that work read-only until you've chosen to act on it.",
+    "q3": "Quick check.",
+    "wrap": "To sum up. [[w1]]With agents, your review becomes the limiting step: plan and batch around it. [[w2]]Pair output with quality, and keep windows into the black box. [[w3]]Build inspection in; a person checks anything safety-critical. [[w4]]Control agents by contract: a defined job, scoped permissions. [[w5]]Centralize safety, let teams configure. Now the lesson practice.",
+    "final1": "Lesson practice. Five situations from a manager's week, with agents.",
+    "finish": "Well done. That is the end of bonus lesson two."
+  }
+}

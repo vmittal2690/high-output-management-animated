@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay as feedback: the bonus and the base salary</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 30, title: 'Pay as feedback: the bonus and the base salary', kicker: 'Chapter 15 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch31/index.html' };
+
+/* Colours: salmon = money as a need; purple = money as a measure (both as in lesson 22);
+   blue = base pay and time-based pay; pink = pay tied to performance (bonus, merit);
+   green = the goal; red = a problem; amber = the rule. */
+const L30 = { need: COL.nat, meas: COL.real, base: COL.whole, perf: COL.rat };
+function l30Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l30Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+const l30Rect = (p, x, y, w, h, fill, t0, o = 1) => { const r = mk('rect', { x, y, width: w, height: h, rx: 4, fill, opacity: o }, p); put(r, { o: 0 }); show(r, t0); return r; };
+// Grove's three salary schemes, redrawn as schematics (not to a dollar scale).
+// Frame w x h at (ox, oy): pay up, time in the job across; the dashed line is the job's maximum value.
+const L30_TITLES = { exp: ['A. Experience only', 'pay rises with years, then levels'], mer: ['B. Merit only', 'pay set by performance, not years'], com: ['C. Compromise', 'same start, different speeds and ends'] };
+function l30Chart(p, kind, ox, oy, w, h, at) {
+  const g = G(p, { o: 0 }), c = kind === 'exp' ? L30.base : L30.perf, t1 = at.curve ?? at.frame;
+  path(g, `M${ox} ${oy}V${oy + h}H${ox + w}`, { stroke: COL.dim, 'stroke-width': 3 });
+  T(g, 'pay', { x: ox - 12, y: oy + 18, size: 22, fill: COL.dim, anchor: 'end' });
+  T(g, 'time in the job', { x: ox + w / 2, y: oy + h + 32, size: 20, fill: COL.dim, anchor: 'middle' });
+  T(g, L30_TITLES[kind][0], { x: ox + w / 2, y: oy + h + 80, size: 28, fill: c, weight: 600, anchor: 'middle' });
+  T(g, L30_TITLES[kind][1], { x: ox + w / 2, y: oy + h + 112, size: 20, fill: COL.dim, anchor: 'middle' });
+  show(g, at.frame);
+  const mx = G(p, { o: 0 });
+  path(mx, `M${ox + 4} ${oy + 30}H${ox + w}`, { stroke: COL.faint, 'stroke-width': 2.5, 'stroke-dasharray': '10 7' });
+  T(mx, 'job’s maximum value', { x: at.maxLeft ? ox + 14 : ox + w, y: oy + 20, size: 18, fill: COL.dim, anchor: at.maxLeft ? 'start' : 'end' });
+  show(mx, at.max ?? at.frame);
+  const y0 = oy + h - 30, sx = ox + 10;
+  if (kind === 'exp') {
+    draw(path(g, `M${sx} ${y0}C${ox + w * .35} ${oy + 70} ${ox + w * .55} ${oy + 42} ${ox + w - 8} ${oy + 40}`, { stroke: c, 'stroke-width': 5 }, { d: 0 }), t1, 1);
+  } else if (kind === 'mer') {
+    [h - 50, h - 105, h - 160, h - 215].forEach((dy, i) => {
+      const d = hmDot(g, sx + 6, oy + dy, c, 9); show(d, t1 + i * .35, .3);
+      draw(path(g, `M${sx + 6} ${oy + dy}H${ox + w - 10}`, { stroke: c, 'stroke-width': 4 }, { d: 0 }), t1 + i * .35, .5);
+    });
+  } else {
+    const d0 = hmDot(g, sx, y0, c, 9); show(d0, at.start ?? at.frame, .3);
+    [[44, .35], [80, .45], [125, .55], [175, .7]].forEach(([top, k], i) => {
+      draw(path(g, `M${sx} ${y0}C${ox + w * k * .6} ${oy + top + 40} ${ox + w * .7} ${oy + top} ${ox + w - 8} ${oy + top}`, { stroke: c, 'stroke-width': 4 }, { d: 0 }), t1 + i * .4, 1);
+      if (at.end !== undefined) { const d = hmDot(g, ox + w - 8, oy + top, COL.good, 8); show(d, at.end + i * .25, .3); }
+    });
+  }
+  return { g, box: [ox - 60, oy - 16, w + 90, h + 140] };
+}
+
+const BEATS = [
+  ['intro', 'Pay as feedback', (m, D) => hmTitle(m, D, 'Chapter 15 · Compensation as Task-Relevant Feedback · Lesson 1 of 2', 'Pay as feedback', 'The performance bonus and the base salary')],
+
+  ['money', 'What money means', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Money matters at every level');
+    hmBox(p, 450, 300, 560, 170, L30.need, m('need'), 'A need', { size: 34, fill: L30.need, sub: ['food, housing, insurance', 'physical and security needs'] });
+    hmBox(p, 1150, 300, 560, 170, L30.meas, m('meas'), 'A measure', { size: 34, fill: L30.meas, sub: ['of your worth among others', 'esteem and self-actualization'] });
+    hmArrow(p, 760, 300, 840, 300, COL.dim, m('meas', -.3), .4);
+    hmSay(p, 'The raise test', 800, 470, m('test'), { size: 30, weight: 700 });
+    hmLines(p, ['the dollar amount', 'is what matters'], 450, 540, m('abs'), { size: 26, fill: L30.need, weight: 600 });
+    hmLines(p, ['the comparison with', 'others is what matters'], 1150, 540, m('rel'), { size: 26, fill: L30.meas, weight: 600 });
+    hmRule(p, 'Pay is a need lower down, a measure higher up.', m('rel', 3.5), 745);
+  }],
+
+  ['middle', 'Middle managers', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Middle managers: money still matters');
+    hmArrow(p, 300, 230, 1300, 230, COL.dim, m('paid', -.3), .8);
+    hmSay(p, 'money is crucial', 300, 275, m('paid'), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'money means nothing', 1300, 275, m('paid'), { size: 22, fill: COL.dim, anchor: 'end' });
+    const dot = hmDot(p, 1000, 230, COL.chalk, 14); show(dot, m('paid', 1.5)); tw(dot, { x: 820 }, m('notyet', .5), .8);
+    hmSay(p, 'middle managers, in Grove’s experience', 820, 195, m('notyet', 1), { size: 22, weight: 600 });
+    [['three children', 400], ['a working spouse', 800], ['one income', 1200]].forEach(([s, x], i) => {
+      const a = l30Person(p, x, 400, COL.chalk); show(a, m('differ', i * .6));
+      l30Chip(p, s, x, 480, COL.whole, m('differ', .3 + i * .6), 250);
+    });
+    hmSay(p, 'Be sensitive to each person’s money needs. Show empathy.', 800, 580, m('empathy'), { size: 28, fill: COL.good, weight: 600 });
+    hmSay(p, 'Don’t project your own circumstances onto them.', 800, 645, m('project'), { size: 28, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Their money needs are not yours.', m('project', 3), 745);
+  }],
+
+  ['hard', 'Tie pay to performance', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Pay as task-relevant feedback');
+    hmBox(p, 800, 230, 700, 90, COL.good, m('feed'), 'Use money as task-relevant feedback', { size: 28, fill: COL.good });
+    hmArrow(p, 800, 280, 800, 340, COL.dim, m('tie'), .4);
+    hmBox(p, 800, 385, 520, 80, COL.chalk, m('tie', .3), 'Tie pay to performance', { size: 28 });
+    hmSay(p, 'but performance is hard to judge precisely', 800, 480, m('but'), { size: 24, fill: COL.dim });
+    hmBox(p, 480, 600, 520, 120, COL.bad, m('piece'), 'No pay by the piece', { size: 28, fill: COL.bad, sub: ['the job is never simple output'] });
+    hmBox(p, 1120, 600, 520, 120, COL.bad, m('team'), 'Woven into a team', { size: 28, fill: COL.bad, sub: ['hard to isolate one manager’s part'] });
+    hmRule(p, 'Pay should follow performance, but it is hard to isolate.', m('team', 4), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-project', prompt: ['A manager with no dependants assumes a report supporting three children on one income will feel a small raise as lightly as she would. What is the mistake? (Illustrative.)'],
+    build: choice([['Projecting her own circumstances onto the report'], ['None: money should mean the same to everyone'], ['Thinking about money at all: managers should ignore it']], 0,
+      'Needs differ with circumstances. Grove asks managers to be sensitive and not project their own.',
+      [null, 'Grove says the opposite: money needs differ greatly from person to person.', 'Money has significance at every level. Ignoring it is not empathy.']),
+  }], done) }],
+
+  ['bonus', 'The performance bonus', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The performance bonus');
+    // each bar = 100% of that person's total pay, 400 px tall (4 px per percent)
+    const B = 620;
+    hmSay(p, 'bonus', 400, 250, m('mid'), { size: 24, fill: L30.perf, anchor: 'end', weight: 600 });
+    hmSay(p, 'base', 400, 470, m('mid'), { size: 24, fill: L30.base, anchor: 'end', weight: 600 });
+    l30Rect(p, 420, B - 300, 160, 300, L30.base, m('mid'));
+    l30Rect(p, 420, B - 400, 160, 60, L30.perf, m('mid', .4), .45);
+    l30Rect(p, 420, B - 340, 160, 40, L30.perf, m('mid', .4));
+    hmSay(p, '10–25%', 600, 270, m('mid', .8), { size: 26, fill: L30.perf, anchor: 'start', weight: 700 });
+    hmSay(p, 'middle manager', 500, 660, m('mid'), { size: 24, fill: COL.dim });
+    l30Rect(p, 820, B - 200, 160, 200, L30.base, m('senior'));
+    l30Rect(p, 820, B - 400, 160, 200, L30.perf, m('senior', .4));
+    hmSay(p, 'up to 50%', 1000, 330, m('senior', .8), { size: 26, fill: L30.perf, anchor: 'start', weight: 700 });
+    hmSay(p, 'senior manager', 900, 660, m('senior'), { size: 24, fill: COL.dim });
+    hmSay(p, 'the share rises with total pay', 700, 180, m('rise'), { size: 26, weight: 600 });
+    hmSay(p, 'each bar = 100% of that person’s pay · Grove’s guide, 1983', 700, 700, m('mid', 1), { size: 18, fill: COL.faint });
+    hmLines(p, ['big swings could', 'cause hardship'], 1340, 400, m('taste'), { size: 24, fill: COL.bad, weight: 600 });
+    hmLines(p, ['a smaller share still', 'gives a taste of', 'feedback'], 1340, 500, m('taste', 3), { size: 24, fill: COL.good, weight: 600 });
+    hmRule(p, 'The bonus share rises with total pay.', m('taste', 5.5), 745);
+  }],
+
+  ['design', 'Four design questions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Four questions for any bonus');
+    hmBox(p, 430, 300, 660, 160, L30.perf, m('who'), 'Whose performance?', { size: 30, fill: L30.perf, sub: ['a team’s, or mostly one person’s?', 'which team: project, division, company?'] });
+    hmBox(p, 1170, 300, 660, 160, L30.perf, m('when'), 'What period?', { size: 30, fill: L30.perf, sub: ['cause and effect are far apart,', 'but people must remember why'] });
+    hmBox(p, 430, 510, 660, 160, L30.perf, m('what'), 'What basis?', { size: 30, fill: L30.perf, sub: ['countable results, measurable objectives,', 'or judgment (a risk of a beauty contest)'] });
+    hmBox(p, 1170, 510, 660, 160, COL.bad, m('broke'), 'Can the company afford it?', { size: 30, fill: COL.bad, sub: ['no lavish payouts while', 'the company heads for bankruptcy'] });
+    hmRule(p, 'Whose work, what period, what basis, and can we afford it?', m('broke', 4), 745);
+  }],
+
+  ['three', 'A three-part bonus', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s example: a three-part bonus');
+    // 1000 px = 100% of the manager's pay; the bonus is 20% = 200 px
+    l30Rect(p, 300, 210, 800, 64, L30.base, m('ex'));
+    hmSay(p, 'base 80%', 700, 252, m('ex'), { size: 26, fill: COL.board, weight: 700 });
+    hmSay(p, '20% bonus', 1200, 196, m('twenty'), { size: 24, fill: L30.perf, weight: 700 });
+    [0, 1, 2].forEach(i => l30Rect(p, 1104 + i * 66, 210, 62, 64, L30.perf, m('twenty', .3)));
+    const parts = [['ind', 'Individual', 'judged by the supervisor', 400], ['dept', 'Team', 'department objectives', 800], ['corp', 'Company', 'overall financial results', 1200]];
+    parts.forEach(([k, t, sub, x], i) => {
+      hmArrow(p, 1135 + i * 66, 282, x, 352, COL.dim, m(k), .5);
+      hmBox(p, x, 420, 360, 120, L30.perf, m(k, .4), t, { size: 30, fill: L30.perf, sub: [sub] });
+    });
+    hmSay(p, 'equal parts drawn for illustration', 800, 512, m('corp', 1), { size: 18, fill: COL.faint });
+    hmSay(p, 'Each part moves pay a little, yet draws attention.', 800, 580, m('small'), { size: 28, fill: COL.good, weight: 600 });
+    hmSay(p, 'No scheme gives exactly what you want.', 800, 640, m('spot'), { size: 26, fill: COL.dim });
+    hmRule(p, 'No bonus is perfect, but most spotlight performance.', m('spot', 3), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-split', prompt: ['Illustrative: a 20% bonus is split 10% individual, 5% team, 5% company. One year the company part pays nothing; the others pay in full. What share of total pay is the bonus?'],
+    build: blanks([{ parts: ['10 + 5 + 0 = ', { box: '15' }, ' % of total pay'], why: 'Fifteen percent: a weak company year trims the bonus, as it should.', hint: 'Add the parts that paid out.' }]),
+  }], done) }],
+
+  ['base', 'Two pure forms', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Base salary: two pure forms');
+    hmSay(p, 'after Grove’s figure (1983), redrawn as a schematic', 1500, 160, m('exp'), { size: 18, fill: COL.faint, anchor: 'end' });
+    l30Chart(p, 'exp', 230, 200, 480, 320, { frame: m('exp'), curve: m('exp', .8), max: m('max') });
+    l30Chart(p, 'mer', 910, 200, 480, 320, { frame: m('merit'), curve: m('merit', 2), max: m('cap') });
+    hmRule(p, 'Two pure forms. Either way, a job has a maximum value.', m('cap', 2.5), 745);
+  }],
+
+  ['routine', 'Experience only, in practice', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Experience only, in practice');
+    const ox = 170, oy = 210, w = 400, h = 280;
+    l30Chart(p, 'exp', ox, oy, w, h, { frame: .3, maxLeft: true });
+    draw(path(p, `M${ox + 240} ${oy + 47}H${ox + 270}V${oy + 33}H${ox + 310}V${oy + 19}H${ox + 350}V${oy + 5}H${ox + 400}`, { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), m('over', 1.5), 1);
+    hmSay(p, 'routine raises', ox + w, oy - 18, m('over', 2), { size: 22, fill: COL.bad, weight: 600, anchor: 'end' });
+    hmSay(p, 'Where pay follows years only', 720, 230, m('pure'), { size: 28, weight: 700, anchor: 'start' });
+    hmSay(p, 'Large Japanese companies, as Grove described them:', 720, 290, m('japan'), { size: 24, anchor: 'start' });
+    hmSay(p, 'no performance distinction for about ten years', 720, 325, m('japan', 1), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'Unions and most government jobs', 720, 390, m('union'), { size: 24, anchor: 'start' });
+    hmSay(p, 'Teachers in many school systems:', 720, 455, m('teach'), { size: 24, anchor: 'start' });
+    hmSay(p, 'good and bad paid alike for equal years', 720, 490, m('teach', 1), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'The message: performance doesn’t matter much.', 800, 655, m('msg'), { size: 30, fill: COL.bad, weight: 700 });
+    hmSay(p, 'Grove’s aside: did pass/fail grading start with how teachers are paid?', 800, 702, m('msg', 4), { size: 20, fill: COL.faint });
+    hmRule(p, 'Pay by years alone says performance doesn’t matter.', m('msg', 7), 745);
+  }],
+
+  ['compromise', 'The compromise', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Most companies: a compromise');
+    S.l30c = [
+      l30Chart(p, 'exp', 160, 200, 360, 280, { frame: .3 }),
+      l30Chart(p, 'mer', 640, 200, 360, 280, { frame: .4 }),
+      l30Chart(p, 'com', 1120, 200, 360, 280, { frame: m('fam'), start: m('start'), curve: m('speed'), end: m('arrive') }),
+    ];
+    hmRule(p, 'Same start, different speeds, different ends.', m('arrive', 2.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-scheme', prompt: ['Equal starting pay; years later, pay differs with performance. Click the scheme.'],
+    build: pickEls(S.l30c.map((c, i) => ({ el: c.g, box: c.box, label: ['Experience only', 'Merit only', 'Compromise'][i] })), 2,
+      'The compromise: shaped by experience, spread by performance.',
+      i => i === 0 ? 'Under experience only, equal years mean equal pay.' : 'Pure merit ignores time. Here experience still shapes the curve.'),
+  }], done) }],
+
+  ['rank', 'Merit pay needs ranking', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Merit pay means ranking');
+    hmBox(p, 300, 290, 340, 150, L30.base, m('book'), 'The pay book', { size: 30, fill: L30.base, sub: ['so much time in the job', '= so much pay'] });
+    hmSay(p, 'experience only: easy to run', 300, 410, m('book'), { size: 22, fill: COL.dim });
+    // a finite pot, divided unequally (illustrative shares)
+    const pie = G(p, { x: 800, y: 290, o: 0 });
+    mk('circle', { r: 90, fill: '#16211d', stroke: L30.perf, 'stroke-width': 3 }, pie);
+    [0, 130, 230, 300].forEach(a => {
+      const A = a * Math.PI / 180;
+      path(pie, `M0 0L${(90 * Math.sin(A)).toFixed(1)} ${(-90 * Math.cos(A)).toFixed(1)}`, { stroke: L30.perf, 'stroke-width': 3 });
+    });
+    show(pie, m('finite'));
+    hmSay(p, 'merit: divide a finite pot', 800, 410, m('finite'), { size: 22, fill: COL.dim });
+    [['1st', 1150], ['2nd', 1230], ['3rd', 1310], ['last', 1400]].forEach(([s, x], i) => {
+      l30Rect(p, x - 32, 380 - (4 - i) * 40, 64, (4 - i) * 40, L30.perf, m('compare', .5 + i * .4), .8);
+      hmSay(p, s, x, 365 - (4 - i) * 40, m('compare', .5 + i * .4), { size: 22, weight: 600 });
+    });
+    hmSay(p, 'a comparative ranking', 1275, 410, m('compare'), { size: 22, fill: COL.dim });
+    hmSay(p, 'If someone is first, someone else has to be last.', 800, 500, m('last'), { size: 30, weight: 700 });
+    hmSay(p, 'In a race, even the last runner accepts the system.', 800, 570, m('race'), { size: 26, fill: COL.good });
+    hmSay(p, 'At work, ranking is charged and hard to run, but it is a must.', 800, 630, m('work'), { size: 26, fill: COL.bad });
+    hmRule(p, 'Merit pay needs honest ranking.', m('work', 4), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 30 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Money: a need lower down, a measure higher up.', 'w1'], ['Bonus share rises with pay; up to half at the top.', 'w2'], ['Bonus design: whose work, what period, what basis.', 'w3'], ['Base pay: experience, merit, or a compromise.', 'w4'], ['Merit pay needs ranking: someone first, someone last.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-measure', prompt: ['After raises, a senior engineer on a device-software team asks only how hers compared with her peers’. What does that suggest? (Illustrative.)'],
+      build: choice([['Money is working as a measure for her'], ['She needs the money for essentials'], ['She is unhappy and about to leave']], 0,
+        'Caring about the relative raise means money measures her worth: the raise test.',
+        [null, 'Then the dollar amount would be what mattered, not the comparison.', 'Comparing raises is normal for an achiever; it is not a sign of leaving.']) },
+    { id: 'p-share', prompt: ['Your company is designing a bonus plan (illustrative). By Grove’s 1983 guide, which bonus share fits a middle manager?'],
+      build: choice([['About half of total pay'], ['Roughly 10 to 25 percent of total pay'], ['None: bonuses are only for executives']], 1,
+        'Enough for a taste of feedback, small enough that swings don’t cause hardship.',
+        ['Half is Grove’s upper figure for highly paid senior managers.', null, 'Grove wants a performance bonus for middle managers too, just a smaller share.']) },
+    { id: 'p-period', prompt: ['A clinical team’s bonus is paid two years after the study work it rewards (illustrative). What is the problem?'],
+      build: choice([['It comes too late for people to remember why they got it'], ['Nothing: cause and effect are far apart anyway'], ['Bonuses should be paid before the work']], 0,
+        'The lag between cause and effect is real, but feedback must arrive while the work is remembered.',
+        [null, 'The lag is real, yet a bonus nobody connects to the work gives no feedback.', 'A bonus rewards performance already delivered.']) },
+    { id: 'p-basis', prompt: ['A bonus is set only by a committee’s general impressions of each person. What does Grove warn this can become?'],
+      build: choice([['A beauty contest'], ['A payout while the company goes bankrupt'], ['Experience-only pay']], 0,
+        'Subjective elements alone can turn the bonus into a beauty contest.',
+        [null, 'That is the affordability question, a separate design issue.', 'Experience-only pay follows years; this follows impressions.']) },
+    { id: 'p-rank', prompt: ['A manager gives every report the same percentage raise to avoid ranking them. Grove’s view?'],
+      build: choice([['Fair: equal raises avoid conflict'], ['Merit pay needs a comparative ranking; equal raises carry no feedback'], ['Better to pay by years in the job instead']], 1,
+        'If someone is first, someone else has to be last. Avoiding that removes the feedback.',
+        ['It avoids conflict by telling people performance doesn’t matter.', null, 'That is experience-only pay, which sends the same message.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

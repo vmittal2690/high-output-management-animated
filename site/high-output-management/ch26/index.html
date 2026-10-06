@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delivering the review</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 26, title: 'Delivering the review', kicker: 'Chapter 13 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch27/index.html' };
+
+/* Colours: blue = ordinary work and output measures; purple = internal measures (as in lesson 25);
+   green = the goal, positives and the messages kept; red = a problem, negatives; amber = the rule. */
+function l26Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l26Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l26Doc(p, x, y, w, h, color, lines, t0) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  for (let j = 0; j < lines; j++) mk('rect', { x: x - w / 2 + w * .14, y: y - h / 2 + h * .16 + j * h * .7 / lines, width: w * (j % 3 === 2 ? .45 : .72), height: Math.max(4, h * .04), rx: 2, fill: COL.faint }, g);
+  show(g, t0); return g;
+}
+// A line through a text item that starts at x (left-anchored), size 22.
+const l26Strike = (p, x, y, chars, t0, size = 22) => draw(path(p, `M${x - 4} ${y - size * .32}H${x + chars * size * .52 + 4}`, { stroke: COL.bad, 'stroke-width': 3 }, { d: 0 }), t0, .4);
+
+const L26_POS = ['planning process much better', 'good report to the council', 'helped on a purchasing cost study'];
+const L26_NEG = ['spec process: zero progress', 'meetings: a debating society', 'weak kick-off for spec training', 'confused on computer use', 'doesn’t listen to peers'];
+
+const BEATS = [
+  ['intro', 'Delivering the review', (m, D) => hmTitle(m, D, 'Chapter 13 · Performance Appraisal: Manager as Judge and Jury · Lesson 2 of 3', 'Delivering the review', 'The three L’s, and preparing the usual mixed review')],
+
+  ['threel', 'The three L’s', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Three L’s for delivering a review');
+    hmBox(p, 340, 280, 400, 130, COL.good, m('lev'), 'Level', { size: 38, fill: COL.good, sub: ['be totally frank'] });
+    hmBox(p, 800, 280, 400, 130, COL.good, m('lis'), 'Listen', { size: 38, fill: COL.good, sub: ['make sure it lands'] });
+    hmBox(p, 1260, 280, 400, 130, COL.good, m('out'), 'Leave yourself out', { size: 32, fill: COL.good, sub: ['it is about them'] });
+    hmSay(p, 'The credibility of the whole system depends on frankness.', 800, 470, m('frank'), { size: 28, weight: 600 });
+    l26Chip(p, 'criticism: hard', 600, 570, COL.bad, m('praise'), 260);
+    l26Chip(p, 'plain praise: just as hard', 1000, 570, COL.good, m('praise', 1.2), 360);
+    hmRule(p, 'Level: be totally frank, in praise too.', m('praise', 4), 745);
+  }],
+
+  ['listen', 'Listening', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Listen: did the thought arrive?');
+    const xs = [240, 520, 800, 1080, 1360];
+    hmChain(p, ['thought', 'words', 'sound', 'ear', 'thought'], xs, 240, 200, 80, COL.whole, xs.map((_, i) => m('chain', .5 + i * 1.1)));
+    hmSay(p, 'you', 240, 315, m('chain', .5), { size: 22, fill: COL.dim });
+    hmSay(p, 'your report', 1360, 315, m('chain', 4.9), { size: 22, fill: COL.dim });
+    // a tape recorder, crossed out
+    const tr = G(p, { x: 360, y: 450, o: 0 });
+    mk('rect', { x: -90, y: -50, width: 180, height: 100, rx: 10, fill: '#16211d', stroke: COL.dim, 'stroke-width': 3 }, tr);
+    [-40, 40].forEach(cx => mk('circle', { cx, cy: -6, r: 22, fill: 'none', stroke: COL.dim, 'stroke-width': 3 }, tr));
+    mk('rect', { x: -60, y: 26, width: 120, height: 10, rx: 3, fill: COL.faint }, tr);
+    show(tr, m('tape'));
+    pop(hmCross(p, 470, 400, COL.bad, 14), m('tape', 3));
+    hmLines(p, ['record it to prove the words?', 'no: words are only the means'], 560, 440, m('tape', 3), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'the end is the thought arriving', 560, 515, m('tape', 7), { size: 24, fill: COL.good, weight: 600, anchor: 'start' });
+    [['too upset to take it in', 350, 330], ['busy planning a reply', 800, 310], ['gone fishing', 1210, 210]].forEach(([s, x, w], i) => l26Chip(p, s, x, 610, COL.bad, m('block', 1 + i * 1.6), w));
+    hmSay(p, 'worst when the message carries conflict', 800, 680, m('conf'), { size: 22, fill: COL.dim });
+    hmRule(p, 'What counts is the thought received.', m('conf', 3), 745);
+  }],
+
+  ['watch', 'Watch, and keep at it', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Use every sense; keep at it');
+    l26Chip(p, '“repeat back what I said”', 400, 210, COL.dim, m('para'), 380);
+    pop(hmCross(p, 615, 210, COL.bad, 14), m('para', 1.5));
+    const eye = G(p, { x: 400, y: 340, o: 0 });
+    path(eye, 'M-90 0Q0 -70 90 0Q0 70 -90 0Z', { fill: 'none', stroke: COL.good, 'stroke-width': 4 });
+    mk('circle', { r: 24, fill: COL.good }, eye);
+    show(eye, m('senses'));
+    hmLines(p, ['watch the words', 'and the body language'], 400, 440, m('senses', 1.5), { size: 24, fill: COL.good });
+    hmSay(p, 'not sure it landed? keep at it', 400, 560, m('keep'), { size: 26, fill: COL.good, weight: 700 });
+    // the professor at the blackboard
+    const bd = G(p, { o: 0 });
+    mk('rect', { x: 960, y: 190, width: 420, height: 220, rx: 6, fill: '#122019', stroke: COL.dim, 'stroke-width': 4 }, bd);
+    path(bd, 'M1000 240Q1040 220 1080 250T1160 240M1000 300Q1060 280 1120 310T1240 300M1000 360Q1080 340 1160 370', { stroke: COL.faint, 'stroke-width': 3, fill: 'none' });
+    show(bd, m('teach'));
+    show(l26Person(p, 1300, 470, COL.dim), m('board'));
+    hmSay(p, 'mumbling at the board', 1300, 530, m('board'), { size: 22, fill: COL.bad });
+    [1000, 1080, 1160].forEach((x, i) => { show(l26Person(p, x, 600, COL.whole, .6), m('teach', .4 + i * .2)); hmSay(p, '?', x, 560, m('board', 1 + i * .3), { size: 26, fill: COL.bad, weight: 700 }); });
+    hmSay(p, 'a good teacher sees the class is lost', 1170, 670, m('teach', 1), { size: 22, fill: COL.dim });
+    hmRule(p, 'Keep at it until you know you were heard.', m('board', 6), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-heard', prompt: ['Midway through a review, your report nods along, keeps glancing at her phone, and asks nothing. What does Grove suggest? (illustrative)'],
+    build: choice([['Carry on: she has heard the words'], ['Stop and check; explain another way until you are sure it landed'], ['Ask her to sign that she understood']], 1,
+      'Listening means using every sense, and keeping at it until the thought has arrived.',
+      ['Words spoken are not thoughts received.', null, 'A signature confirms she got the paper, not the message.']),
+  }], done) }],
+
+  ['leave', 'Leave yourself out', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Leave yourself out');
+    show(l26Person(p, 380, 330, COL.dim, 1.3), .3);
+    hmSay(p, 'you', 380, 410, .3, { size: 22, fill: COL.dim });
+    [['insecurity', 200], ['anxiety', 380], ['guilt', 560]].forEach(([s, x], i) => {
+      const c = l26Chip(p, s, x, 210, COL.bad, m('own', i * .6), 160, 22);
+      hide(c, m('own', 4 + i * .2), .6);
+    });
+    hmSay(p, 'kept out of it', 380, 470, m('own', 4.5), { size: 24, fill: COL.bad, weight: 600 });
+    const spot = G(p, { o: 0 });
+    path(spot, 'M1150 160L1020 420H1280Z', { fill: 'rgba(143,214,176,.12)', stroke: 'none' });
+    mk('ellipse', { cx: 1150, cy: 420, rx: 130, ry: 22, fill: 'rgba(143,214,176,.2)' }, spot);
+    show(spot, m('court'));
+    show(l26Person(p, 1150, 370, COL.whole, 1.3), m('about'));
+    hmSay(p, 'about them, and for them', 1150, 470, m('about'), { size: 24, fill: COL.whole, weight: 600 });
+    hmSay(p, 'their day in court', 1150, 510, m('court'), { size: 24, fill: COL.good, weight: 700 });
+    hmSay(p, 'Stage fright comes back every time. Control it so it doesn’t steer.', 800, 630, m('stage'), { size: 26 });
+    hmRule(p, 'It is their day in court, not yours.', m('stage', 6), 745);
+  }],
+
+  ['types', 'Three types of review', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Three types of review');
+    hmBox(p, 340, 270, 440, 140, COL.whole, m('mixed'), ['On the one hand…', 'on the other'], { size: 28, sub: ['most reviews: this lesson'] });
+    hmBox(p, 800, 270, 400, 140, COL.bad, m('blast'), 'The blast', { size: 30, fill: COL.bad, sub: ['a serious problem: next lesson'] });
+    hmBox(p, 1260, 270, 400, 140, COL.good, m('ace'), 'The ace', { size: 30, fill: COL.good, sub: ['a star: next lesson'] });
+    hmSay(p, 'How mixed reviews go wrong:', 800, 450, m('most'), { size: 28, weight: 700 });
+    [['superficial', 450, 200], ['clichés', 800, 160], ['laundry lists', 1150, 220]].forEach(([s, x, w], i) => l26Chip(p, s, x, 530, COL.bad, m('sup', i * .7), w));
+    hmSay(p, 'they leave people bewildered, not better', 800, 620, m('sup', 3), { size: 24, fill: COL.dim });
+    hmRule(p, 'No clichés, no laundry lists.', m('sup', 6), 745);
+  }],
+
+  ['capacity', 'Less may be more', (m) => {
+    const p = panel(0);
+    hmHead(p, 'People can absorb only so much');
+    hmSay(p, 'seven true things you could say', 800, 190, m('seven'), { size: 24, fill: COL.dim });
+    const xs = [440, 560, 680, 800, 920, 1040, 1160];
+    const dots = xs.map((x, i) => { const d = hmDot(p, x, 250, COL.chalk, 22); show(d, m('seven', .3 + i * .15), .2); return d; });
+    // a container that holds four
+    draw(path(p, 'M620 380V520H980V380', { stroke: COL.good, 'stroke-width': 5 }, { d: 0 }), m('four'), .6);
+    hmSay(p, 'what they can take in: four', 800, 560, m('four', .3), { size: 24, fill: COL.good, weight: 600 });
+    [[680, 480], [760, 480], [840, 480], [920, 480]].forEach(([x, y], i) => tw(dots[i], { x, y }, m('four', 1 + i * .2), .6));
+    [[1270, 470], [1340, 470], [1410, 470]].forEach(([x, y], i) => tw(dots[4 + i], { x, y, o: .45 }, m('waste', i * .2), .6));
+    hmSay(p, 'wasted breath', 1340, 530, m('waste', .5), { size: 22, fill: COL.bad, weight: 600 });
+    hmLines(p, ['at worst: overload,', 'and nothing sticks'], 320, 460, m('over'), { size: 24, fill: COL.bad });
+    hmSay(p, 'The aim is to improve them, not to empty your head.', 800, 660, m('less'), { size: 26 });
+    hmRule(p, 'Less may be more.', m('less', 4), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-capacity', prompt: ['You have seven points for a review. Your report can absorb four. At best, how many are wasted breath?'],
+    build: blanks([{ parts: ['7 − 4 = ', { box: '3' }, '  points'], why: 'Three wasted at best. At worst, overload, and none of the seven stick.', hint: 'Seven points, room for four.' }]),
+  }], done) }],
+
+  ['worksheet', 'The worksheet', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Preparing: write everything, then cut');
+    const docs = [['progress reports', 220], ['results vs objectives', 330], ['one-on-one notes', 440]].map(([s, y], i) => {
+      const g = l26Doc(p, 200, y, 70, 86, COL.whole, 3, m('scan', i * .6));
+      hmSay(p, s, 250, y + 8, m('scan', i * .6), { size: 20, fill: COL.dim, anchor: 'start' });
+      return g;
+    });
+    const sheet = l26Doc(p, 760, 340, 230, 300, COL.chalk, 10, m('blank'));
+    hmSay(p, 'everything, unedited', 760, 520, m('blank', 1), { size: 22, fill: COL.chalk });
+    hmSay(p, 'commits you to nothing', 760, 555, m('blank', 3), { size: 20, fill: COL.dim });
+    docs.forEach((d, i) => tw(d, { o: .25 }, m('away', i * .2), .5));
+    hmSay(p, 'put away', 200, 520, m('away', .3), { size: 20, fill: COL.dim });
+    // links between items on the sheet
+    draw(path(p, 'M890 240C940 260 940 300 890 320', { stroke: COL.good, 'stroke-width': 3, fill: 'none' }, { d: 0 }), m('rel'), .5);
+    draw(path(p, 'M890 360C950 390 950 430 890 450', { stroke: COL.good, 'stroke-width': 3, fill: 'none' }, { d: 0 }), m('rel', 1), .5);
+    hmArrow(p, 960, 330, 1060, 330, COL.dim, m('msg'), .4);
+    [['message 1 + examples', 260], ['message 2 + examples', 340], ['message 3', 420]].forEach(([s, y], i) => hmBox(p, 1250, y, 340, 60, COL.good, m('msg', .3 + i * .5), s, { size: 22, fill: COL.good }));
+    pop(hmCross(p, 1440, 420, COL.bad, 14), m('cut', 2));
+    hmSay(p, 'will they remember all? drop the rest, for next time', 1250, 500, m('cut', 2.5), { size: 20, fill: COL.dim });
+    hmRule(p, 'Write everything, find the messages, cut to a few.', m('cut', 7), 745);
+  }],
+
+  ['grovesheet', 'Grove’s worksheet', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s sample worksheet');
+    hmSay(p, 'paraphrased', 1500, 110, .2, { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Positives', 260, 180, m('pos'), { size: 26, fill: COL.good, weight: 700, anchor: 'start' });
+    L26_POS.forEach((s, i) => hmSay(p, '+ ' + s, 260, 225 + i * 40, m('pos', .5 + i * 1.2), { size: 22, fill: COL.good, anchor: 'start' }));
+    hmSay(p, 'Negatives', 880, 180, m('neg'), { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+    L26_NEG.forEach((s, i) => hmSay(p, '− ' + s, 880, 225 + i * 40, m(i < 3 ? 'neg' : 'cross', i < 3 ? .5 + i * 1.3 : -.5), { size: 22, fill: COL.bad, anchor: 'start' }));
+    l26Strike(p, 880, 345, ('− ' + L26_NEG[3]).length, m('cross', .5));
+    l26Strike(p, 880, 385, ('− ' + L26_NEG[4]).length, m('cross', 1));
+    path(p, 'M240 430H1360', { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, 'Messages', 260, 480, m('m1'), { size: 26, weight: 700, anchor: 'start' });
+    hmSay(p, '1  Good results on planning (financial background helps)', 260, 530, m('m1'), { size: 24, fill: COL.good, anchor: 'start' });
+    hmSay(p, '2  Hard time setting clear, crisp goals: activity, not results', 260, 580, m('m2'), { size: 24, fill: COL.chalk, weight: 600, anchor: 'start' });
+    hmSay(p, '3  Computer knowledge', 260, 630, m('m3'), { size: 24, fill: COL.dim, anchor: 'start' });
+    l26Strike(p, 260, 630, 22, m('m3', 1), 24);
+    hmSay(p, '“let’s just concentrate on #2”', 620, 630, m('m3', 2), { size: 22, fill: COL.task, anchor: 'start' });
+    hmRule(p, 'Group the items into a few messages.', m('m3', 5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-sheet', prompt: ['On Grove’s worksheet, where does each item end up?'],
+    build: grid([
+      { parts: ['Planning process much better'], ans: ['a'], why: 'It backs message 1: good results on planning.' },
+      { parts: ['Spec process: zero progress'], ans: ['b'], why: 'A sign of message 2: no clear, crisp goals.' },
+      { parts: ['Meetings turn into a debating society'], ans: ['b'], why: 'Activity mistaken for results: message 2 again.' },
+      { parts: ['Confused on computer use'], ans: ['x'], why: 'A minor point, crossed out to keep the review focused.' },
+    ], [['a', 'Message 1', COL.good, '1'], ['b', 'Message 2', COL.chalk, '2'], ['x', 'Dropped', COL.bad, 'D']], { multi: false, text: true }),
+  }], done) }],
+
+  ['surprise', 'Surprises', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What about surprises?');
+    hmSay(p, 'a year of regular one-on-ones', 800, 190, m('ideal'), { size: 24, fill: COL.dim });
+    for (let i = 0; i < 24; i++) draw(path(p, `M${270 + i * 44} 220V264`, { stroke: COL.whole, 'stroke-width': 6 }, { d: 0 }), m('ideal', .3 + i * .04), .15);
+    hmSay(p, 'so: no surprises?', 800, 320, m('ideal', 3), { size: 26, fill: COL.whole, weight: 600 });
+    l26Doc(p, 800, 470, 150, 180, COL.chalk, 6, m('wrongs'));
+    const bang = G(p, { x: 900, y: 400, s: 0, o: 0 });
+    mk('circle', { r: 30, fill: COL.bad }, bang); T(bang, '!', { x: 0, y: 12, size: 36, fill: COL.board, weight: 700, anchor: 'middle' });
+    pop(bang, m('wrongs', 1.5));
+    hmLines(p, ['the worksheet can', 'startle you too'], 1000, 460, m('wrongs', 2), { size: 24, fill: COL.bad, anchor: 'start' });
+    hmLines(p, ['purpose: improve them,', 'so deliver it'], 600, 460, m('deliver'), { size: 24, fill: COL.good, weight: 600, anchor: 'end' });
+    hmSay(p, 'Swallow hard and bring it up.', 800, 640, m('swallow'), { size: 30, weight: 700 });
+    hmRule(p, 'Found a surprise? Deliver it anyway.', m('swallow', 2.5), 745);
+  }],
+
+  ['sample', 'Grove’s annotated sample', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s sample review, annotated');
+    hmSay(p, 'a supervisor’s six-month review, 1982; paraphrased', 800, 155, .3, { size: 20, fill: COL.faint });
+    l26Doc(p, 800, 430, 340, 480, COL.chalk, 14, .3);
+    const tag = (lines, side, y, c, t0) => {
+      const x = side < 0 ? 610 : 990;
+      draw(path(p, `M${side < 0 ? 630 : 970} ${y - 8}H${side < 0 ? 680 : 920}`, { stroke: c, 'stroke-width': 3 }, { d: 0 }), t0, .3);
+      hmLines(p, lines, x + (side < 0 ? -10 : 10), y - (lines.length - 1) * 13, t0, { size: 22, fill: c, weight: 600, anchor: side < 0 ? 'end' : 'start', lh: 28 });
+    };
+    tag(['output measure: good'], -1, 250, COL.whole, m('outm'));
+    tag(['internal measure lacking:', 'activity, not output'], -1, 370, COL.real, m('intm'));
+    tag(['each point backed', 'by an example'], -1, 490, COL.chalk, m('ex'));
+    tag(['compliments need', 'examples too'], 1, 300, COL.good, m('comp'));
+    tag(['how to improve:', 'results on complex projects', 'first, then promotion'], 1, 440, COL.good, m('how'));
+    tag(['rating: meets requirements,', 'one he can raise'], 1, 580, COL.chalk, m('rate'));
+    hmRule(p, 'Back every point, good or bad, with an example.', m('rate', 4), 745);
+  }],
+
+  ['signoff', 'Who signs', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who signs the review');
+    const rows = [['immediate supervisor', 'two'], ['approving supervisor', 'two'], ['matrix manager', 'dual'], ['personnel', 'two'], ['employee', 'sig']];
+    rows.forEach(([s, k], i) => {
+      const y = 220 + i * 80, t = m(k, k === 'two' ? [0, .8, 0, 1.6][i] : 0);
+      hmSay(p, s, 560, y, t, { size: 26, anchor: 'end' });
+      path(p, `M590 ${y + 6}H900`, { stroke: COL.faint, 'stroke-width': 2 });
+      draw(path(p, `M610 ${y}q20 -24 40 0t40 0t40 -6t40 4`, { stroke: COL.whole, 'stroke-width': 3, fill: 'none' }, { d: 0 }), t + .3, .5);
+    });
+    hmLines(p, ['two levels of management', '+ personnel: checks and balances'], 960, 290, m('two', 2.5), { size: 22, fill: COL.good, anchor: 'start' });
+    hmLines(p, ['prepared jointly with a council head:', 'dual reporting (book chapter 9)'], 960, 440, m('dual'), { size: 22, fill: COL.real, anchor: 'start' });
+    hmLines(p, ['means: received it', 'not: agrees with it'], 960, 540, m('sig', 2), { size: 22, fill: COL.chalk, weight: 600, anchor: 'start' });
+    hmRule(p, 'A signature means received, not agreed.', m('sig', 6), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-example', prompt: ['Your draft says a field-service engineer “communicates well with hospitals”. What would Grove add? (illustrative)'],
+    build: choice([['Nothing: praise needs no support'], ['A specific example, like the site visit that resolved a complaint'], ['A list of every hospital he visited this year']], 1,
+      'Compliments need examples too, or they read as clichés.',
+      ['Unsupported praise is a cliché, and teaches nothing.', null, 'A laundry list buries the message.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 26 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Level: be totally frank, in praise too.', 'w1'], ['Listen with every sense until it lands.', 'w2'], ['Leave yourself out: their day in court.', 'w3'], ['Write it all down, then cut to a few messages.', 'w4'], ['Back each point with an example; no hiding.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-level', prompt: ['Your draft review hides a real problem behind “some room to grow”. Which L does that break?'],
+      build: choice([['Level'], ['Listen'], ['Leave yourself out']], 0,
+        'Leveling means total frankness. A softened problem is not delivered at all.',
+        [null, 'Listening is about whether the message lands; here the message is missing.', 'That L is about keeping your emotions out; the problem here is frankness.']) },
+    { id: 'p-tape', prompt: ['A peer records his reviews “so no one can say I didn’t tell them”. What would Grove say?'],
+      build: choice([['Good practice: it proves the words'], ['The words are only the means; what matters is whether the thought got through'], ['Fine, as long as the employee agrees']], 1,
+        'Grove’s answer is an emphatic no. Watch the person and keep at it until the message is understood.',
+        ['Proving the words does nothing to make sure the thought arrived.', null, 'Consent doesn’t change the point: words aren’t understanding.']) },
+    { id: 'p-many', prompt: ['Your worksheet for a clinical research associate yields six messages. What next? (illustrative)'],
+      build: choice([['Deliver all six, thoroughly'], ['Keep the few she can absorb, and save the rest'], ['Merge them into one general comment']], 1,
+        'People absorb only so much. Delete the less important ones; they can wait for the next review.',
+        ['Six messages risk overload, and nothing sticks.', null, 'A general comment is the superficial review Grove warns against.']) },
+    { id: 'p-surprise', prompt: ['Preparing a review, you realize a quality engineer’s habit of skipping peer checks is serious, and you never raised it. What now? (illustrative)'],
+      build: choice([['Leave it out: reviews should hold no surprises'], ['Raise it, with examples, even though it is a surprise'], ['Put it in the written form but don’t discuss it']], 1,
+        'If the purpose is to improve performance, you must deliver it. Swallow hard and bring it up.',
+        ['No surprises is the ideal, but hiding a real problem defeats the review.', null, 'It must be heard and understood, not slipped into the paperwork.']) },
+    { id: 'p-sign', prompt: ['Your report refuses to sign her review because she disagrees with the rating. In Grove’s sample, what does signing mean?'],
+      build: choice([['That she agrees with the rating'], ['Only that she has received the review'], ['That personnel has approved it']], 1,
+        'Grove’s note: the signature shows the review was given, not that the employee agrees.',
+        ['Agreement is not required to sign.', null, 'Personnel signs separately, as a check and balance.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

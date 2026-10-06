@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing the mode of control</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 20, title: 'Choosing the mode of control', kicker: 'Chapter 10 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch21/index.html' };
+
+/* Colours (as in lesson 19): pink = the market mode; blue = the contract mode; purple = cultural values;
+   green = the goal; red = a problem (high CUA, the nothing-works box); amber = the rule. */
+const L20 = { mkt: COL.rat, con: COL.whole, cul: COL.real };
+function l20Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l20Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// Grove's four-box chart, redrawn. Drawn in a 800 x 440 frame (each cell 400 x 220), placed at (ox, oy), scale s.
+const L20_CELLS = [
+  ['mkt', 0, 0, ['Free-market', 'forces'], 'buying tires', COL.rat],
+  ['none', 1, 0, ['Nothing', 'works!'], 'a sinking ship', COL.bad],
+  ['con', 0, 1, ['Contractual', 'obligations'], 'the red light', COL.whole],
+  ['cul', 1, 1, ['Cultural', 'values'], 'the accident', COL.real],
+];
+function l20Quad(p, ox, oy, s, at) {
+  const g = G(p, { x: ox, y: oy, s }), lab = s < 1 ? 30 : 26, cells = {};
+  const ax = G(g, { o: 0 });
+  path(ax, 'M0 0V440H800', { stroke: COL.dim, 'stroke-width': 3 / s });
+  T(ax, 'self-interest', { x: -18, y: 118, size: lab, fill: COL.chalk, anchor: 'end' });
+  T(ax, 'group interest', { x: -18, y: 338, size: lab, fill: COL.chalk, anchor: 'end' });
+  T(ax, 'motivation', { x: -18, y: 230, size: lab * .8, fill: COL.faint, anchor: 'end' });
+  T(ax, 'low', { x: 200, y: 475, size: lab, fill: COL.chalk, anchor: 'middle' });
+  T(ax, 'high', { x: 600, y: 475, size: lab, fill: COL.chalk, anchor: 'middle' });
+  T(ax, 'CUA factor: complexity, uncertainty, ambiguity', { x: 400, y: 512, size: lab * .8, fill: COL.dim, anchor: 'middle' });
+  show(ax, at.axes);
+  L20_CELLS.forEach(([k, c, r, title, ex, color]) => {
+    const x = c * 400, y = r * 220, cg = G(g, { o: 0 });
+    mk('rect', { x: x + 4, y: y + 4, width: 392, height: 212, rx: 10, fill: '#16211d', stroke: color, 'stroke-width': 3 / s }, cg);
+    if (k === 'none') {
+      for (let cc = 30; cc < 620; cc += 30) {
+        const x1 = Math.min(cc, 392), x2 = Math.max(cc - 212, 0);
+        path(cg, `M${x + 4 + x1} ${y + 4 + cc - x1}L${x + 4 + x2} ${y + 4 + cc - x2}`, { stroke: COL.bad, 'stroke-width': 2, opacity: .35 });
+      }
+      mk('rect', { x: x + 70, y: y + 46, width: 260, height: 128, rx: 10, fill: COL.board }, cg);
+    }
+    T(cg, title[0], { x: x + 200, y: y + 88, size: 30, fill: color, weight: 600, anchor: 'middle' });
+    T(cg, title[1], { x: x + 200, y: y + 124, size: 30, fill: color, weight: 600, anchor: 'middle' });
+    T(cg, ex, { x: x + 200, y: y + 160, size: 22, fill: COL.dim, anchor: 'middle' });
+    if (at[k] !== undefined) show(cg, at[k]);
+    cells[k] = { el: cg, box: [ox + x * s, oy + y * s, 400 * s, 220 * s] };
+  });
+  return { g, cells };
+}
+const l20Side = (p, arr, t0s, y0 = 220) => arr.forEach(([s, o], i) => hmSay(p, s, 920, y0 + i * 52, t0s[i], { size: 26, anchor: 'start', ...o }));
+
+const BEATS = [
+  ['intro', 'Choosing the mode of control', (m, D) => hmTitle(m, D, 'Chapter 10 · Modes of Control · Lesson 2 of 2', 'Choosing the mode of control', 'Motivation, the CUA factor, and all three modes in a working day')],
+
+  ['ideal', 'Don’t idealize culture', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Is culture always best?');
+    hmBox(p, 330, 250, 360, 110, L20.mkt, .3, 'Market', { size: 30, fill: L20.mkt });
+    hmBox(p, 800, 250, 360, 110, L20.con, .4, 'Contract', { size: 30, fill: L20.con });
+    const cul = hmBox(p, 1270, 250, 360, 110, L20.cul, .5, 'Culture', { size: 30, fill: L20.cul });
+    pulse(cul, m('nice'), 1.08);
+    hmSay(p, 'nice, even utopian', 1270, 350, m('nice', 2), { size: 24, fill: L20.cul });
+    hmSay(p, 'but not the most efficient everywhere', 800, 440, m('not'), { size: 28, fill: COL.bad, weight: 600 });
+    l20Chip(p, 'culture to buy tires?', 560, 540, L20.cul, m('tires'), 320);
+    pop(hmCross(p, 750, 540, COL.bad, 16), m('tires', 1));
+    l20Chip(p, 'culture to run taxes?', 1040, 540, L20.cul, m('tax'), 320);
+    pop(hmCross(p, 1230, 540, COL.bad, 16), m('tax', 1));
+    hmSay(p, 'Every situation has a most appropriate mode.', 800, 640, m('best'), { size: 30, fill: COL.good, weight: 600 });
+    hmRule(p, 'No mode is best everywhere. Find the one that fits.', m('best', 4));
+  }],
+
+  ['two', 'Two variables', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two things decide the mode');
+    hmSay(p, 'Motivation', 400, 200, m('mot'), { size: 32, weight: 600 });
+    hmArrow(p, 400, 400, 400, 250, COL.dim, m('mot', 1), .5);
+    hmArrow(p, 400, 400, 400, 560, COL.dim, m('mot', 1), .5);
+    hmSay(p, 'self-interest', 430, 270, m('mot', 2), { size: 26, anchor: 'start' });
+    hmSay(p, 'group interest', 430, 560, m('mot', 3), { size: 26, anchor: 'start' });
+    hmSay(p, 'Environment', 1100, 200, m('env'), { size: 32, weight: 600 });
+    [['complexity', 270], ['uncertainty', 335], ['ambiguity', 400]].forEach(([s, y], i) => l20Chip(p, s, 1100, y, COL.chalk, m('env', 2.5 + i * .8), 240));
+    hmSay(p, 'the CUA factor', 1100, 490, m('cua'), { size: 28, fill: COL.bad, weight: 600 });
+    hmArrow(p, 850, 520, 1350, 520, COL.dim, m('cua', 1), .7);
+    hmSay(p, 'low', 850, 560, m('cua', 1.5), { size: 24, fill: COL.dim });
+    hmSay(p, 'high', 1350, 560, m('cua', 1.5), { size: 24, fill: COL.dim });
+    hmSay(p, 'an imaginary composite index (Grove)', 1100, 610, m('cua', 2.5), { size: 20, fill: COL.faint });
+    hmRule(p, 'Two variables: motivation and the CUA factor.', m('cua', 4));
+  }],
+
+  ['cua', 'Complex, uncertain, ambiguous', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Three ways work gets hard');
+    const col = (x, k, title, role, lines) => {
+      hmBox(p, x, 210, 400, 80, COL.bad, m(k), title, { size: 32, fill: COL.bad });
+      hmSay(p, role, x, 300, m(k, .5), { size: 26, weight: 600 });
+      lines.forEach((s, i) => hmSay(p, s, x, 350 + i * 38, m(k, 2 + i * 1.6), { size: 22, fill: COL.dim }));
+    };
+    col(330, 'c', 'Complex', 'a process engineer', ['tricky technologies', 'half-working new equipment', 'pulled two ways by engineers']);
+    col(800, 'u', 'Uncertain', 'a marketing manager', ['asks to hire for an', 'understaffed group', 'the boss waffles', 'no idea what will happen']);
+    col(1270, 'a', 'Ambiguous', 'a transportation supervisor', ['committees, councils,', 'division managers', 'which way is up?']);
+    hmSay(p, 'he quit', 1270, 520, m('quit'), { size: 30, fill: COL.bad, weight: 700 });
+    hmSay(p, 'Grove’s examples, described by role', 800, 620, m('quit', 2), { size: 22, fill: COL.faint });
+    hmRule(p, 'High CUA: work that is complex, uncertain or ambiguous.', m('quit', 3));
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-cua', prompt: ['Which part of the CUA factor is strongest here? (Illustrative.)'],
+    build: grid([
+      { parts: ['New robot firmware, untested tools, two teams pulling opposite ways'], ans: ['c'], why: 'Many tricky moving parts: complexity.' },
+      { parts: ['You don’t know whether next year’s clinical study will be funded'], ans: ['u'], why: 'An outcome nobody can tell you yet: uncertainty.' },
+      { parts: ['Four committees each think they own the product roadmap'], ans: ['a'], why: 'No clear answer to who decides: ambiguity.' },
+      { parts: ['A launch date hangs on a regulator’s reply no one can predict'], ans: ['u'], why: 'The plan waits on an unknown outcome: uncertainty.' },
+    ], [['c', 'Complex', COL.chalk, 'C'], ['u', 'Uncertain', COL.chalk, 'U'], ['a', 'Ambiguous', COL.chalk, 'A']], { multi: false, text: true }),
+  }], done) }],
+
+  ['quad', 'The four boxes', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Matching the mode to the situation');
+    hmSay(p, 'after Grove’s chart (1983), redrawn', 1320, 146, m('axes'), { size: 18, fill: COL.faint, anchor: 'end' });
+    S.quad = l20Quad(p, 520, 160, 1, { axes: m('axes'), mkt: m('mkt'), con: m('con'), cul: m('cul'), none: m('none') });
+    hmRule(p, 'Match the mode to motivation and the CUA factor.', m('none', 6));
+  }],
+
+  ['q2', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-box', prompt: ['A team that guards its own turf takes on a vague, shifting project. Click its box.'],
+    build: pickEls(['mkt', 'none', 'con', 'cul'].map((k, i) => ({ el: S.quad.cells[k].el, box: S.quad.cells[k].box, label: L20_CELLS[i][3].join(' ') })), 1,
+      'Self-interest with a high CUA factor: no mode of control works well.',
+      i => i === 0 ? 'The motivation fits, but a vague, shifting project is high CUA, not low.' : i === 2 ? 'Turf-guarding is self-interest, not group interest, and the project is high CUA.' : 'Culture needs group interest. Turf-guarding is self-interest.'),
+  }], done) }],
+
+  ['newhire', 'The new employee', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A new employee’s path');
+    const q = l20Quad(p, 330, 210, .65, { axes: .3, mkt: .4, con: .5, cul: .6, none: .7 });
+    const dot = G(q.g, { x: 340, y: 186, o: 0 }); mk('circle', { r: 18, fill: COL.good }, dot);
+    show(dot, m('self'));
+    hmArrow(q.g, 340, 206, 340, 396, COL.good, m('well'), .6); tw(dot, { y: 412 }, m('well', .6), .6);
+    hmArrow(q.g, 360, 412, 540, 412, COL.good, m('promo'), .6); tw(dot, { x: 560 }, m('promo', .6), .6);
+    l20Side(p, [['1  New hire: mostly self-interest', { weight: 600 }], ['    give a clear, low-CUA job', { fill: COL.dim, size: 24 }],
+      ['2  Does well: cares about the team', { weight: 600 }], ['    help row; don’t run to the front', { fill: COL.dim, size: 24 }],
+      ['3  Promoted into higher-CUA work', { weight: 600 }], ['    it tends to pay more', { fill: COL.dim, size: 24 }], ['    shared experience grows', { fill: COL.dim, size: 24 }]],
+      [m('self'), m('self', 2.5), m('well'), m('row'), m('promo'), m('promo', 2.5), m('more')]);
+    hmSay(p, 'This is why strong cultures promote from within.', 800, 640, m('within'), { size: 30, fill: COL.good, weight: 600 });
+    hmRule(p, 'Start people in clear jobs; widen them with experience.', m('within', 5));
+  }],
+
+  ['outsider', 'The senior outside hire', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The senior hire from outside');
+    const q = l20Quad(p, 330, 210, .65, { axes: .3, mkt: .4, con: .5, cul: .6, none: .7 });
+    const dot = G(q.g, { x: 600, y: -60, o: 0 }); mk('circle', { r: 18, fill: COL.bad }, dot);
+    show(dot, m('self')); tw(dot, { y: 186 }, m('trouble', 1), .8, io);
+    pulse(dot, m('hope'), 1.6);
+    l20Side(p, [['•  high self-interest, like any new hire', {}], ['•  handed a group in trouble: high CUA', { fill: COL.bad }],
+      ['•  no shared experience, no known methods', {}]], [m('self'), m('trouble'), m('nobase')], 230);
+    hmLines(p, ['All you can do: hope he drops self-interest', 'and gets on top of the job, fast.'], 920, 420, m('hope'), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'An outside senior hire starts in the box where nothing works.', m('hope', 6));
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-new', prompt: ['You are onboarding a new engineer onto a clinical-AI team. By Grove’s chart, what should her first assignment be?'],
+    build: choice([['A well-defined task with clear inputs and a clear finish'], ['The team’s most ambiguous open problem, to prove herself'], ['Whatever is urgent this week, with three people directing her']], 0,
+      'A newcomer is mostly self-interested, so start her in a low-CUA job and widen it as shared experience grows.',
+      [null, 'Self-interest plus high CUA is the box where nothing works.', 'Several bosses and shifting priorities make the job ambiguous; that comes later.']),
+  }], done) }],
+
+  ['day', 'All three in one day', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One day, all three modes');
+    // illustrative times: 8 am at x 260 to 6 pm at x 1340, 108 px per hour
+    path(p, 'M260 420H1340', { stroke: COL.faint, 'stroke-width': 4 });
+    [['8 am', 260], ['noon', 692], ['6 pm', 1340]].forEach(([s, x]) => hmSay(p, s, x, 525, .3, { size: 18, fill: COL.faint }));
+    hmSay(p, 'illustrative times', 1340, 555, .3, { size: 18, fill: COL.faint, anchor: 'end' });
+    const ev = (x, k, title, sub, color, mode) => {
+      hmBox(p, x, 270, 330, 130, color, m(k), title, { size: 26, fill: color, sub: [sub] });
+      path(p, `M${x} 335V408`, { stroke: color, 'stroke-width': 2 });
+      show(hmDot(p, x, 420, color, 12), m(k));
+      hmSay(p, mode, x, 475, m(k, 1.5), { size: 26, fill: color, weight: 600 });
+    };
+    ev(692, 'lunch', 'Buys lunch', 'what he wants, at a price', L20.mkt, 'market');
+    ev(314, 'come', 'Comes to work', 'a salary for his best', L20.con, 'contract');
+    ev(1124, 'plan', 'Strategic planning', 'beyond his regular job', L20.cul, 'culture');
+    hmSay(p, 'Grove’s example: a marketing supervisor', 800, 630, m('lunch', 1), { size: 22, fill: COL.dim });
+    hmRule(p, 'Over one day, all three modes steer us.', m('plan', 5));
+  }],
+
+  ['project', 'All three in one project', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One project, all three modes');
+    hmSay(p, 'a training manager’s courses for the sales force', 800, 170, m('train'), { size: 24, fill: COL.dim });
+    const row = (y, k, mode, color, title, sub, t2) => {
+      l20Chip(p, mode, 300, y, color, m(k), 200, 26);
+      hmSay(p, title, 440, y - 4, m(k, .4), { size: 28, weight: 600, anchor: 'start' });
+      hmSay(p, sub, 440, y + 34, t2, { size: 22, fill: COL.dim, anchor: 'start' });
+    };
+    row(250, 'bind', 'market', L20.mkt, 'Binders for the course', 'the required quality, at the lowest price', m('bind', 2));
+    row(370, 'exist', 'contract', L20.con, 'The training program itself', 'salespeople expect it, though no policy says so', m('exist', 3));
+    row(490, 'share', 'culture', L20.cul, 'One coordinated message', 'divisions sharing a sales force put the common interest first', m('coord'));
+    hmSay(p, 'Expectations can bind as firmly as a legal document.', 800, 620, m('bound'), { size: 28, fill: L20.con, weight: 600 });
+    hmRule(p, 'Unwritten expectations can bind like a contract.', m('coord', 3));
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-proj', prompt: ['A device launch project (illustrative). Which mode governs each part?'],
+    build: grid([
+      { parts: ['Buying test fixtures from the lowest qualified bidder'], ans: ['m'], why: 'A clearly priced purchase.' },
+      { parts: ['A monthly demo other teams rely on, though no one mandated it'], ans: ['c'], why: 'An expectation that binds like a contract.' },
+      { parts: ['Three product teams agree one clinical message for surgeons'], ans: ['v'], why: 'Putting the common interest ahead of each team’s own.' },
+      { parts: ['An engineer gives a weekend to help a sister team pass an audit'], ans: ['v'], why: 'Effort beyond the contract, for the group.' },
+    ], [['m', 'Market', L20.mkt, 'M'], ['c', 'Contract', L20.con, 'C'], ['v', 'Culture', L20.cul, 'V']], { multi: false, text: true }),
+  }], done) }],
+
+  ['monster', 'Who made the monster', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who made the monster?');
+    const sp = l20Person(p, 800, 440, L20.mkt, 1.3); show(sp, m('claim'));
+    hmSay(p, 'salespeople', 800, 510, m('claim'), { size: 22, fill: COL.dim });
+    hmSay(p, '“They only push whatever pays them most.”', 800, 600, m('claim', 1), { size: 26, fill: COL.dim });
+    hmSay(p, 'But the marketers had built the contests.', 800, 650, m('made'), { size: 28, fill: COL.bad, weight: 600 });
+    [['Division A', 'contest: cash bonus', 380], ['Division B', 'contest: exotic trip', 800], ['Division C', 'contest: more prizes', 1220]].forEach(([n, s, x], i) => {
+      hmBox(p, x, 220, 300, 100, L20.con, m('contest', i * .6), n, { size: 28, sub: [s] });
+    });
+    hmArrow(p, 440, 272, 740, 400, COL.bad, m('contest', 2), .5);
+    hmArrow(p, 800, 272, 800, 380, COL.bad, m('contest', 2.3), .5);
+    hmArrow(p, 1160, 272, 860, 400, COL.bad, m('contest', 2.6), .5);
+    hmLines(p, ['their time:', 'scarce and valuable'], 1080, 450, m('time'), { size: 24, fill: L20.mkt, anchor: 'start' });
+    hmSay(p, 'they responded as expected', 520, 460, m('resp'), { size: 24, fill: L20.mkt, anchor: 'end' });
+    hmRule(p, 'Pay people like a market, and they act like one.', m('resp', 3));
+  }],
+
+  ['faith', 'Belief and faith', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When there was nothing to sell');
+    hmSay(p, 'nearly a year with nothing to sell', 800, 210, m('noprod'), { size: 26, fill: COL.bad, weight: 600 });
+    const bar = mk('rect', { x: 300, y: 232, width: 0, height: 36, rx: 8, fill: COL.bad }, p); put(bar, { a_width: 0 }); tw(bar, { a_width: 1000 }, m('noprod', .5), 1.4, out);
+    for (let i = 0; i < 10; i++) show(hmDot(p, 420 + i * 62, 400, L20.cul, 16), m('noprod', 3 + i * .08));
+    hmSay(p, 'sales engineers', 700, 450, m('noprod', 3), { size: 22, fill: COL.dim });
+    hmArrow(p, 1010, 400, 1150, 400, COL.dim, m('could'), .5);
+    hmBox(p, 1310, 400, 300, 100, L20.mkt, m('could', .5), 'other jobs', { size: 28, fill: L20.mkt, sub: ['quick commissions'] });
+    pop(hmCross(p, 1080, 400, COL.bad, 16), m('stay'));
+    hmSay(p, 'By and large, they stayed.', 700, 530, m('stay', .5), { size: 30, fill: L20.cul, weight: 600 });
+    hmSay(p, 'belief and faith', 800, 630, m('faith'), { size: 38, fill: L20.cul, weight: 700 });
+    hmRule(p, 'Belief and faith come from culture, not the market.', m('faith', 3));
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 20 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['No mode is best everywhere: find the fit.', 'w1'], ['Two variables: motivation and the CUA factor.', 'w2'], ['Self-interest plus high CUA: nothing works.', 'w3'], ['Start new people low-CUA; promote from within.', 'w4'], ['All three modes run through every day.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-ideal', prompt: ['A peer says the best teams run purely on shared values, with no rules or prices. What would Grove say?'],
+      build: choice([['Agreed: rules show a lack of trust'], ['Culture is not the most efficient mode everywhere; use the one that fits'], ['Culture is only for senior staff']], 1,
+        'Culture cannot buy tires or run the tax system. Each situation has a most appropriate mode.',
+        ['Contracts and markets are the efficient choice for many tasks, without implying distrust.', null, 'The mode depends on motivation and the CUA factor, not on seniority.']) },
+    { id: 'p-vp', prompt: ['You must hire a senior leader from outside to rescue a struggling regulatory group. What risk does Grove flag?'],
+      build: choice([['He will be too loyal to the old company'], ['Self-interest plus a high-CUA job: the box where nothing works'], ['He will have too little authority']], 1,
+        'He arrives self-interested, inherits trouble, and lacks shared experience and the company’s methods.',
+        ['Grove’s concern is self-interest and high CUA, not loyalty elsewhere.', null, 'Authority is not the problem; motivation and a high-CUA job are.']) },
+    { id: 'p-amb', prompt: ['Three steering committees each claim a say over your clinical-AI roadmap. Which part of CUA is this mainly?'],
+      build: choice([['Complexity'], ['Uncertainty'], ['Ambiguity']], 2,
+        'Not knowing who decides, or which way is up, is ambiguity, as with Grove’s transportation supervisor.',
+        ['Complexity is tricky technology and many moving parts; here the issue is unclear ownership.', 'Uncertainty is not knowing an outcome; here it is unclear who decides.', null]) },
+    { id: 'p-bonus', prompt: ['After you add bonuses per team’s product sales, two teams give surgeons conflicting messages. What happened?'],
+      build: choice([['Your bonuses turned it into a market, so each team pushes its own'], ['The teams simply lack good values'], ['They need more product training']], 0,
+        'Like Intel’s sales contests: incentives you design set the mode people work in.',
+        [null, 'Grove’s point: the people designing the incentives created the behaviour.', 'Training does not fix an incentive that pays for competing.']) },
+    { id: 'p-hold', prompt: ['A regulatory hold pauses your program for months, and almost no one leaves. What does Grove call this? (Illustrative.)'],
+      build: choice([['The market: they had no better offers'], ['The contract: they are paid to stay'], ['Cultural values: belief and faith in the company']], 2,
+        'Staying through a dry spell when others would pay more comes from belief and faith.',
+        ['Good people usually have offers; staying was not a price decision.', 'A salary pays for work; riding out a dry spell goes beyond it.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>“I quit!”</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 29, title: '“I quit!”', kicker: 'Chapter 14 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch30/index.html' };
+
+/* Colours: chalk = people; blue = ordinary work (the meeting you are rushing to); purple = the company as a
+   whole, beyond your team; green = the goal or the right move; red = a problem or the wrong move;
+   amber = the rule. */
+function l29Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l29Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+const l29BW = (s, size = 24) => s.length * size * .54 + 44;
+// A speech bubble whose left edge is at x.
+function l29Bubble(p, s, x, y, color, t0, size = 24) {
+  const w = l29BW(s, size), g = G(p, { o: 0 });
+  mk('rect', { x, y: y - 26, width: w, height: 52, rx: 18, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x: x + 22, y: y + 8, size, fill: color });
+  show(g, t0); return g;
+}
+const L29_REPLY = [['“Can we talk after my meeting?”', 250], ['“Let’s sit down now. Tell me why.”', 370], ['“You can’t leave now. We need you!”', 490]];
+
+const BEATS = [
+  ['intro', '“I quit!”', (m, D) => hmTitle(m, D, 'Chapter 14 · Two Difficult Tasks · Lesson 2 of 2', '“I quit!”', 'What to do when a valued person says they are leaving')],
+
+  ['dread', 'What Grove dreaded most', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What Grove dreaded most');
+    show(l29Person(p, 800, 250, COL.chalk, 1.3), m('val'));
+    hmSay(p, 'a highly valued, respected report decides to leave', 800, 330, m('val', .4), { size: 26 });
+    hmBox(p, 450, 450, 520, 110, COL.dim, m('not'), 'leaving for money and perks', { size: 26, fill: COL.dim, sub: ['not this case'] });
+    hmBox(p, 1150, 450, 520, 110, COL.bad, m('loyal'), 'loyal, but feels unappreciated', { size: 26, fill: COL.bad, sub: ['the case Grove means'] });
+    hmSay(p, 'you and the company both lose', 800, 580, m('lose'), { size: 26, fill: COL.dim });
+    hmSay(p, 'their decision reflects on you', 800, 645, m('you'), { size: 32, weight: 700 });
+    hmRule(p, 'Unrecognized effort means you failed as their manager.', m('you', 3), 745);
+  }],
+
+  ['onrun', 'The opening shot', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The opening shot comes on the run');
+    path(p, 'M200 372H1460', { stroke: COL.faint, 'stroke-width': 3 });
+    hmBox(p, 1360, 320, 180, 80, COL.whole, .3, 'meeting', { size: 26, fill: COL.whole });
+    const you = l29Person(p, 300, 330, COL.chalk); T(you, 'you', { y: 70, size: 20, fill: COL.dim, anchor: 'middle' });
+    show(you, .3); tw(you, { x: 800 }, .6, m('minute') - .6, lin);
+    show(l29Person(p, 1000, 330, COL.chalk), m('minute', .5));
+    hmSay(p, 'valued report', 1000, 400, m('minute', .5), { size: 20, fill: COL.dim });
+    l29Bubble(p, '“Do you have a minute?”', 900, 190, COL.chalk, m('minute', 1));
+    l29Bubble(p, '“…I’ve decided to leave.”', 900, 250, COL.chalk, m('minute', 3));
+    hmSay(p, 'your first reaction is crucial', 800, 470, m('react'), { size: 30, weight: 700 });
+    l29Bubble(p, '“Let’s talk later…”', 520, 545, COL.bad, m('escape'));
+    hmArrow(p, 840, 545, 1260, 545, COL.bad, m('escape', 1.5), .6);
+    hmSay(p, 'off to the meeting', 1280, 553, m('escape', 2), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmSay(p, 'they already feel unimportant to you; putting it off confirms it', 800, 640, m('why'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Deal with it at the first mention.', m('confirm', 1.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => {
+    const p = panel(0);
+    hmHead(p, 'Your first response?', .2, 140);
+    S.l29q = L29_REPLY.map(([s, y], i) => ({ el: l29Bubble(p, s, 800 - l29BW(s, 28) / 2, y, COL.chalk, .3 + i * .2, 28), box: [800 - l29BW(s, 28) / 2 - 10, y - 36, l29BW(s, 28) + 20, 72], label: s }));
+  }, { ask: done => quiz(BAND, [{
+    id: 'c-first', prompt: ['A valued report says “I’m leaving” as you rush out. Click your best reply.'],
+    build: pickEls(S.l29q, 1,
+      'Act at once. It shows them they matter to you.',
+      i => i === 0 ? 'Putting it off confirms they feel unimportant to you.' : 'Arguing now can lose the war. Listen first.'),
+  }], done) }],
+
+  ['listen', 'Let them talk', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Drop everything. Let them talk.');
+    show(l29Person(p, 520, 280, COL.chalk), m('sit')); show(l29Person(p, 880, 280, COL.chalk), m('sit', .3));
+    hmSay(p, 'you', 520, 350, m('sit'), { size: 20, fill: COL.dim }); hmSay(p, 'report', 880, 350, m('sit', .3), { size: 20, fill: COL.dim });
+    ['prepared reason 1', 'prepared reason 2', 'prepared reason 3'].forEach((s, i) => l29Chip(p, s, 1240, 200 + i * 62, COL.dim, m('talk', .5 + i * .8), 280, 22));
+    hmSay(p, 'rehearsed over sleepless nights', 1240, 400, m('talk', 3), { size: 20, fill: COL.dim });
+    l29Bubble(p, '“What else is on your mind?”', 260, 470, COL.chalk, m('more'));
+    hmArrow(p, 700, 470, 960, 470, COL.dim, m('real', -.3), .4);
+    l29Chip(p, 'the real issue', 1110, 470, COL.good, m('real', .3), 260, 26);
+    [['don’t argue', 520], ['don’t lecture', 800], ['don’t panic', 1080]].forEach(([s, x], i) => l29Chip(p, s, x, 600, COL.bad, m('dont', i * .8), 230));
+    hmRule(p, 'Listen. Ask more. Don’t argue, lecture or panic.', m('dont', 3), 745);
+  }],
+
+  ['skirmish', 'Skirmish, not war', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The opening skirmish, not the war');
+    // schematic timeline of the whole episode
+    const seg = (x, w, c, s, t0) => { const r = mk('rect', { x, y: 200, width: w, height: 56, rx: 8, fill: c }, p); put(r, { o: 0 }); show(r, t0); hmSay(p, s, x + w / 2, 236, t0, { size: 24, fill: COL.board, weight: 700 }); };
+    seg(200, 360, COL.chalk, 'first talk', .3);
+    seg(580, 400, COL.dim, 'prepare', m('time'));
+    seg(1000, 400, COL.good, 'next round', m('time', 2));
+    hmSay(p, 'schematic', 1400, 290, m('time', 2), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmLines(p, ['can’t win it here,', 'but can lose it'], 380, 320, m('win'), { size: 24, fill: COL.bad, weight: 600 });
+    l29Chip(p, 'show they matter', 380, 450, COL.good, m('show'), 300);
+    l29Chip(p, 'find the real trouble', 380, 520, COL.good, m('find'), 300);
+    pop(hmCross(p, 780, 450, COL.bad, 18), m('time'));
+    hmSay(p, 'change their mind now', 820, 458, m('time'), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmSay(p, 'buy time: ask for what you need', 780, 528, m('time', 1), { size: 22, fill: COL.chalk, anchor: 'start' });
+    hmSay(p, 'whatever you commit to, deliver', 800, 640, m('keep'), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'Buy time, then follow through on every promise.', m('keep', 2), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-do', prompt: ['A valued report has just told you they are quitting. Do, or don’t?'],
+    build: grid([
+      { parts: ['Sit down with them right away'], ans: ['y'], why: 'Dealing with it at once shows they matter.' },
+      { parts: ['Point out where their reasons are wrong'], ans: ['n'], why: 'Arguing loses the skirmish. Let them talk.' },
+      { parts: ['Ask more questions after the prepared speech'], ans: ['y'], why: 'The real issues often come out after the rehearsed ones.' },
+      { parts: ['Try to change their mind on the spot'], ans: ['n'], why: 'Not yet. Buy time to prepare a real answer.' },
+      { parts: ['Ask for time to prepare the next step'], ans: ['y'], why: 'Buy time, and then follow through.' },
+    ], [['y', 'Do', COL.good, 'D'], ['n', 'Don’t', COL.bad, 'N']], { multi: false, text: true }),
+  }], done) }],
+
+  ['boss', 'Bring in your manager', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Make it your manager’s problem too');
+    show(l29Person(p, 380, 300, COL.chalk), m('busy', -1)); hmSay(p, 'you', 380, 370, m('busy', -1), { size: 20, fill: COL.dim });
+    const boss = l29Person(p, 820, 300, COL.chalk); T(boss, 'your manager', { y: 70, size: 20, fill: COL.dim, anchor: 'middle' });
+    show(boss, m('busy', -1)); tw(boss, { x: 900 }, m('busy', .5), 1, lin);
+    hmBox(p, 1340, 300, 180, 80, COL.whole, m('busy'), 'meeting', { size: 26, fill: COL.whole });
+    hmArrow(p, 960, 300, 1230, 300, COL.whole, m('busy', .8), .6);
+    l29Bubble(p, '“Can it wait till next week?”', 760, 200, COL.bad, m('busy', 2));
+    hmSay(p, 'not uncaring: it simply affects you more', 800, 450, m('care'), { size: 26, fill: COL.dim });
+    hmArrow(p, 440, 300, 840, 300, COL.good, m('make'), .8);
+    hmBox(p, 800, 610, 640, 80, COL.good, m('make', 1), 'they take part in the solution', { size: 26, fill: COL.good });
+    hmRule(p, 'Make it your manager’s problem, and theirs to help solve.', m('make', 3), 745);
+  }],
+
+  ['citizen', 'Save them for the company', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A valued employee of the company');
+    const co = mk('rect', { x: 200, y: 180, width: 1200, height: 340, rx: 20, fill: 'none', stroke: COL.real, 'stroke-width': 3 }, p); put(co, { o: 0 }); show(co, m('firm'));
+    hmSay(p, 'the company', 230, 220, m('firm'), { size: 24, fill: COL.real, anchor: 'start', weight: 600 });
+    hmBox(p, 520, 370, 400, 180, COL.chalk, .3, 'your team', { size: 28 });
+    hmBox(p, 1080, 370, 400, 180, COL.chalk, m('every'), 'another department', { size: 28 });
+    const d = hmDot(p, 520, 420, COL.good, 16); show(d, .5);
+    hmArrow(p, 740, 330, 860, 330, COL.good, m('every', 1), .5);
+    tw(d, { x: 1080 }, m('pm', 1), 1.2);
+    l29Chip(p, 'you: project manager of the move, until settled', 800, 580, COL.good, m('pm'), 600);
+    hmSay(p, 'you owe it to your employer', 800, 660, m('owe', 3), { size: 26, fill: COL.dim });
+    hmRule(p, 'Save a valued employee for the company.', m('owe', 5), 745);
+  }],
+
+  ['golden', 'The golden rule', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The golden rule, made practical');
+    show(l29Person(p, 450, 360, COL.chalk), .3); show(l29Person(p, 1150, 360, COL.chalk), .3);
+    hmSay(p, 'you', 450, 430, .3, { size: 22, fill: COL.dim }); hmSay(p, 'fellow manager', 1150, 430, .3, { size: 22, fill: COL.dim });
+    hmArrow(p, 520, 280, 1080, 280, COL.real, m('today'), .7);
+    hmSay(p, 'today: you give them a valued person', 800, 255, m('today', .3), { size: 24, fill: COL.real });
+    const a = hmDot(p, 520, 310, COL.good, 12); show(a, m('today')); tw(a, { x: 1080 }, m('today', .2), 1);
+    hmArrow(p, 1080, 470, 520, 470, COL.real, m('tomorrow'), .7);
+    hmSay(p, 'tomorrow: they do the same for you', 800, 510, m('tomorrow', .3), { size: 24, fill: COL.real });
+    const b = hmDot(p, 1080, 440, COL.good, 12); show(b, m('tomorrow')); tw(b, { x: 520 }, m('tomorrow', .2), 1);
+    hmSay(p, 'if every manager does it, every manager wins', 800, 620, m('all'), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'Give a good person away today; it comes back.', m('all', 2.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-move', prompt: ['Illustrative: your best verification engineer is quitting because they want systems work. Another department has a systems opening. What should you do?'],
+    build: choice([['Drive the transfer yourself until it is settled'], ['Let them go: you lose them either way'], ['Mention it to the other manager and step back']], 0,
+      'Save the person for the company, and be the project manager of the move.',
+      [null, 'You owe your employer the save, and the favour will come back.', 'Stepping back lets it drift. Own the move until it is done.']),
+  }], done) }],
+
+  ['back', 'The blackmail worry', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The next round: “Am I a blackmailer?”');
+    hmBox(p, 380, 250, 420, 120, COL.good, m('fix'), 'your solution', { size: 28, fill: COL.good, sub: ['meets their real reasons', 'and helps the company'] });
+    show(l29Person(p, 1400, 440, COL.chalk), m('obj')); hmSay(p, 'report', 1400, 510, m('obj'), { size: 20, fill: COL.dim });
+    l29Bubble(p, '“You should have offered this long ago.”', 700, 370, COL.bad, m('obj', 2));
+    l29Bubble(p, '“You only did it because I forced you.”', 700, 435, COL.bad, m('obj', 4));
+    l29Bubble(p, '“You’ll think I blackmailed you.”', 700, 500, COL.bad, m('black'));
+    l29Bubble(p, '“You shook us up. We’re doing what we should have done.”', 200, 620, COL.good, m('shook'));
+    hmSay(p, 'you', 184, 628, m('shook'), { size: 20, fill: COL.dim, anchor: 'end' });
+    hmRule(p, 'Not blackmail: you are doing what you should have done.', m('shook', 3.5), 745);
+  }],
+
+  ['again', 'Quit again', (m) => {
+    const p = panel(0);
+    hmHead(p, '“I’ve accepted another job.”');
+    hmSay(p, 'then get them to quit again', 800, 200, m('quit'), { size: 32, fill: COL.good, weight: 700 });
+    show(l29Person(p, 800, 400, COL.chalk, 1.2), m('two'));
+    hmSay(p, 'two commitments', 800, 480, m('two'), { size: 22, fill: COL.dim });
+    hmBox(p, 300, 400, 340, 110, COL.dim, m('new'), 'a new employer', { size: 26, fill: COL.dim, sub: ['they barely know'] });
+    draw(path(p, 'M475 400H740', { stroke: COL.dim, 'stroke-width': 2, 'stroke-dasharray': '8 8' }, { d: 0 }), m('new', .4), .5);
+    hmBox(p, 1300, 400, 340, 110, COL.good, m('old'), 'you and the team', { size: 26, fill: COL.good, sub: ['seen every day'] });
+    draw(path(p, 'M860 400H1125', { stroke: COL.good, 'stroke-width': 12 }, { d: 0 }), m('old', .4), .5);
+    hmSay(p, 'the daily commitment is the stronger one', 800, 620, m('strong'), { size: 28, weight: 600 });
+    hmRule(p, 'Two commitments: the one to daily colleagues is stronger.', m('strong', 3.5), 745);
+  }],
+
+  ['stakes', 'Others are watching', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Other strong performers are watching');
+    show(l29Person(p, 800, 340, COL.good, 1.3), .3);
+    hmSay(p, 'respected for their qualities', 800, 222, m('attr'), { size: 22, fill: COL.good });
+    const W = [[380, 250], [330, 430], [520, 560], [1080, 560], [1270, 430], [1220, 250]];
+    W.forEach(([x, y], i) => {
+      show(l29Person(p, x, y, COL.dim, .9), m('ident', i * .2));
+      const a = Math.atan2(340 - y, 800 - x);
+      draw(path(p, `M${x + 50 * Math.cos(a)} ${y + 50 * Math.sin(a)}L${800 - 110 * Math.cos(a)} ${340 - 110 * Math.sin(a)}`, { stroke: COL.dim, 'stroke-width': 2, 'stroke-dasharray': '6 8' }, { d: 0 }), m('watch', i * .15), .5);
+    });
+    hmSay(p, 'their morale and commitment hinge on the outcome', 800, 660, m('morale'), { size: 28, weight: 700 });
+    hmRule(p, 'Keeping one valued person keeps faith with many.', m('morale', 3), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-why', prompt: ['Why, in Grove’s view, does saving one valued person matter beyond that person?'],
+    build: choice([['Hiring a replacement is expensive'], ['It protects your own performance rating'], ['Other strong performers watch, and their commitment hinges on it']], 2,
+      'They identify with this person. What happens to them tells everyone like them how they are valued.',
+      ['True, but Grove’s point is bigger: the morale of others like them.', 'Grove’s reason is the good of the company, not your rating.', null]),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 29 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['A valued person quitting is a verdict on you.', 'w1'], ['Drop everything; sit down; let them talk.', 'w2'], ['Don’t argue or panic. Buy time, then deliver.', 'w3'], ['Enlist your manager; save them for the company.', 'w4'], ['Answer the blackmail worry; ask them to quit again.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-first', prompt: ['Illustrative: your lead clinical scientist messages “Got a minute? I’m resigning” as you walk into a design review. Best move?'],
+      build: choice([['Reply “Let’s talk tomorrow”'], ['Step out and sit down with them now'], ['Forward the message to HR']], 1,
+        'Your first reaction is crucial. Dealing with it at once shows they matter.',
+        ['A day’s delay confirms they feel unimportant to you.', null, 'That hands off the one conversation that has to be yours.']) },
+    { id: 'p-reasons', prompt: ['They list three reasons for leaving, clearly rehearsed. What next?'],
+      build: choice([['Agree, and start planning the handover'], ['Rebut each reason in turn'], ['Ask more questions until the real issue comes out']], 2,
+        'After the prepared points, the real issues may come out. Keep them talking.',
+        ['Giving up now loses a person you could keep.', 'Arguing can lose the war in the opening skirmish.', null]) },
+    { id: 'p-boss', prompt: ['You tell your own director, who says, “Let’s discuss it next week.” What does Grove suggest?'],
+      build: choice([['Make it their problem too, and get them involved now'], ['Accept it: directors are busy'], ['Solve it alone without them']], 0,
+        'It affects you more, so it is up to you to make your manager part of the solution.',
+        [null, 'A week may be too late, and they can open doors you can’t.', 'A transfer or new role may need their help. Bring them in.']) },
+    { id: 'p-black', prompt: ['Offered a new role, they say: “If I stay, you’ll always think I blackmailed you.” Best reply?'],
+      build: choice([['“You did, but we forgive you.”'], ['“You shook us up; we’re doing what we should have done anyway.”'], ['“Then perhaps you should go.”']], 1,
+        'Make them comfortable: the change was right regardless of how it came about.',
+        ['That confirms the fear and spoils the new arrangement.', null, 'That throws away everything you worked to save.']) },
+    { id: 'p-again', prompt: ['“I’ve already accepted the other offer. I can’t back out.” What does Grove suggest?'],
+      build: choice([['Accept it gracefully and say goodbye'], ['Outbid the other company on salary'], ['Ask them to weigh their commitment to the people they work with daily']], 2,
+        'They made two commitments. The one to colleagues they see every day is stronger.',
+        ['Grove says you must get them to quit again, not give up.', 'Grove’s case is someone who feels unvalued, not someone after money.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

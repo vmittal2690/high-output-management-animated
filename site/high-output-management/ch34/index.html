@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Running an agent workforce</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 34, title: 'Running an agent workforce', kicker: 'Bonus · Lesson 2', minutes: 10, language: 'en', silent: true, next: '../ch35/index.html' };
+
+/* Bonus lesson, not from Grove's book: his production ideas applied to AI agents.
+   Colours: blue = people and ordinary work; purple = agents; green = the goal or output; red = a problem;
+   amber = the rule (and the limiting step). Modes of control: salmon = market, purple = contract (the agents' mode),
+   pink = culture. Central governance is drawn in chalk.
+   Product facts are as announced or reported in Aug–Sep 2026 (see books/high-output-management/chapters/bonus-agents.md). */
+const L34 = { mkt: COL.nat, con: COL.real, cul: COL.rat, gov: COL.chalk };
+
+// "Beyond the book" badge, top-left, dim.
+function l34Badge(p) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: 36, y: 30, width: 220, height: 40, rx: 20, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, g);
+  T(g, 'beyond the book', { x: 146, y: 57, size: 20, fill: COL.dim, anchor: 'middle' });
+  show(g, .1); return g;
+}
+// A generic agent: a rounded robot head with an antenna. Not any product's artwork.
+function l34Agent(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  path(g, 'M0 -34V-46', { stroke: color, 'stroke-width': 4 });
+  mk('circle', { cy: -50, r: 6, fill: color }, g);
+  mk('rect', { x: -28, y: -34, width: 56, height: 44, rx: 14, fill: color }, g);
+  mk('circle', { cx: -11, cy: -13, r: 5.5, fill: COL.board }, g);
+  mk('circle', { cx: 11, cy: -13, r: 5.5, fill: COL.board }, g);
+  path(g, 'M-24 34C-24 20 -14 16 0 16C14 16 24 20 24 34Z', { fill: color, stroke: 'none' });
+  return g;
+}
+function l34Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l34Chip = (p, s, x, y, color, t0, w, size = 22) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A dated product note, small and dim.
+const l34Date = (p, s, x, y, t0, anchor = 'middle') => hmSay(p, s, x, y, t0, { size: 18, fill: COL.dim, anchor });
+const l34Ref = (p, s, t0 = .4) => hmSay(p, s, 800, 160, t0, { size: 20, fill: COL.dim });
+
+const L34_Q1 = [['agents draft', '10 minutes', COL.real], ['agents check', '15 minutes', COL.real], ['your review', '2 days', COL.whole], ['send to client', '1 minute', COL.real]];
+
+const BEATS = [
+  ['intro', 'Running an agent workforce', (m, D) => hmTitle(m, D, 'Bonus chapter · Grove for the age of agents · Lesson 2 of 3', 'Running an agent workforce', 'Production principles for a team of agents')],
+
+  ['limit', 'The limiting step moves to you', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'With agents, the slowest step is you');
+    l34Ref(p, 'the limiting step: lessons 1 and 7');
+    hmChain(p, ['draft', 'research', 'fill forms'], [230, 470, 710], 270, 200, 100, COL.real, [m('fast'), m('fast', .8), m('fast', 1.6)], { subs: [['minutes'], ['minutes'], ['minutes']] });
+    hmArrow(p, 818, 270, 990, 270, COL.dim, m('you', -.2), .4);
+    hmBox(p, 1140, 270, 280, 110, COL.task, m('you'), 'your review', { size: 30, fill: COL.task, sub: ['and approval: days'] });
+    const me = l34Person(p, 1350, 285, COL.whole, .9); show(me, m('you', .5));
+    hmSay(p, 'you', 1350, 340, m('you', .5), { size: 20, fill: COL.whole });
+    for (let i = 0; i < 10; i++) show(l34Agent(p, 1140 - i * 78, 440, COL.real, .6), m('pile', .1 + i * .15));
+    hmArrow(p, 1140, 400, 1140, 335, COL.dim, m('pile', 1.6), .3);
+    hmSay(p, 'ten agents waiting on one reviewer', 600, 520, m('pile', 1.8), { size: 26, fill: COL.bad, weight: 600 });
+    hmSay(p, 'a queue at the toaster, as in lesson 1', 600, 555, m('pile', 2.3), { size: 20, fill: COL.dim });
+    l34Chip(p, 'review blocks', 300, 625, COL.whole, m('plan', 1), 240);
+    l34Chip(p, 'batch approvals, like a hold file', 720, 625, COL.whole, m('plan', 3), 440);
+    l34Chip(p, 'raise maturity on routine tasks', 1240, 625, COL.whole, m('raise'), 420);
+    hmSay(p, 'lesson 8', 720, 675, m('plan', 4), { size: 18, fill: COL.dim });
+    hmSay(p, 'lessons 23–24', 1240, 675, m('raise', 1), { size: 18, fill: COL.dim });
+    hmRule(p, 'Your review is the limiting step. Plan around it.', m('raise', 4), 745);
+  }],
+
+  ['indicators', 'Paired indicators, open windows', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'Pair the indicators; look inside the box');
+    l34Ref(p, 'lesson 3: paired indicators and the black box');
+    hmSay(p, 'pair output with quality', 420, 215, m('pair'), { size: 26, weight: 600 });
+    [['tasks done', 'errors caught', 280], ['speed', 'rework', 410]].forEach(([a, b, y], i) => {
+      const t = m('pair', 1 + i * 3.5);
+      hmBox(p, 270, y, 250, 90, COL.good, t, a, { size: 28, fill: COL.good });
+      hmSay(p, '+', 420, y + 12, t + .8, { size: 40, fill: COL.dim, weight: 700 });
+      hmBox(p, 570, y, 250, 90, COL.bad, t + 1, b, { size: 28, fill: COL.bad });
+    });
+    const bx = G(p, { o: 0 });
+    mk('rect', { x: 960, y: 200, width: 380, height: 230, rx: 16, fill: '#121a17', stroke: COL.faint, 'stroke-width': 4 }, bx);
+    show(bx, m('window', -.5));
+    show(l34Agent(p, 1150, 345, COL.real, 1), m('window', -.3));
+    hmSay(p, 'the black box', 1150, 465, m('window', -.3), { size: 20, fill: COL.dim });
+    [1030, 1150, 1270].forEach((x, i) => {
+      const w = mk('rect', { x: x - 36, y: 222, width: 72, height: 44, rx: 6, fill: '#3a4f47', stroke: COL.chalk, 'stroke-width': 2.5 }, p);
+      put(w, { o: 0 }); show(w, m('window', 2.6 + i * 1.6));
+    });
+    [['progress updates', 'OpenAI Dots · Sep 2026'], ['a screen you can open', 'OpenAI Dots · Sep 2026'], ['an audit trail', 'Meta Muse · Sep 2026']].forEach(([s, d], i) => {
+      const t = m('window', 2.6 + i * 1.6), y = 520 + i * 58;
+      l34Chip(p, s, 1150, y, COL.chalk, t, 300);
+      l34Date(p, d, 985, y + 6, t, 'end');
+    });
+    hmSay(p, 'trouble shows early,', 420, 545, m('lead'), { size: 26, fill: COL.good, weight: 600 });
+    hmSay(p, 'before it reaches the output', 420, 582, m('lead'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'Pair output with quality. Keep windows into the box.', m('lead', 4), 745);
+  }],
+
+  ['inspect', 'Inspection stations', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'Inspection stations, built in');
+    l34Ref(p, 'lessons 2 and 4: inspect where it is cheapest; the reliability rule');
+    draw(path(p, 'M210 330H1360', { stroke: COL.faint, 'stroke-width': 4 }, { d: 0 }), m('sta'), .8);
+    show(l34Agent(p, 160, 340, COL.real, 1.1), .3);
+    hmSay(p, 'agent', 160, 410, .3, { size: 20, fill: COL.real });
+    hmBox(p, 1455, 330, 170, 110, COL.good, m('sta', .6), 'the world', { size: 26, fill: COL.good, sub: ['email, money', 'accounts'] });
+    hmBox(p, 470, 330, 320, 130, COL.real, m('sent'), 'Sentinel agent', { size: 28, sub: ['must approve anything', 'Muse sends out'] });
+    l34Date(p, 'Meta Muse · Sep 2026', 470, 420, m('sent'));
+    hmBox(p, 820, 330, 320, 130, COL.real, m('auto'), 'Auto-review', { size: 28, sub: ['checks account actions;', 'a monitor can pause it'] });
+    l34Date(p, 'OpenAI Dots · Sep 2026', 820, 420, m('auto'));
+    hmBox(p, 1170, 330, 320, 130, COL.real, m('hall'), 'Hallucination check', { size: 25, sub: ['catches subtle', 'made-up details'] });
+    l34Date(p, 'Instinct · Aug–Sep 2026', 1170, 420, m('hall'));
+    hmSay(p, 'Grove’s reliability rule: never pass a possible safety failure', 800, 520, m('rule'), { size: 28, fill: COL.bad, weight: 600 });
+    show(l34Person(p, 560, 625, COL.whole, .9), m('rule', 5.5));
+    hmSay(p, 'in medtech, a person makes that check', 610, 632, m('rule', 5.5), { size: 28, fill: COL.whole, weight: 600, anchor: 'start' });
+    hmRule(p, 'Never pass a possible safety failure.', m('rule', 8), 745);
+  }],
+
+  ['q1', 'Quick check', () => {
+    const p = panel(0); l34Badge(p);
+    hmSay(p, 'one report, start to finish (illustrative)', 800, 130, .2, { size: 24, fill: COL.dim });
+    S.q1 = L34_Q1.map(([n, t, c], i) => {
+      const x = 230 + i * 380;
+      if (i) hmArrow(p, x - 380 + 150, 260, x - 160, 260, COL.dim, .3 + i * .15, .3);
+      return hmBox(p, x, 260, 290, 130, c, .3 + i * .15, n, { size: 28, fill: c, sub: [t] });
+    });
+  }, { ask: done => quiz({ x: 200, y: 400, w: 1200, cls: 'side' }, [
+    { id: 'c-limit', prompt: ['Ten agents finish drafts in minutes, but work waits two days for you. Click the limiting step.'],
+      build: pickEls(S.q1.map((g, i) => ({ el: g, box: [230 + i * 380 - 155, 185, 310, 150], label: L34_Q1[i][0] })), 2,
+        'Your review: the slowest step sets the pace of the whole flow.',
+        i => i === 3 ? 'Sending takes a minute; nothing piles up in front of it.' : 'The agents finish in minutes. Making them faster changes nothing while work waits for you.') },
+    { id: 'c-fix', prompt: ['What is the best fix?'],
+      build: choice([['Add ten more agents so drafts arrive even faster'], ['Set review blocks, batch approvals, and move routine tasks to spot checks'], ['Stop reviewing anything so the queue clears']], 1,
+        'Plan around the limiting step and raise each agent’s maturity on routine work.',
+        ['More drafts just make the queue in front of you longer.', null, 'Consequential work still needs review; skipping it trades a delay for errors.']) },
+  ], done) }],
+
+  ['control', 'Control by contract', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'Control agents by contract');
+    l34Ref(p, 'lessons 19–20: the three modes of control');
+    hmBox(p, 330, 280, 380, 140, L34.mkt, m('mkt'), 'Free market', { size: 32, fill: L34.mkt, sub: ['price and choice', 'between suppliers'] });
+    hmBox(p, 800, 280, 380, 140, L34.con, m('con'), 'Contract', { size: 32, fill: L34.con, sub: ['an agreed job, rules', 'and monitoring'] });
+    hmBox(p, 1270, 280, 380, 140, L34.cul, m('cult'), 'Culture', { size: 32, fill: L34.cul, sub: ['shared values,', 'group first'] });
+    pop(hmCross(p, 1440, 218, COL.bad, 18), m('nocult', 3));
+    hmLines(p, ['agents share no culture', 'and have no motives of their own'], 1270, 400, m('nocult', 3.5), { size: 22, fill: COL.bad, lh: 30 });
+    hmLines(p, ['choosing a vendor:', 'still the market'], 330, 400, m('nocult', 6), { size: 22, fill: COL.dim, lh: 30 });
+    const hl = mk('rect', { x: 600, y: 200, width: 400, height: 160, rx: 18, fill: 'none', stroke: L34.con, 'stroke-width': 6 }, p); put(hl, { o: 0 }); show(hl, m('contract'));
+    hmLines(p, ['a defined job, scoped', 'permissions, spending limits'], 800, 400, m('contract', .5), { size: 22, fill: L34.con, weight: 600, lh: 30 });
+    [['one-time-use card', 'Meta Muse · Sep 2026', 330, 300], ['short-lived credentials', 'Instinct · Aug–Sep 2026', 800, 330], ['access app by app', 'Meta Muse · Sep 2026', 1270, 300]].forEach(([s, d, x, w], i) => {
+      const t = m('ex', i * 1.6);
+      l34Chip(p, s, x, 530, L34.con, t, w);
+      l34Date(p, d, x, 582, t);
+    });
+    hmSay(p, 'more complex, uncertain or ambiguous task  →  tighter job definition', 800, 660, m('cua'), { size: 26 });
+    hmRule(p, 'No shared culture: control agents by contract.', m('cua', 4), 745);
+  }],
+
+  ['hybrid', 'Grove’s Law for agents', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'Grove’s Law applies to agents');
+    hmLines(p, ['“All large organizations with a common business purpose', 'end up in a hybrid organizational form.”'], 800, 170, .6, { size: 24, fill: COL.dim, lh: 32 });
+    hmSay(p, 'Grove’s Law, lessons 15–16', 800, 236, 1, { size: 18, fill: COL.faint });
+    hmBox(p, 800, 326, 640, 130, L34.gov, m('central'), ['Central: identity, credentials,', 'security and the rules'], { size: 28, sub: ['for scale and safety'] });
+    [['Team A', 400], ['Team B', 800], ['Team C', 1200]].forEach(([n, x], i) => {
+      const t = m('local', i * .6);
+      draw(path(p, `M800 391L${x} 448`, { stroke: COL.faint, 'stroke-width': 3 }, { d: 0 }), t, .4);
+      const g = G(p, { o: 0 });
+      mk('rect', { x: x - 150, y: 450, width: 300, height: 120, rx: 14, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, g);
+      T(g, n, { x, y: 482, size: 24, fill: COL.whole, weight: 600, anchor: 'middle' });
+      show(g, t);
+      [-60, 0, 60].forEach((dx, k) => show(l34Agent(p, x + dx, 532, COL.real, .5), t + .3 + k * .15));
+    });
+    hmSay(p, 'each team configures its own agents, for responsiveness', 800, 612, m('local', 2), { size: 22, fill: COL.whole });
+    hmSay(p, 'OpenAI specialist agents · Sep 2026: each gets its own identity and', 800, 658, m('spec'), { size: 22, fill: COL.real });
+    hmSay(p, 'credentials for one defined job, starting with focused pilots', 800, 688, m('spec'), { size: 22, fill: COL.real });
+    hmRule(p, 'Centralize safety and identity. Let teams configure.', m('spec', 7), 750);
+  }],
+
+  ['dual', 'One agent, two bosses', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'One agent, two bosses');
+    l34Ref(p, 'lessons 17–18: dual reporting');
+    show(l34Agent(p, 800, 440, COL.real, 1.5), .4);
+    hmSay(p, 'specialist agent', 800, 520, .4, { size: 24, fill: COL.real, weight: 600 });
+    hmBox(p, 360, 300, 380, 120, COL.whole, m('mission'), 'Mission boss', { size: 30, fill: COL.whole, sub: ['the team it serves'] });
+    hmArrow(p, 740, 410, 560, 330, COL.whole, m('mission', .4), .4);
+    hmBox(p, 1240, 300, 380, 140, L34.gov, m('func'), 'Functional boss', { size: 30, sub: ['IT and security governance,', 'e.g. Microsoft’s Agent 365'] });
+    l34Date(p, 'OpenAI specialist agents · Sep 2026', 1240, 400, m('func'));
+    hmArrow(p, 860, 410, 1040, 330, L34.gov, m('func', .4), .4);
+    l34Chip(p, 'the team decides: which tasks, what output', 460, 620, COL.whole, m('both', 1), 550);
+    l34Chip(p, 'governance decides: access and safety', 1150, 620, L34.gov, m('both', 2.2), 500);
+    hmRule(p, 'Two bosses work when both know who decides what.', m('both', 4.5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { const p = panel(0); l34Badge(p); }, { ask: done => quiz(MID, [{
+    id: 'c-mode', prompt: ['Applied to agents: market, contract or culture?'],
+    build: grid([
+      { parts: ['A one-time-use payment card for each purchase'], ans: ['c'], why: 'A hard spending limit written into the job: contract.' },
+      { parts: ['Access granted app by app'], ans: ['c'], why: 'Scoped permissions spell out what the agent may touch: contract.' },
+      { parts: ['Hoping the agent shares the team’s values'], ans: ['v'], why: 'That is culture, and it fails here: agents share no values or motives.' },
+      { parts: ['Choosing between two agent vendors on price and quality'], ans: ['m'], why: 'A priced choice between suppliers: the market does the work.' },
+    ], [['m', 'Market', L34.mkt, 'M'], ['c', 'Contract', L34.con, 'C'], ['v', 'Culture', L34.cul, 'V']], { multi: false, text: true }),
+  }], done) }],
+
+  ['regular', 'Regularity', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmHead(p, 'Keep agents from interrupting you');
+    l34Ref(p, 'lesson 7: regularity cuts interruptions');
+    // A working day, 9 to 5, 800 px wide.
+    hmSay(p, 'without', 290, 288, m('pings'), { size: 22, fill: COL.dim, anchor: 'end' });
+    const bar1 = mk('rect', { x: 310, y: 268, width: 800, height: 26, rx: 8, fill: '#33463f' }, p); put(bar1, { o: 0 }); show(bar1, m('pings'));
+    [40, 95, 130, 210, 260, 330, 370, 450, 520, 560, 640, 700, 760, 820, 880, 950].forEach((x, i) => {
+      const d = hmDot(p, 310 + x * .8, 246, COL.bad, 9); pop(d, m('pings', .3 + i * .2));
+    });
+    hmSay(p, 'agent questions, all day', 1130, 252, m('pings', 2), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmSay(p, 'with', 290, 408, m('batch'), { size: 22, fill: COL.dim, anchor: 'end' });
+    const bar2 = mk('rect', { x: 310, y: 388, width: 800, height: 26, rx: 8, fill: '#33463f' }, p); put(bar2, { o: 0 }); show(bar2, m('batch'));
+    [160, 450, 740].forEach((x, i) => { const r = mk('rect', { x: 310 + x - 40, y: 382, width: 80, height: 38, rx: 6, fill: COL.good }, p); put(r, { o: 0 }); show(r, m('batch', .4 + i * .4)); });
+    hmSay(p, 'questions batched into set times', 1130, 410, m('batch', 1.2), { size: 22, fill: COL.good, anchor: 'start' });
+    hmSay(p, '9:00', 310, 450, m('batch'), { size: 18, fill: COL.faint }); hmSay(p, '17:00', 1110, 450, m('batch'), { size: 18, fill: COL.faint });
+    hmBox(p, 440, 590, 460, 130, COL.whole, m('std'), 'Standard answers', { size: 30, fill: COL.whole, sub: ['written once,', 'reused by the agent'] });
+    hmBox(p, 1160, 590, 520, 130, COL.real, m('proact'), 'Unprompted work: read-only', { size: 30, fill: COL.real, sub: ['until you choose to act on it'] });
+    l34Date(p, 'OpenAI Dots “proactive research” · Sep 2026', 1160, 680, m('proact'));
+    hmRule(p, 'Standard answers, set times, read-only by default.', m('proact', 6), 745);
+  }],
+
+  ['q3', 'Quick check', () => { const p = panel(0); l34Badge(p); }, { ask: done => quiz(MID, [{
+    id: 'c-hybrid', prompt: ['Your company is rolling out specialist agents to many teams. Who should own what?'],
+    build: choice([['Each team sets its own agent credentials, security rules and tasks'], ['A central group owns identity, credentials and security rules; each team configures what its agents do'], ['A central group decides everything, including which tasks each team’s agents do']], 1,
+      'Grove’s hybrid: centralize what needs scale and safety, and let teams configure their own work.',
+      ['Thirty teams inventing their own security rules is how a credential leaks.', null, 'The centre is too far from each team’s work to choose its tasks well; responsiveness is lost.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0); l34Badge(p);
+    hmSay(p, 'Bonus lesson 2 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Your review is the limiting step: batch around it.', 'w1'], ['Pair output with quality; keep windows open.', 'w2'], ['Build inspection in; a person checks safety.', 'w3'], ['Control agents by contract: job, permissions.', 'w4'], ['Centralize safety; let teams configure.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-gate', prompt: ['Illustrative: an agent drafts a complaint-trend summary for a regulatory filing. What should happen before it goes out?'],
+      build: choice([['File it: the agent is usually accurate'], ['A person reviews and signs it before it is sent'], ['A second agent approves it instead of a person']], 1,
+        'Anything that reaches a regulator is an irreversible step, so a person stays accountable at that gate.',
+        ['“Usually accurate” is not enough at a step you cannot undo.', null, 'An independent checker helps, but in regulated work a person still owns the decision.']) },
+    { id: 'p-pair', prompt: ['Illustrative: your agents report 400 literature summaries done this week. What should you pair with that number?'],
+      build: choice([['How much compute they used'], ['How many summaries needed correction'], ['How many agents were running']], 1,
+        'Pair output with quality, so pushing volume cannot hide a rise in errors.',
+        ['Cost matters, but it says nothing about whether the work is right.', null, 'That counts activity, not the quality of the output.']) },
+    { id: 'p-ping', prompt: ['A test-planning agent pings you twenty times a day with small questions. What is the best fix?'],
+      build: choice([['Answer each one at once to keep it moving'], ['Write standard answers it can reuse and batch the rest into set times'], ['Switch the agent off']], 1,
+        'Grove’s cures for interruptions work for agents too: standard answers and set times.',
+        ['Twenty interruptions a day break up your own work.', null, 'The agent is doing useful work; channel its questions instead of losing it.']) },
+    { id: 'p-trm', prompt: ['Illustrative: a research agent has run routine literature searches for six months with almost no errors. What now?'],
+      build: choice([['Keep approving every step of every search'], ['Move to spot checks on this routine task'], ['Let it approve study protocols as well']], 1,
+        'Its maturity on this task has been earned, so lighter monitoring frees your limiting step.',
+        ['That keeps you the bottleneck on a task it has mastered.', null, 'Maturity is per task: good searches say nothing about protocol decisions.']) },
+    { id: 'p-access', prompt: ['A team asks for its scheduling agent to get admin access to the clinical data system “to save time.” What do you do?'],
+      build: choice([['Grant it: the team knows its own work'], ['Send it to central security governance and scope access to the job'], ['Let the agent request whatever access it finds it needs']], 1,
+        'Identity and access are centralized for safety, and the agent gets only what its defined job needs.',
+        ['Teams configure tasks, but access to sensitive systems is the functional boss’s call.', null, 'That is control by hope, not by contract.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

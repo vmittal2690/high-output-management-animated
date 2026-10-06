@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The planning process</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 12, title: 'The planning process', kicker: 'Chapter 6 · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch13/index.html' };
+
+/* Colours: purple = step 1, demand; blue = step 2, present status and ordinary work; green = step 3, the actions
+   that close the gap (the strategy); red = the gap or a problem; amber = the rule. */
+const L12_C = [COL.real, COL.whole, COL.good];
+function l12Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l12Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A numbered step disc in its step colour.
+function l12Step(p, n, x, y, t0, r = 24) {
+  const g = G(p, { x, y, o: 0 });
+  mk('circle', { r, fill: L12_C[n - 1] }, g);
+  T(g, String(n), { x: 0, y: r * .42, size: r * 1.15, fill: COL.board, weight: 700, anchor: 'middle' });
+  show(g, t0); return g;
+}
+// A bar that grows to the right from x.
+function l12BarR(p, x, y, w, h, fill, t0, dur = .8) {
+  const r = mk('rect', { x, y, width: 0, height: h, rx: 6, fill }, p);
+  put(r, { a_width: 0 }); tw(r, { a_width: w }, t0, dur, out); return r;
+}
+function l12Doc(p, x, y, color, frac, t0) {
+  const g = G(p, { x, y, o: 0 });
+  mk('rect', { x: -22, y: -28, width: 44, height: 56, rx: 5, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  mk('rect', { x: -22, y: 28 - 56 * frac, width: 44, height: 56 * frac, rx: 5, fill: color, opacity: .55 }, g);
+  show(g, t0); return g;
+}
+
+const BEATS = [
+  ['intro', 'The planning process', (m, D) => hmTitle(m, D, 'Chapter 6 · Planning: Today’s Actions for Tomorrow’s Output · Lesson 1 of 2', 'The planning process', 'What will be demanded of you, where you stand, and how to close the gap')],
+
+  ['gas', 'Planning is ordinary', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Planning is an everyday thing');
+    // the drive: home to work
+    const home = G(p, { x: 260, y: 250, o: 0 });
+    path(home, 'M-36 0L0 -32L36 0V40H-36Z', { fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 });
+    show(home, .3);
+    const work = G(p, { x: 1340, y: 250, o: 0 });
+    mk('rect', { x: -34, y: -40, width: 68, height: 80, rx: 4, fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 }, work);
+    for (let i = 0; i < 3; i++) mk('rect', { x: -20, y: -28 + i * 22, width: 40, height: 10, rx: 2, fill: COL.faint }, work);
+    show(work, .4);
+    hmSay(p, 'home', 260, 325, .3, { size: 22, fill: COL.dim }); hmSay(p, 'work', 1340, 325, .4, { size: 22, fill: COL.dim });
+    draw(path(p, 'M320 270H1280', { stroke: COL.faint, 'stroke-width': 4, 'stroke-dasharray': '18 12' }, { d: 0 }), .5, .8);
+    const car = G(p, { x: 330, y: 254, o: 0 });
+    mk('rect', { x: -34, y: -16, width: 68, height: 26, rx: 8, fill: COL.whole }, car);
+    mk('circle', { cx: -18, cy: 12, r: 7, fill: COL.chalk }, car); mk('circle', { cx: 18, cy: 12, r: 7, fill: COL.chalk }, car);
+    show(car, m('drive')); tw(car, { x: 520 }, m('drive', .3), 2.5, io);
+    // the gauge
+    const gg = G(p, { x: 360, y: 560, o: 0 });
+    path(gg, 'M-110 0A110 110 0 0 1 110 0', { stroke: COL.chalk, 'stroke-width': 5 });
+    T(gg, 'E', { x: -110, y: 36, size: 26, fill: COL.bad, anchor: 'middle', weight: 700 });
+    T(gg, 'F', { x: 110, y: 36, size: 26, fill: COL.good, anchor: 'middle', weight: 700 });
+    mk('circle', { r: 10, fill: COL.chalk }, gg);
+    const nd = G(gg, { r: -90 }); path(nd, 'M0 0V-92', { stroke: COL.task, 'stroke-width': 5 });
+    show(gg, m('drive', .8)); tw(nd, { r: -50 }, m('drive', 1.4), 1, out);
+    hmSay(p, 'the gauge', 360, 640, m('drive', .8), { size: 22, fill: COL.dim });
+    // need vs have, to the same scale
+    hmSay(p, 'gas you need, to work and back', 640, 470, m('need'), { size: 24, fill: COL.real, anchor: 'start', weight: 600 });
+    l12BarR(p, 640, 485, 520, 40, COL.real, m('need', .4));
+    hmSay(p, 'gas in the tank', 640, 575, m('have'), { size: 24, fill: COL.whole, anchor: 'start', weight: 600 });
+    l12BarR(p, 640, 590, 340, 40, COL.whole, m('have', .3));
+    const gap = mk('rect', { x: 980, y: 590, width: 180, height: 40, rx: 6, fill: 'none', stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, p);
+    put(gap, { o: 0 }); show(gap, m('decide'));
+    hmSay(p, 'short: stop for gas', 1180, 618, m('decide', .4), { size: 24, fill: COL.bad, anchor: 'start', weight: 600 });
+    hmRule(p, 'Planning: compare what you’ll need with what you have.', m('decide', 2.8), 745);
+  }],
+
+  ['steps', 'Three steps', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Every plan has three steps');
+    hmSay(p, 'the breakfast factory', 420, 200, .3, { size: 26, fill: COL.dim, weight: 600 });
+    [['forecast market demand', 'f1'], ['output if nothing changes', 'f2'], ['adjust production starts', 'f3']].forEach(([s, k], i) => {
+      l12Step(p, i + 1, 190, 290 + i * 120, m(k));
+      hmSay(p, s, 235, 299 + i * 120, m(k, .2), { size: 26, anchor: 'start' });
+    });
+    hmArrow(p, 600, 410, 730, 410, COL.dim, m('g'), .5);
+    hmSay(p, 'any plan', 1080, 200, m('g'), { size: 26, fill: COL.dim, weight: 600 });
+    [['What will your environment demand?', 'g1', 'demand'], ['Where will you be if nothing changes?', 'g2', 'present status, counting the pipeline'], ['What more, or less, must you do?', 'g3', 'close the gap']].forEach(([s, k, sub], i) => {
+      l12Step(p, i + 1, 800, 290 + i * 120, m(k));
+      hmSay(p, s, 845, 299 + i * 120, m(k, .2), { size: 26, anchor: 'start', weight: 600 });
+      hmSay(p, sub, 845, 335 + i * 120, m(k, .8), { size: 22, anchor: 'start', fill: L12_C[i] });
+    });
+    hmRule(p, 'Every plan: demand, present status, close the gap.', m('g3', 2.8), 745);
+  }],
+
+  ['env', 'Step 1: your environment', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Step 1: what will your environment demand?');
+    hmSay(p, 'Treat your group as its own company', 800, 180, 2.5, { size: 26, fill: COL.dim });
+    hmBox(p, 800, 320, 260, 90, COL.whole, m('mail'), 'the mailroom', { size: 28 });
+    hmBox(p, 310, 320, 330, 110, COL.real, m('cust'), 'customers', { size: 28, sub: ['the rest of the company'] });
+    hmArrow(p, 668, 320, 480, 320, COL.dim, m('cust', .4), .5);
+    hmBox(p, 1290, 320, 350, 110, COL.whole, m('vend'), 'vendors', { size: 28, sub: ['postage meters, mail carts'] });
+    hmArrow(p, 1112, 320, 934, 320, COL.dim, m('vend', .4), .5);
+    hmBox(p, 800, 465, 520, 110, COL.faint, m('comp'), 'no internal competitor', { size: 28, sub: ['benchmark: an outside parcel service'] });
+    hmSay(p, 'Look at:', 160, 588, m('look'), { size: 24, anchor: 'start', weight: 700 });
+    l12Chip(p, 'what customers expect, how they see you', 560, 580, COL.real, m('look', .3), 500, 22);
+    l12Chip(p, 'new technology, other ways to do it', 1110, 580, COL.real, m('look', 3), 450, 22);
+    l12Chip(p, 'your vendors’ performance', 470, 645, COL.whole, m('look', 6), 330, 22);
+    l12Chip(p, 'groups your work depends on', 880, 645, COL.whole, m('look', 7.5), 360, 22);
+    hmRule(p, 'See your group as a company: customers, vendors, rivals.', m('look', 10), 745);
+  }],
+
+  ['diff', 'Now and a year out', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Demand now, and a year from now');
+    // illustrative heights: demand now 260 px, demand in a year 380 px; today's work meets today's demand
+    const base = 620;
+    hmBarUp(p, 360, base, 190, 260, COL.real, m('now'));
+    hmBarUp(p, 360, base, 190, 260, COL.whole, m('now', 1.2));
+    hmSay(p, 'now', 455, base + 40, m('now'), { size: 26, fill: COL.dim });
+    hmBarUp(p, 700, base, 190, 380, COL.real, m('year'));
+    hmBarUp(p, 700, base, 190, 260, COL.whole, m('year', 1.2));
+    hmSay(p, 'a year from now', 795, base + 40, m('year'), { size: 26, fill: COL.dim });
+    hmSay(p, 'illustrative', 1460, base + 40, m('now'), { size: 18, fill: COL.faint, anchor: 'end' });
+    // legend
+    mk('rect', { x: 1060, y: 536, width: 26, height: 26, rx: 4, fill: COL.real }, p);
+    hmSay(p, 'what the environment demands', 1100, 558, m('now'), { size: 22, anchor: 'start', fill: COL.real });
+    mk('rect', { x: 1060, y: 586, width: 26, height: 26, rx: 4, fill: COL.whole }, p);
+    hmSay(p, 'what today’s work delivers', 1100, 608, m('now', 1.2), { size: 22, anchor: 'start', fill: COL.whole });
+    // the difference
+    draw(path(p, `M905 ${base - 380}H925V${base - 260}H905`, { stroke: COL.bad, 'stroke-width': 4 }, { d: 0 }), m('gap'), .5);
+    hmSay(p, 'the difference', 945, base - 312, m('gap', .3), { size: 26, fill: COL.bad, anchor: 'start', weight: 700 });
+    hmLines(p, ['new work should', 'answer the difference'], 945, base - 200, m('gap', 5), { size: 26, fill: COL.good, anchor: 'start', weight: 600 });
+    hmRule(p, 'Plan for the difference between now and a year out.', m('gap', 8.5), 745);
+  }],
+
+  ['honest', 'State demand honestly', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Don’t shrink demand to fit capacity');
+    // to scale: 4 px per unit a month, base y 620
+    const base = 620, u = 4;
+    path(p, `M220 ${base}H1060`, { stroke: COL.dim, 'stroke-width': 3 });
+    hmBarUp(p, 260, base, 170, 100 * u, COL.real, m('mkt', .3));
+    hmSay(p, '100', 345, base - 100 * u - 14, m('mkt', .6), { size: 28, fill: COL.real, weight: 700 });
+    hmSay(p, 'could sell', 345, base + 36, m('mkt'), { size: 22, fill: COL.dim });
+    hmLines(p, ['doubts the factory', 'can make more than 10'], 1110, 300, m('doubt'), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmBarUp(p, 540, base, 170, 10 * u, COL.real, m('ten'));
+    hmSay(p, '10', 625, base - 10 * u - 14, m('ten', .3), { size: 28, fill: COL.real, weight: 700 });
+    hmSay(p, 'forecast', 625, base + 36, m('ten'), { size: 22, fill: COL.dim });
+    hmBarUp(p, 820, base, 170, 10 * u, COL.whole, m('never'));
+    const miss = mk('rect', { x: 820, y: base - 100 * u, width: 170, height: 90 * u, rx: 6, fill: 'none', stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, p);
+    put(miss, { o: 0 }); show(miss, m('never', 1));
+    hmSay(p, 'factory tools up', 905, base + 36, m('never'), { size: 22, fill: COL.dim });
+    hmLines(p, ['real demand', 'never met'], 905, 380, m('never', 1.4), { size: 20, fill: COL.bad, weight: 700 });
+    hmSay(p, 'units a month (to scale)', 640, base + 72, m('mkt'), { size: 18, fill: COL.faint });
+    hmLines(p, ['Step 1: the real 100.', 'Step 3: deal with', 'capacity.'], 1110, 470, m('sep'), { size: 26, fill: COL.good, anchor: 'start', weight: 600 });
+    hmRule(p, 'State demand honestly; capacity comes in step 3.', m('sep', 3.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-honest', prompt: ['Hospitals will likely want 100 device training sessions a month next year (illustrative). Your team can run about 10. What goes into step 1 of your plan?'],
+    build: choice([['10: what the team can actually deliver'], ['100: the real demand'], ['55: a middle figure']], 1,
+      'Step 1 states demand honestly. What you can do is handled in step 3, where the gap is closed.',
+      ['Then nobody ever builds up to the real demand, like a factory that never tools up.', null, 'A blend still hides the real demand from the people who must plan for it.']),
+  }], done) }],
+
+  ['status', 'Step 2: present status', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Step 2: where do you stand now?');
+    l12Chip(p, 'demand: finished designs', 440, 200, COL.real, m('curr'), 360);
+    l12Chip(p, 'pipeline: partly finished designs', 1080, 200, COL.whole, m('curr', 4), 450);
+    hmSay(p, 'same currency', 760, 208, m('curr', 4.5), { size: 20, fill: COL.dim });
+    // the pipeline
+    const pipe = mk('rect', { x: 200, y: 280, width: 1080, height: 90, rx: 45, fill: 'none', stroke: COL.faint, 'stroke-width': 3 }, p);
+    put(pipe, { o: 0 }); show(pipe, m('list'));
+    hmArrow(p, 1290, 325, 1380, 325, COL.dim, m('list', .3), .4);
+    hmSay(p, 'out', 1400, 333, m('list', .5), { size: 22, fill: COL.dim, anchor: 'start' });
+    [[330, .15], [530, .35], [730, .5], [930, .7], [1130, .9]].forEach(([x, f], i) => l12Doc(p, x, 325, COL.whole, f, m('list', .6 + i * .3)));
+    ['next year', 'Q4', 'Q3', 'Q2', 'Q1'].forEach((s, i) => hmSay(p, 'out ' + s, 330 + i * 200, 405, m('when', i * .3), { size: 20, fill: COL.whole }));
+    // losses: 10 started, about 8 finish
+    hmSay(p, 'started:', 300, 497, m('loss'), { size: 22, fill: COL.dim, anchor: 'end' });
+    for (let i = 0; i < 10; i++) {
+      const bad = i >= 8, sq = mk('rect', { x: 330 + i * 64, y: 465, width: 48, height: 48, rx: 6, fill: bad ? 'none' : COL.good, stroke: bad ? COL.bad : 'none', 'stroke-width': 3 }, p);
+      put(sq, { o: 0 }); show(sq, m('loss', .3 + i * .1));
+      if (bad) pop(hmCross(p, 354 + i * 64, 489, COL.bad, 12), m('loss', 3 + (i - 8) * .3));
+    }
+    hmSay(p, '≈ 8 in 10 finish', 1000, 498, m('loss', 3.5), { size: 26, fill: COL.good, anchor: 'start', weight: 700 });
+    hmSay(p, 'Grove: in chip-making only about 80% of material started gets finished', 800, 580, m('loss', 4), { size: 24, fill: COL.dim });
+    hmSay(p, 'Allow for some loss in managerial projects too.', 800, 650, m('mgr'), { size: 28, weight: 600 });
+    hmRule(p, 'Count the pipeline in demand’s currency, minus losses.', m('mgr', 2.8), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-loss', prompt: ['You start 50 product designs this year. About 80% of work started gets finished. How many finished designs should your plan count on?'],
+    build: blanks([{ parts: ['80% of 50 = ', { box: '40' }, '  designs'], why: 'Forty, not fifty: some started work will be scrapped or dropped.', hint: 'Eight in every ten. 50 × 0.8.' }]),
+  }], done) }],
+
+  ['gap', 'Step 3: close the gap', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Step 3: what will you do to close the gap?');
+    const base = 640;
+    hmBarUp(p, 230, base, 150, 400, COL.real, .4);
+    hmBarUp(p, 430, base, 150, 240, COL.whole, .6);
+    const gp = mk('rect', { x: 430, y: base - 400, width: 150, height: 160, rx: 6, fill: 'none', stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, p);
+    put(gp, { o: 0 }); show(gp, .9);
+    hmSay(p, 'demand', 305, base + 36, .4, { size: 22, fill: COL.dim });
+    hmSay(p, 'status', 505, base + 36, .6, { size: 22, fill: COL.dim });
+    hmSay(p, 'gap', 600, base - 310, .9, { size: 24, fill: COL.bad, weight: 700, anchor: 'start' });
+    hmSay(p, '1. What do I need to do?', 760, 300, m('need'), { size: 30, anchor: 'start', weight: 600 });
+    hmSay(p, '2. What can I do?', 760, 370, m('can'), { size: 30, anchor: 'start', weight: 600 });
+    hmSay(p, 'ask each separately', 1060, 370, m('can', .8), { size: 22, anchor: 'start', fill: COL.dim });
+    hmSay(p, '3. What will I do?', 760, 440, m('will'), { size: 30, anchor: 'start', weight: 600 });
+    hmSay(p, 'how much of the gap will it close, and when?', 790, 478, m('will', 1), { size: 22, anchor: 'start', fill: COL.dim });
+    hmBarUp(p, 430, base - 240, 150, 120, COL.good, m('will', 1.5));
+    hmSay(p, 'That set of actions is your strategy.', 760, 580, m('strat'), { size: 30, anchor: 'start', fill: COL.good, weight: 700 });
+    hmRule(p, 'The actions you choose to close the gap: your strategy.', m('strat', 2.6), 745);
+  }],
+
+  ['strat', 'Strategy or tactics?', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Strategy or tactics?');
+    hmSay(p, 'strategy: the most general summary of what you plan to do', 800, 190, m('def'), { size: 26, fill: COL.good });
+    hmSay(p, 'tactics: what you do to carry it out', 800, 232, m('def', 3.5), { size: 26, fill: COL.dim });
+    hmBox(p, 760, 350, 760, 110, COL.good, m('comm'), 'Communications manager', { size: 28, sub: ['strategy: electronic mail between all plants'] });
+    hmBox(p, 760, 540, 760, 110, COL.good, m('room'), 'Mailroom manager', { size: 28, sub: ['strategy: printers in the mailroom, deliver the printouts'] });
+    hmArrow(p, 760, 482, 760, 418, COL.dim, m('room', .5), .3);
+    hmArrow(p, 1170, 540, 1170, 360, COL.whole, m('same'), .6);
+    hmLines(p, ['= the boss’s', 'tactics'], 1195, 420, m('same', .5), { size: 26, fill: COL.whole, anchor: 'start', weight: 600 });
+    hmRule(p, 'One level’s strategy is the next level up’s tactics.', m('same', 3.5), 745);
+  }],
+
+  ['bruce', 'A marketing manager', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s marketing manager: a gap he can’t close');
+    [210, 290, 370].forEach((x, i) => show(l12Person(p, x, 280, COL.whole), m('three', i * .2)));
+    hmSay(p, '3 people', 290, 350, m('three', .6), { size: 24, fill: COL.whole, weight: 600 });
+    for (let i = 0; i < 15; i++) {
+      const r = mk('rect', { x: 500 + (i % 5) * 76, y: 220 + Math.floor(i / 5) * 54, width: 62, height: 40, rx: 5, fill: '#16211d', stroke: COL.real, 'stroke-width': 2.5 }, p);
+      put(r, { o: 0 }); show(r, m('three', 1.5 + i * .08));
+    }
+    hmSay(p, 'projects, all must be finished', 690, 410, m('three', 2.5), { size: 22, fill: COL.real });
+    l12Chip(p, 'no budget to hire', 1200, 250, COL.bad, m('three', 6), 260);
+    hmLines(p, ['a full match is impossible:', 'narrow the gap'], 1200, 330, m('narrow'), { size: 24, fill: COL.bad, weight: 600 });
+    hmSay(p, 'Now', 180, 490, m('moves'), { size: 26, anchor: 'start', weight: 700, fill: COL.good });
+    [['non-critical tasks → less busy groups', 0], ['a summer student for well-defined work', 3.5], ['monitor the group closely', 7.5]].forEach(([s, o], i) => hmSay(p, '• ' + s, 180, 540 + i * 48, m('moves', o), { size: 24, anchor: 'start' }));
+    hmSay(p, 'Longer term', 880, 490, m('long'), { size: 26, anchor: 'start', weight: 700, fill: COL.good });
+    hmSay(p, '• share work with similar groups', 880, 540, m('long', .5), { size: 24, anchor: 'start' });
+    hmSay(p, '• cut duplication between them', 880, 588, m('long', 2.5), { size: 24, anchor: 'start' });
+    hmSay(p, '• ask to grow, with the plan as the case', 880, 636, m('req'), { size: 24, anchor: 'start', fill: COL.good, weight: 600 });
+    hmRule(p, 'Can’t close the gap? Narrow it; let the plan make the case.', m('req', 3.5), 745);
+  }],
+
+  ['cindy', 'A process engineer', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s process engineer plans in three steps');
+    l12Step(p, 1, 70, 230, m('env'), 20);
+    hmBox(p, 290, 230, 320, 120, COL.real, m('env'), '“objects”', { size: 26, sub: ['untested processes', 'and tools'] });
+    hmBox(p, 790, 230, 560, 120, COL.real, m('env', 3), '“influences”', { size: 26, sub: ['development: less testing, less paperwork', 'production: more of both'] });
+    hmBox(p, 1310, 230, 420, 120, COL.real, m('cust'), 'customer: production', { size: 26, sub: ['vendors: the engineering groups'] });
+    l12Step(p, 2, 70, 352, m('status'), 20);
+    hmSay(p, 'status: development’s data always arrives incomplete (low on their list)', 120, 361, m('status'), { size: 24, fill: COL.bad, anchor: 'start' });
+    l12Step(p, 3, 70, 480, m('plan'), 20);
+    hmChain(p, ['define every step', 'set the dates', 'agree the dates', 'monitor weekly'], [268, 622, 976, 1330], 480, 310, 120, COL.good,
+      [m('plan'), m('plan', 3.5), m('agree'), m('mon')], { size: 26, subs: [['before a process goes in'], ['by time offsets'], ['with development’s', 'manager'], ['and publish the results']] });
+    hmSay(p, 'published results: an indicator, and a window into the black box', 800, 620, m('mon', 4), { size: 24, fill: COL.dim });
+    hmRule(p, 'Define the steps, date them, agree them, then watch them.', m('mon', 6.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-step', prompt: ['Which planning step is each action? (illustrative)'],
+    build: grid([
+      { parts: ['Ask the clinical team what they will need from you next year'], ans: ['d'], why: 'Step 1: what your environment will demand.' },
+      { parts: ['List the projects in progress and when each will finish'], ans: ['s'], why: 'Step 2: your pipeline, with its timing.' },
+      { parts: ['Discount the pipeline for projects likely to be cancelled'], ans: ['s'], why: 'Step 2: not every started project finishes.' },
+      { parts: ['Hand a non-critical task to a less busy group'], ans: ['c'], why: 'Step 3: an action that narrows the gap.' },
+      { parts: ['Compare what hospitals expect now with what they will expect in a year'], ans: ['d'], why: 'Step 1: the difference between demand now and later.' },
+      { parts: ['Request headcount, with the plan as the case'], ans: ['c'], why: 'Step 3: part of the strategy to close the gap.' },
+    ], [['d', '1 Demand', COL.real, 'D'], ['s', '2 Status', COL.whole, 'S'], ['c', '3 Close the gap', COL.good, 'C']], { multi: false, text: true }),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 12 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Plan in three steps: demand, status, close the gap.', 'w1'], ['Look now and a year out; plan for the difference.', 'w2'], ['State demand honestly, before thinking of capacity.', 'w3'], ['Count the pipeline in demand’s terms, minus losses.', 'w4'], ['Your actions to close the gap are your strategy.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-demand', prompt: ['Planning next year, a peer lists only the requests her team thinks it can handle. What would Grove say?'],
+      build: choice([['Sensible: it avoids overpromising'], ['List the real demand first; deal with capacity in step 3'], ['Skip demand and start from current projects']], 1,
+        'Shrinking demand to fit capacity means nobody ever builds up to the real need.',
+        ['It hides the real demand, so the gap is never seen or closed.', null, 'Without demand there is nothing to compare your status against.']) },
+    { id: 'p-currency', prompt: ['Demand is stated as verified device-software releases (illustrative). How should you count work in progress?'],
+      build: choice([['As hours spent so far'], ['As partly finished releases, with when each will come out'], ['As the number of people on the team']], 1,
+        'Use the same currency as demand, and note the timing of each item in the pipeline.',
+        ['Hours spent can’t be compared with releases demanded.', null, 'Headcount is a capability, not output in the pipeline.']) },
+    { id: 'p-loss', prompt: ['Your pipeline holds 10 clinical evidence packages (illustrative). How many should the plan count on?'],
+      build: choice([['All 10: they are all started'], ['Fewer: allow for some to be dropped or delayed'], ['None until each is finished']], 1,
+        'Not every started project finishes. Factor in some loss, as chip-makers do.',
+        ['Some will be scrapped or delayed; planning on all 10 overstates your output.', null, 'That ignores real work in progress and overstates the gap.']) },
+    { id: 'p-tactic', prompt: ['Your director’s strategy is to move all device test data to one system. Your plan to migrate your lab’s records is…'],
+      build: choice([['Your strategy, and her tactics'], ['Only tactics: strategy is for directors'], ['Unrelated to her strategy']], 0,
+        'One level’s strategy is the tactical concern of the level above.',
+        [null, 'Every manager has a strategy: the general summary of their own plan.', 'It implements hers, so it is her tactics.']) },
+    { id: 'p-narrow', prompt: ['Your team can’t finish everything required this year, and you can’t hire. What did Grove’s marketing manager do?'],
+      build: choice([['Dropped the plan as hopeless'], ['Narrowed the gap: shifted non-critical work, added temporary help, used the plan to ask to grow'], ['Had everyone work weekends until it was done']], 1,
+        'He accepted that a full match was impossible, narrowed the gap, and let the plan make his case.',
+        ['The plan is what shows the gap and justifies more people.', null, 'That is not a plan; it burns the team out and still may not close the gap.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

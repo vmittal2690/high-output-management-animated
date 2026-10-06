@@ -1,0 +1,20 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Lesson two. [[sub]]What changes when the work scales up, and where to catch problems.",
+    "cont": "Business is good, so you turn the kitchen into a breakfast factory. [[boiler]]A continuous egg boiler turns out a steady stream of three-minute eggs, [[toast]]matched by a continuous toaster. [[plus]]You gain lower cost and predictable quality. [[minus]]You give up flexibility. This machine cannot make a four-minute egg. [[adjust]]Customers get the benefits, but they have to fit the menu.",
+    "fail": "Scale carries a risk. [[drift]]Suppose the water temperature quietly drifts out of range. [[lost]]Every egg in the boiler, and every egg made since the drift began, is unusable. [[toast]]The toast made to go with them is wasted too. [[q]]How do you catch a fault like that early?",
+    "tests": "One way is a functional test. [[open]]Every so often, open an egg and look. [[destroy]]It works, but you throw that egg away. The other way is in-process inspection. [[thermo]]Put a thermometer in the water, [[alarm]]and wire it to an alarm. [[rule]]Whenever you can, choose the check that does not destroy the product.",
+    "q1": "Quick check. Which one is the in-process check?",
+    "incoming": "Trouble can also arrive from outside. [[door]]So inspect the eggs at the door. That is incoming inspection. [[reject]]But if you send a bad batch back, you have nothing to cook. [[stock]]So keep a raw material inventory: enough to cover what you use in the time it takes to get more. [[day]]If the egg man comes once a day, keep a day's supply. [[cost]]Inventory costs money, so weigh it against the opportunity at risk: [[risk]]what a day's shutdown would cost you in lost customers.",
+    "q2": "Quick check. How much stock covers the gap?",
+    "value": "Work gains value at every step. [[s1]]A raw egg is cheap. [[s2]]A boiled egg is worth more. [[s3]]A plated breakfast, more again. [[s4]]And a breakfast on the customer's table is worth the most. [[bad]]Catch a bad egg at the door and you lose a few cents. [[late]]Let it reach the table and you lose the whole meal, and maybe the customer. [[rule]]So detect and fix problems at the lowest-value stage you can.",
+    "q3": "Quick check. Where should the problem be caught?",
+    "jail": "Here is the same thinking in a very different place. [[flow]]Treat the justice system as a production line: report, investigation, arrest, trial, conviction, jail. [[narrow]]Few cases make it all the way through. [[mil]]Grove estimated that each conviction ending in jail cost society over a million dollars. [[cell]]A jail cell cost about eighty thousand. [[limit]]Yet a shortage of cells was what limited the whole system. [[rule]]Never let a cheap step choke an expensive one.",
+    "q4": "Quick check. Spot the wrong limiting step.",
+    "wrap": "To sum up. [[w1]]Scale lowers cost but gives up flexibility. [[w2]]Prefer checks that do not destroy the work. [[w3]]Hold enough raw material to cover the time to restock. [[w4]]Catch problems at the lowest-value stage. [[w5]]Never let a cheap step limit an expensive one. [[end]]Now try the lesson practice.",
+    "final1": "Lesson practice. Four situations from a manager's week.",
+    "finish": "Well done. That is the end of chapter one."
+  }
+}

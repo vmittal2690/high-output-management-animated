@@ -1,0 +1,20 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Bonus lesson one. [[sub]]Grove never met an AI agent. But his ideas fit them remarkably well. This chapter is our application, not his.",
+    "new": "In the fall of 2026, a new kind of software arrived. [[dots]]OpenAI's Dots: always-on agents in ChatGPT. You hand one a goal, and it carries the job forward on its own computer in the cloud. [[muse]]Meta's Muse: a personal agent that books, fills forms, negotiates and checks out, and keeps working after you close the app. [[inst]]And Instinct, a startup whose agent you text or call to plan trips, buy groceries or cancel subscriptions. [[shift]]These don't answer questions. They do work. And work that is delegated needs managing.",
+    "output": "Remember Grove's definition. [[def]]A manager's output is the output of their organization, plus the neighbouring organizations they influence. [[now]]Agents you direct are now part of your organization. [[yours]]Their output is your output. [[mist]]And so are their mistakes.",
+    "lever": "Leverage is output per activity. [[mult]]Agents can multiply it enormously. One clear brief can drive hours of work. [[brief]]A well-written brief is now one of the highest-leverage things a manager does. [[neg]]But leverage can be negative, too. A vague or wrong brief also gets carried out, at machine speed.",
+    "q1": "Quick check.",
+    "base": "Grove said delegation only works with a shared base: [[info]]the same information, [[approach]]and the same sense of how to solve problems. [[learn]]Agents now build that base. Dots learn their owner's preferences from feedback. Muse remembers what matters to you, and can be told to forget. [[write]]So give it what you'd give a new report: the objective, your priorities, and how you prefer things done.",
+    "follow": "Grove's warning still holds: delegation without follow-through is abdication. [[still]]You remain responsible for the result. [[watch]]The new tools build in follow-through. Each Dot has a computer you can open to see what it's doing. It sends progress updates and questions. [[trail]]Muse keeps an audit trail of what it has done and what it plans to do. [[use]]Monitoring isn't meddling. Use them.",
+    "gate": "Where should you check? Grove: at the lowest-value stage, [[gate]]and gate anything whose failure would reach the customer. [[irrev]]With agents, gate the irreversible steps: sending, paying, signing, submitting. [[ex]]Muse asks before it sends an email or makes a purchase. One tester's Dot noticed a forgotten invoice, drafted it, and waited for approval before sending. [[sample]]Everything reversible, you can sample. [[med]]In regulated work, anything that reaches a patient, a customer or a regulator gets a gate and a person who signs.",
+    "q2": "Quick check. Gate or monitor?",
+    "trm": "How much freedom should an agent get? Use task-relevant maturity. [[task]]It belongs to the task, not the agent. [[low]]For a new kind of task, start structured: read-only access, or approval at every step. Dots, when nobody has given them a task, look for ways to help with read-only access, so they can't send or change anything. [[mid]]As the record builds, approve at key points instead. [[high]]And once it's proven, spot check. [[back]]If something goes wrong, drop back to structure, exactly as Grove would with a person.",
+    "q3": "Quick check.",
+    "wrap": "To sum up. [[w1]]Agents you direct are part of your output, and so are their mistakes. [[w2]]A clear brief is high leverage; a vague one is negative leverage. [[w3]]Share the objective, priorities and preferred approach. [[w4]]Follow through: gate the irreversible, sample the rest. [[w5]]Grant autonomy by task, as the track record grows. Now the lesson practice.",
+    "final1": "Lesson practice. Five situations from a manager's week, with agents.",
+    "finish": "Well done. That is the end of bonus lesson one."
+  }
+}

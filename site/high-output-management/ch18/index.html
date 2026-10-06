@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dual reporting at work</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 18, title: 'Dual reporting at work', kicker: 'Chapter 9 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch19/index.html' };
+
+/* Colours (as in lesson 17): purple = the mission-oriented side (division, general manager, a task force);
+   salmon = functional supervision, peer councils and the coordinating plane; blue = ordinary people and the
+   operating plane; chalk outline = the one person we follow; green = the goal; red = a problem; amber = the rule. */
+function l18Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l18Chip = (p, s, x, y, color, t0, w, size = 22) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l18Line(p, d, color, t0, dashed = false, dur = .5) {
+  if (dashed) { const e = path(p, d, { stroke: color, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, { o: 0 }); show(e, t0); return e; }
+  const e = path(p, d, { stroke: color, 'stroke-width': 3 }, { d: 0 }); draw(e, t0, dur); return e;
+}
+// A small factory outline; returns its fill, which is shown when the plant is reached.
+function l18Plant(p, x, y, t0) {
+  const g = G(p, { x, y, o: 0 });
+  const d = 'M-60 40V-10L-30 -30V-10L0 -30V-10L30 -30V-40H50V40Z';
+  const fillE = path(g, d, { fill: COL.nat, stroke: 'none' }, { o: 0 });
+  path(g, d, { fill: 'none', stroke: COL.dim, 'stroke-width': 3 });
+  show(g, t0); return fillE;
+}
+// One plane of the two-plane chart: a slanted sheet with a small hierarchy on it.
+function l18Plane(p, y0, color, fillA, t0, top, mid, her) {
+  const sh = path(p, `M440 ${y0}H1400L1360 ${y0 + 240}H400Z`, { fill: fillA, stroke: color, 'stroke-width': 2 }, { o: 0 }); show(sh, t0);
+  hmBox(p, 860, y0 + 40, 380, 50, color, t0 + .3, top, { size: 20, fill: color });
+  [600, 860, 1120].forEach((x, i) => hmBox(p, x, y0 + 120, 220, 46, color, t0 + .5 + i * .15, mid, { size: 20 }));
+  l18Line(p, `M860 ${y0 + 65}V${y0 + 81}H600V${y0 + 97}M860 ${y0 + 81}V${y0 + 97}M860 ${y0 + 81}H1120V${y0 + 97}`, color, t0 + .5, false, .5);
+  hmBox(p, 1020, y0 + 200, 150, 46, COL.faint, t0 + 1, 'engineer', { size: 20, fill: COL.dim });
+  const b = hmBox(p, 1215, y0 + 200, 220, 46, COL.chalk, her, 'process engineer', { size: 20 });
+  l18Line(p, `M1120 ${y0 + 143}V${y0 + 160}H1020V${y0 + 177}M1120 ${y0 + 160}H1215V${y0 + 177}`, color, t0 + 1, false, .4);
+  return b;
+}
+
+const BEATS = [
+  ['intro', 'Dual reporting at work', (m, D) => hmTitle(m, D, 'Chapter 9 · Dual Reporting · Lesson 2 of 2', 'Dual reporting at work', 'Controllers, advertising, and the two-plane organization')],
+
+  ['controller', 'The controller', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The controller: two bosses, two kinds of help');
+    hmBox(p, 800, 260, 260, 90, COL.chalk, m('ctrl'), 'controller', { size: 30, sub: ['inside the division'] });
+    hmBox(p, 290, 260, 320, 90, COL.nat, m('fin'), 'finance manager', { size: 28, fill: COL.nat, sub: ['functional boss'] });
+    hmArrow(p, 460, 260, 660, 260, COL.nat, m('fin', .4), .5);
+    hmSay(p, 'methods, practices, standards', 290, 360, m('fin', 1), { size: 22, fill: COL.nat });
+    hmSay(p, 'training, technical review', 290, 395, m('train'), { size: 22, fill: COL.nat });
+    hmSay(p, 'career: a bigger division next', 290, 430, m('career'), { size: 22, fill: COL.nat, weight: 600 });
+    hmBox(p, 1310, 260, 320, 90, COL.real, m('gm'), 'general manager', { size: 28, fill: COL.real, sub: ['mission boss'] });
+    hmArrow(p, 1140, 260, 940, 260, COL.real, m('gm', .4), .5);
+    hmLines(p, ['mission priorities:', 'specific business problems'], 1310, 360, m('gm', 1.5), { size: 22, fill: COL.real });
+    hmSay(p, 'the division’s staff, as in Grove’s figure', 800, 520, m('career', 2), { size: 20, fill: COL.dim });
+    ['engineering', 'marketing', 'manufacturing', 'quality', 'personnel', 'controller'].forEach((s, i) => l18Chip(p, s, 250 + i * 220, 575, i === 5 ? COL.chalk : COL.whole, m('career', 2.3 + i * .15), 196, 20));
+    hmRule(p, 'The division sets priorities. Finance sets standards and careers.', m('career', 4.5), 745);
+  }],
+
+  ['ads', 'Advertising', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Advertising: each division, or one company?');
+    hmBox(p, 420, 220, 560, 80, COL.real, m('div'), 'each division its own', { size: 28, fill: COL.real });
+    hmLines(p, ['knows its own strategy best,', 'so its message and audience'], 420, 310, m('div', .8), { size: 22 });
+    hmSay(p, 'or', 800, 230, m('corp'), { size: 26, fill: COL.dim });
+    hmBox(p, 1180, 220, 560, 80, COL.nat, m('corp'), 'one corporate approach', { size: 28, fill: COL.nat });
+    hmLines(p, ['products together serve one market:', 'tell one coordinated story'], 1180, 310, m('corp', 1), { size: 22 });
+    hmLines(p, ['ads sell the whole company:', 'one consistent image'], 1180, 400, m('image'), { size: 22 });
+    hmSay(p, 'At the very least: no division hires its own agency.', 800, 560, m('agency'), { size: 30, weight: 700 });
+    hmRule(p, 'Both sides are right, so use both.', m('agency', 3), 745);
+  }],
+
+  ['adfix', 'Local message, shared image', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Local message, shared image');
+    [380, 800, 1220].forEach((x, i) => {
+      hmBox(p, x, 290, 300, 64, COL.whole, .4 + i * .2, 'division ' + 'ABC'[i] + ' marketing', { size: 22 });
+      l18Chip(p, 'own selling message', x, 200, COL.real, m('msg', .3 + i * .3), 250, 20);
+      l18Line(p, `M${x} 322L${800 + (x - 800) * .4} 422`, COL.nat, m('council', .6 + i * .2), true);
+    });
+    hmBox(p, 800, 470, 640, 96, COL.nat, m('council'), 'marketing council of peers', { size: 28, fill: COL.nat, sub: ['chair: perhaps the corporate merchandising manager'] });
+    [['picks the agency', 280, 230], ['sets the graphic image', 630, 290], ['rules for the agency', 980, 270], ['volume buying', 1320, 220]].forEach(([s, x, w], i) => l18Chip(p, s, x, 590, COL.nat, m('jobs', i * 1.4), w));
+    hmSay(p, 'the cost: patience, and understanding your peers’ needs', 800, 665, m('patience'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Local message, shared image.', m('patience', 4), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ads', prompt: ['A device company has several divisions. Who should decide each of these? (illustrative)'],
+    build: grid([
+      { parts: ['Which advertising agency the company uses'], ans: ['c'], why: 'One agency keeps the image consistent and allows volume buying.' },
+      { parts: ['Which clinical benefit the new stapler’s ad leads with'], ans: ['d'], why: 'The division knows its own product, strategy and audience best.' },
+      { parts: ['The logo and graphic look every ad must follow'], ans: ['c'], why: 'A shared image is the council’s job.' },
+      { parts: ['The wording aimed at the stapler’s surgeons'], ans: ['d'], why: 'The specific selling message is left mainly to the division.' },
+    ], [['d', 'Division', COL.real, 'D'], ['c', 'Council of peers', COL.nat, 'C']], { multi: false, text: true }),
+  }], done) }],
+
+  ['univ', 'Even a university', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Even a university');
+    hmSay(p, 'Ohio University, in a Wall Street Journal story; Grove’s notes in brackets', 800, 170, .3, { size: 22, fill: COL.dim });
+    hmBox(p, 430, 270, 420, 90, COL.nat, m('admin'), 'administration', { size: 28, fill: COL.nat, sub: ['[functional]'] });
+    hmBox(p, 1170, 270, 420, 90, COL.real, m('fac'), 'faculty', { size: 28, fill: COL.real, sub: ['[mission-oriented]'] });
+    hmBox(p, 800, 440, 560, 90, COL.nat, m('council'), 'planning advisory council', { size: 28, fill: COL.nat, sub: ['[a group of peers]'] });
+    l18Line(p, 'M500 315L640 395', COL.nat, m('council', .4)); l18Line(p, 'M1100 315L960 395', COL.real, m('council', .4));
+    hmSay(p, 'shares out scarce money during severe budget cuts', 800, 530, m('council', 2), { size: 22 });
+    hmSay(p, '“We are being educated to think institutionally.”', 800, 600, m('inst'), { size: 28, fill: COL.good, weight: 600 });
+    hmSay(p, 'the student-affairs member backs a new bulldozer', 800, 650, m('doze'), { size: 22, fill: COL.dim });
+    hmRule(p, 'A shared table teaches people to think for the whole.', m('doze', 3), 745);
+  }],
+
+  ['nobusy', 'No excuse for busywork', (m) => {
+    const p = panel(0);
+    hmHead(p, 'No excuse for busywork');
+    hmSay(p, 'the hybrid form: the price of being part of something large', 800, 180, .3, { size: 26, fill: COL.dim });
+    hmSay(p, 'Do', 450, 270, m('cut'), { size: 30, fill: COL.good, weight: 700 });
+    ['slash needless bureaucracy', 'simplify the work', 'test coordination against common sense'].forEach((s, i) => {
+      const y = 330 + i * 60;
+      draw(path(p, `M180 ${y - 8}L192 ${y + 4}L214 ${y - 18}`, { stroke: COL.good, 'stroke-width': 4 }, { d: 0 }), m('cut', i * 1.2), .3);
+      hmSay(p, s, 230, y, m('cut', i * 1.2), { size: 24, anchor: 'start' });
+    });
+    hmSay(p, 'Don’t', 1180, 270, m('escape'), { size: 30, fill: COL.bad, weight: 700 });
+    hmBox(p, 1180, 380, 460, 110, COL.bad, m('escape'), ['redraw reporting lines', 'to escape complexity'], { size: 26, fill: COL.bad });
+    pop(hmCross(p, 1410, 330, COL.bad, 18), m('escape', 1.5));
+    hmSay(p, 'The hybrid organization is a basic fact of organizational life.', 800, 590, m('escape', 3), { size: 26 });
+    hmRule(p, 'Cut the busywork. Keep the hybrid.', m('escape', 5), 745);
+  }],
+
+  ['planes', 'One name, two charts', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One name on two organization charts');
+    l18Plane(p, 160, COL.whole, 'rgba(134,201,232,.06)', m('op'), 'plant engineering manager', 'supervisor', m('op', 1.5));
+    hmLines(p, ['operating plane', 'her plant', '80% of her time'], 375, 230, m('op', 2), { size: 22, fill: COL.whole, anchor: 'end' });
+    l18Plane(p, 430, COL.nat, 'rgba(244,164,140,.06)', m('coord'), 'Engineering Managers Council', 'process group', m('coord', 1));
+    hmLines(p, ['coordinating plane', 'all plants, monthly'], 375, 500, m('coord', 2), { size: 22, fill: COL.nat, anchor: 'end' });
+    hmLines(p, ['its chair', 'supervises her'], 375, 580, m('chair'), { size: 22, fill: COL.nat, anchor: 'end', weight: 600 });
+    l18Line(p, 'M1325 360C1470 360 1470 630 1325 630', COL.chalk, m('two'), true);
+    hmLines(p, ['same', 'person'], 1452, 490, m('two', .3), { size: 22, anchor: 'start' });
+    hmRule(p, 'One person, two charts, two supervisors.', m('two', 3), 745);
+  }],
+
+  ['church', 'Like a church', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Like belonging to a church');
+    hmBox(p, 450, 210, 320, 64, COL.whole, .4, 'the company', { size: 26 });
+    hmBox(p, 450, 330, 320, 64, COL.whole, .6, 'her supervisor', { size: 26 });
+    const a = l18Person(p, 450, 470, COL.chalk); show(a, .8);
+    l18Line(p, 'M450 242V298', COL.whole, .5, false, .3); l18Line(p, 'M450 362V430', COL.whole, .7, false, .3);
+    hmBox(p, 1150, 210, 320, 64, COL.nat, m('church'), 'the church', { size: 26, fill: COL.nat });
+    hmBox(p, 1150, 330, 320, 64, COL.nat, m('pastor'), 'local pastor', { size: 26, fill: COL.nat });
+    const b = l18Person(p, 1150, 470, COL.chalk); show(b, m('church', .4));
+    l18Line(p, 'M1150 242V298', COL.nat, m('pastor', .2), false, .3); l18Line(p, 'M1150 362V430', COL.nat, m('pastor', .4), false, .3);
+    hmSay(p, 'her', 450, 540, .8, { size: 22, fill: COL.dim }); hmSay(p, 'her', 1150, 540, m('church', .4), { size: 22, fill: COL.dim });
+    hmSay(p, 'two planes', 800, 340, m('church', 1), { size: 26, fill: COL.dim });
+    hmSay(p, 'No one confuses the two.', 800, 620, m('clear'), { size: 32, fill: COL.good, weight: 700 });
+    hmRule(p, 'Separate planes, separate hierarchies, no conflict.', m('clear', 2), 745);
+  }],
+
+  ['lever', 'More leverage', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A second plane multiplies her leverage');
+    const xs = [400, 667, 933, 1200], lit = xs.map((x, i) => l18Plant(p, x, 260, .3 + i * .15));
+    xs.forEach((x, i) => hmSay(p, 'plant ' + (i + 1), x, 340, .3 + i * .15, { size: 20, fill: COL.dim }));
+    const her = l18Person(p, 400, 540, COL.chalk); show(her, .4);
+    hmArrow(p, 400, 495, 400, 370, COL.whole, m('one'), .5);
+    show(lit[0], m('one', .5));
+    hmSay(p, 'main job: one plant', 400, 610, m('one', .3), { size: 22, fill: COL.whole });
+    hmBox(p, 900, 540, 300, 64, COL.nat, m('all'), 'process group', { size: 24, fill: COL.nat });
+    l18Line(p, 'M440 540H750', COL.chalk, m('all', .2), true);
+    xs.forEach((x, i) => { hmArrow(p, 900 + (x - 900) * .15, 508, x + 20, 370, COL.nat, m('all', .5 + i * .2), .4); show(lit[i], m('all', .8 + i * .2)); });
+    hmSay(p, 'second job: every plant', 900, 610, m('all', 1), { size: 22, fill: COL.nat });
+    hmSay(p, 'especially valuable for know-how managers', 800, 670, m('know'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Coordinating groups multiply a know-how manager’s leverage.', m('know', 3), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-plane', prompt: ['A software quality engineer works on one product, and also sits on a monthly cross-site group that standardizes code-review practice. Who supervises her work in that group? (illustrative)'],
+    build: choice([['Only her product’s manager'], ['The group’s chair'], ['No one: it is voluntary']], 1,
+      'The group sits on a second plane, with its own chair, like the process engineer’s.',
+      ['Her manager supervises her operating plane; the group is a separate plane.', null, 'The group is real work on its own plane, with its own supervision.']),
+  }], done) }],
+
+  ['more', 'Two planes, or three', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two planes, or three');
+    hmSay(p, 'operating work and planning sit on separate planes', 800, 185, m('plan'), { size: 26, fill: COL.dim });
+    // to scale: 1000 px = all of her time. 80% operating is Grove's figure; the rest is split illustratively.
+    const seg = (x, w, c, t0) => { const r = mk('rect', { x, y: 250, width: 0, height: 56, rx: 4, fill: c }, p); put(r, { a_width: 0 }); tw(r, { a_width: w }, t0, .6, out); };
+    seg(300, 800, COL.whole, m('three')); seg(1100, 120, COL.nat, m('three', .8)); seg(1220, 80, COL.real, m('three', 1.6));
+    hmSay(p, 'operating: her plant, 80% (Grove)', 700, 287, m('three', .4), { size: 24, fill: COL.board, weight: 600 });
+    hmSay(p, 'coordinating', 1160, 232, m('three', .8), { size: 18, fill: COL.nat });
+    hmSay(p, 'task force', 1260, 336, m('three', 1.6), { size: 18, fill: COL.real });
+    hmSay(p, 'rest of her time: illustrative split', 1300, 366, m('three', 2), { size: 18, fill: COL.faint, anchor: 'end' });
+    [['the company', 430, 220, COL.whole], ['a church', 800, 170, COL.nat], ['adviser to the parks department', 1190, 400, COL.real]].forEach(([s, x, w, c], i) => l18Chip(p, s, x, 460, c, m('like', i * 1.2), w));
+    hmSay(p, 'no conflict, but they all compete for her time', 800, 580, m('time'), { size: 28, weight: 600 });
+    hmRule(p, 'Several planes, one person, one calendar.', m('time', 3), 745);
+  }],
+
+  ['reverse', 'Bosses can swap places', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Bosses can swap places');
+    hmSay(p, 'operating plane', 450, 180, m('pres'), { size: 24, fill: COL.whole });
+    hmBox(p, 450, 260, 340, 70, COL.whole, m('pres'), 'president: Grove', { size: 26 });
+    hmBox(p, 450, 450, 340, 70, COL.whole, m('pres', .8), 'a division controller', { size: 26 });
+    l18Line(p, 'M450 296V414', COL.whole, m('pres', 1), true);
+    hmLines(p, ['his boss, or', 'his boss’s boss'], 440, 345, m('ranch'), { size: 20, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'planning plane', 1150, 180, m('group'), { size: 24, fill: COL.nat });
+    hmBox(p, 1150, 260, 340, 70, COL.nat, m('group'), 'chair: the controller', { size: 26, fill: COL.nat });
+    hmBox(p, 1150, 450, 340, 70, COL.nat, m('group', .8), 'member: Grove', { size: 26, fill: COL.nat });
+    l18Line(p, 'M1150 296V414', COL.nat, m('group', 1));
+    l18Line(p, 'M625 450L975 260', COL.faint, m('group', 2), true); l18Line(p, 'M625 260L975 450', COL.faint, m('group', 2), true);
+    hmSay(p, 'Army Reserve: on weekends, the controller commands', 800, 580, m('army'), { size: 26, weight: 600 });
+    hmRule(p, 'Rank in one plane doesn’t carry into the next.', m('ranch', 4), 745);
+  }],
+
+  ['soldier', 'Foot soldier or general', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A foot soldier, when that is right');
+    hmBox(p, 450, 250, 520, 90, COL.bad, m('only'), ['join only groups he runs'], { size: 28, fill: COL.bad });
+    hmSay(p, 'no time for that', 450, 350, m('time'), { size: 24, fill: COL.bad });
+    hmSay(p, 'often not the most qualified to lead', 450, 390, m('qual'), { size: 24, fill: COL.bad });
+    pop(hmCross(p, 710, 205, COL.bad, 18), m('foot'));
+    hmBox(p, 1150, 250, 520, 90, COL.good, m('foot'), ['serve as a member'], { size: 28, fill: COL.good });
+    hmSay(p, 'lead where you are best placed', 1150, 350, m('foot', 1.5), { size: 24, fill: COL.good });
+    hmSay(p, 'the organization gains flexibility', 800, 540, m('flex'), { size: 30, weight: 700 });
+    hmRule(p, 'Lead where you are best placed; serve elsewhere.', m('flex', 2.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-rank', prompt: ['You run a 40-person R&D group. You join a device-cybersecurity task force chaired by an engineer two levels below you. How should you act in it? (illustrative)'],
+    build: choice([['Take over: you outrank everyone there'], ['As a member: follow the chair’s agenda and decisions'], ['Stay out: join only groups you lead']], 1,
+      'In that plane the chair leads. Serving as a member is exactly the flexibility Grove wants.',
+      ['Rank in your operating plane doesn’t carry into this one.', null, 'That is the limit the multi-plane organization removes.']),
+  }], done) }],
+
+  ['temp', 'Teams that come and go', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Teams that come and go');
+    l18Line(p, 'M200 230H900V200H1400', COL.whole, .4, false, 1);
+    hmSay(p, 'formal organization: changes slowly', 200, 180, .5, { size: 22, fill: COL.whole, anchor: 'start' });
+    path(p, 'M200 460H1400', { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, 'time', 1400, 490, .5, { size: 20, fill: COL.faint, anchor: 'end' });
+    const bars = [[260, 220, 290, 'tf', 0, 'task force'], [420, 180, 345, 'inf', 0, 'informal group'], [560, 260, 400, 'fast', 0], [800, 160, 290, 'fast', .6], [900, 220, 345, 'fast', 1.2], [1050, 180, 400, 'fast', 1.8], [1180, 200, 290, 'formal', 0]];
+    bars.forEach(([x, w, y, k, o, lab]) => {
+      const c = k === 'inf' ? COL.dim : COL.nat;
+      const r = mk('rect', { x, y, width: w, height: 34, rx: 8, fill: c }, p); put(r, { o: 0 }); show(r, m(k, o));
+      if (lab) hmSay(p, lab, x + w / 2, y + 24, m(k, o), { size: 18, fill: COL.board, weight: 600 });
+    });
+    l18Chip(p, 'dual or multiple reporting', 520, 560, COL.nat, m('need'), 360, 24);
+    l18Chip(p, 'decisions by peer groups', 1080, 560, COL.nat, m('need', 1.8), 340, 24);
+    hmSay(p, 'held together by cultural values: the next lesson', 800, 650, m('culture'), { size: 28, fill: COL.good, weight: 700 });
+    hmRule(p, 'Fast change runs on temporary teams, held by culture.', m('culture', 4), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 18 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Mission sets priorities; function, standards.', 'w1'], ['A peer council: one image, local messages.', 'w2'], ['Cut busywork; complexity can’t be reorganized away.', 'w3'], ['One person, several planes, more leverage.', 'w4'], ['Rank can reverse; temporary teams need culture.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-career', prompt: ['Your program’s regulatory specialist does excellent work. Who should look after her move to a bigger product line? (illustrative)'],
+      build: choice([['You, her program manager'], ['The head of regulatory affairs, her functional boss'], ['Human resources alone']], 1,
+        'As with Grove’s controller, the functional side judges technical work and manages the career.',
+        ['You set her priorities; her function looks after her career across programs.', null, 'Grove gives that to the functional supervisor who judges her technical work.']) },
+    { id: 'p-agency', prompt: ['Two divisions want different advertising agencies for their device launches. What fits Grove’s model? (illustrative)'],
+      build: choice([['Let each division choose: they know their markets'], ['Corporate writes every ad itself'], ['A council of division marketing managers picks one agency; divisions keep their own messages']], 2,
+        'Shared image and volume buying from the council; the selling message from the division.',
+        ['That fragments the company’s image and loses volume buying.', 'Divisions understand their own strategy and message best.', null]) },
+    { id: 'p-reorg', prompt: ['Coordination between quality and R&D is painful. A colleague proposes a reorganization so it is no longer needed. What would Grove say?'],
+      build: choice([['Redraw the chart: the right structure removes the complexity'], ['Cut needless steps, but expect the coordination to stay'], ['Add a sign-off meeting for every decision']], 1,
+        'Slash busywork and test each requirement with common sense, but the hybrid stays.',
+        ['Playing with reporting lines doesn’t escape complexity.', null, 'That adds the bureaucracy Grove says to slash.']) },
+    { id: 'p-chair', prompt: ['Your senior test engineer chairs a cross-site group on test-method standards. Your own boss joins it. Who leads the group’s meetings?'],
+      build: choice([['Your boss: the most senior person present'], ['You, as the engineer’s manager'], ['Your test engineer, the chair']], 2,
+        'In that plane the engineer is the chair; rank elsewhere doesn’t carry over.',
+        ['Like Grove in his planning group, a senior person can be a member.', 'You aren’t on that plane at all unless you join it.', null]) },
+    { id: 'p-temp', prompt: ['New regulatory guidance on AI-enabled device software affects four of your teams. What is the quickest good response? (illustrative)'],
+      build: choice([['Reorganize the four teams under one manager'], ['Form a temporary task force from the four teams, and end it when done'], ['Let each team respond on its own']], 1,
+        'Short-lived teams handle fast-changing problems; formal structure can’t move that fast.',
+        ['Formal reorganization can’t keep up with fast change.', null, 'The problem crosses teams; separate answers fragment the response.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

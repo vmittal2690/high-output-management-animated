@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planning around the limiting step</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 1, title: 'Planning around the limiting step', kicker: 'Chapter 1 · Lesson 1', minutes: 8, language: 'en', silent: true, next: '../ch02/index.html' };
+
+/* ---------- the breakfast plan: bars finish together at X_READY; 150 px = 1 minute ---------- */
+const X_READY = 1320, X_DEL = 1380, PXM = 150, BH = 64, ROW = { egg: 270, toast: 400, coffee: 530 };
+function c1Flow(p, t) {
+  const f = {};
+  const dl = G(p, { o: 0 });
+  path(dl, `M${X_DEL} 200V640`, { stroke: COL.chalk, 'stroke-width': 3 });
+  T(dl, 'Deliver', { x: X_DEL, y: 180, size: 28, fill: COL.dim, anchor: 'middle' });
+  show(dl, t.frame);
+  f.order = G(p, { o: 0 });
+  path(f.order, 'M570 200V640', { stroke: COL.chalk, 'stroke-width': 3 });
+  T(f.order, 'Order', { x: 570, y: 180, size: 28, fill: COL.dim, anchor: 'middle' });
+  show(f.order, t.frame);
+  [['Egg', '5 min', ROW.egg], ['Toast', '1½ min', ROW.toast], ['Coffee', '1 min', ROW.coffee]].forEach(([n, d, y]) => {
+    hmSay(p, n, 110, y + 30, t.frame, { size: 34, anchor: 'start', weight: 600 });
+    hmSay(p, d, 110, y + 62, t.frame, { size: 24, anchor: 'start', fill: COL.dim });
+  });
+  f.egg = hmBarBack(p, X_READY, ROW.egg, 5 * PXM, BH, COL.task, t.egg);
+  f.lim = G(p, { o: 0 });
+  T(f.lim, 'limiting step', { x: 945, y: ROW.egg - 16, size: 28, fill: COL.task, weight: 700, anchor: 'middle' });
+  show(f.lim, t.name);
+  f.toast = hmBarBack(p, X_READY, ROW.toast, 1.5 * PXM, BH, COL.whole, t.toast);
+  f.coffee = hmBarBack(p, X_READY, ROW.coffee, PXM, BH, COL.whole, t.coffee);
+  const ready = G(p, { o: 0 });
+  path(ready, `M${X_READY} 250V640`, { stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '8 9' });
+  T(ready, 'all ready together', { x: X_READY - 14, y: 680, size: 26, fill: COL.good, anchor: 'end', weight: 600 });
+  T(ready, 'plate up', { x: X_READY + 8, y: 680, size: 22, fill: COL.dim });
+  show(ready, t.ready);
+  return f;
+}
+function c1Item(p, kind, x, y, t0) {
+  const g = G(p, { x, y, s: 0, o: 0 });
+  if (kind === 'egg') {
+    mk('ellipse', { cx: 0, cy: -22, rx: 44, ry: 56, fill: COL.chalk }, g);
+    mk('path', { d: 'M-52 0H52L38 64H-38Z', fill: COL.task }, g);
+  } else if (kind === 'toast') {
+    mk('path', { d: 'M-58 -30Q-58 -62 -24 -56Q0 -70 24 -56Q58 -62 58 -30V58H-58Z', fill: '#d9a45b', stroke: '#a8742f', 'stroke-width': 7, 'stroke-linejoin': 'round' }, g);
+    mk('rect', { x: -26, y: -8, width: 52, height: 30, rx: 6, fill: '#f6e6a3' }, g);
+  } else {
+    mk('path', { d: 'M-46 -26H46V30Q46 62 0 62Q-46 62 -46 30Z', fill: COL.chalk }, g);
+    mk('path', { d: 'M46 -8Q82 -8 82 16Q82 40 44 40', fill: 'none', stroke: COL.chalk, 'stroke-width': 10 }, g);
+    mk('path', { d: 'M-18 -44Q-30 -62 -18 -80M12 -44Q0 -62 12 -80', fill: 'none', stroke: COL.dim, 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+  }
+  pop(g, t0);
+  return g;
+}
+
+const C1_TASKS = [['Security clearance', '5 weeks', 750], ['System accounts', '1 week', 150], ['Laptop', '2 days', 60]];   // 150 px = 1 week
+const C1_HIRE = ['phone screen', 'on-site visit', 'offer made', 'first month'];
+
+const BEATS = [
+  ['intro', 'Planning around the limiting step', (m, D) => hmTitle(m, D, 'Chapter 1 · The Basics of Production · Lesson 1 of 2', 'Planning around the limiting step', 'How to plan any piece of work, learned from serving breakfast')],
+
+  ['order', 'One breakfast order', (m) => {
+    const p = panel(0);
+    hmSay(p, 'One order', 800, 170, .2, { size: 40, weight: 600 });
+    hmSay(p, 'on time  ·  acceptable quality  ·  lowest cost', 800, 668, m('once', 5.5), { size: 28, fill: COL.dim });
+    [['egg', 'soft-boiled egg', 420], ['toast', 'buttered toast', 800], ['coffee', 'coffee', 1180]].forEach(([k, lab, x]) => {
+      c1Item(p, k, x, 380, m(k));
+      hmSay(p, lab, x, 500, m(k, .2), { size: 30, fill: COL.dim });
+    });
+    draw(path(p, 'M250 560H1350', { stroke: COL.good, 'stroke-width': 4 }, { d: 0 }), m('once'), .9);
+    hmSay(p, 'all three on the table at the same moment, fresh and hot', 800, 612, m('once', .4), { size: 30, fill: COL.good, weight: 600 });
+    hmSay(p, 'Where do you start?', 800, 745, m('how'), { size: 40, fill: COL.task, weight: 700 });
+  }],
+
+  ['limit', 'The limiting step', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Plan around the longest step', 800, 110, .2, { size: 40, weight: 600 });
+    c1Flow(p, { frame: .3, egg: m('egg'), name: m('name'), toast: m('toast'), coffee: m('coffee'), ready: m('together') });
+    const back = hmArrow(p, X_DEL - 10, 150, 1080, 150, COL.dim, m('back'));
+    hmSay(p, 'work backward', 1060, 160, m('back', .3), { size: 26, fill: COL.dim, anchor: 'end' });
+  }],
+
+  ['q1', 'Quick check', () => {
+    const p = panel(0);
+    hmSay(p, 'A new teammate starts in six weeks', 800, 100, .2, { size: 38, weight: 600 });
+    const g = G(p, { o: 0 });
+    path(g, 'M350 150V600', { stroke: COL.chalk, 'stroke-width': 3 });
+    T(g, 'Today', { x: 350, y: 640, size: 26, fill: COL.dim, anchor: 'middle' });
+    path(g, 'M1250 150V600', { stroke: COL.chalk, 'stroke-width': 3 });
+    T(g, 'First day', { x: 1250, y: 640, size: 26, fill: COL.dim, anchor: 'middle' });
+    show(g, .3);
+    S.q1 = C1_TASKS.map(([n, d, w], i) => {
+      const y = 200 + i * 135;
+      hmSay(p, n, 40, y + 28, .4, { size: 28, anchor: 'start', weight: 600 });
+      hmSay(p, d, 40, y + 58, .4, { size: 22, anchor: 'start', fill: COL.dim });
+      const b = G(p, { x: 350, y, o: 0 });
+      mk('rect', { width: w, height: BH, rx: 8, fill: COL.whole }, b);
+      show(b, .5 + i * .15);
+      return b;
+    });
+  }, { ask: done => quiz(BAND, [{
+    id: 'c-limit', prompt: ['All three must be done by the first day. Click the task to start first.'],
+    build: pickEls(C1_TASKS.map(([n, d, w], i) => ({ el: S.q1[i], box: [28, 186 + i * 135, 350 + w - 8, 92], label: `${n}, ${d}` })), 0,
+      'Five weeks makes the clearance the limiting step. Start it now.',
+      i => i === 1 ? 'Accounts take one week. They can start in week five.' : 'The laptop takes two days. It does not set the pace.',
+      () => { C1_TASKS.forEach(([, , w], i) => { if (i) fx(S.q1[i], { x: 1250 - w }, .1, .8); }); S.q1[0].firstChild.setAttribute('fill', COL.task); }),
+  }], done) }],
+
+  ['recruit', 'The costly step', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Sometimes the limiting step is the most expensive one', 800, 120, .2, { size: 38, weight: 600 });
+    hmBox(p, 250, 380, 300, 130, COL.whole, m('flow'), 'Campus interviews', { size: 28 });
+    hmArrow(p, 410, 380, 640, 380, COL.dim, m('visit', -.2));
+    const v = hmBox(p, 800, 380, 300, 150, COL.whole, m('visit'), 'Visit to the plant', { size: 28, sub: ['travel + a day of interviews'] });
+    hmArrow(p, 960, 380, 1190, 380, COL.dim, m('visit', .4));
+    hmBox(p, 1350, 380, 300, 130, COL.good, m('visit', .6), 'Offer', { size: 28, fill: COL.good });
+    tw(v.firstChild, { c_stroke: COL.task }, m('cost'), .5);
+    hmSay(p, 'the step to plan around', 800, 500, m('cost'), { size: 28, fill: COL.task, weight: 700 });
+    hmBox(p, 525, 240, 250, 84, COL.task, m('screen'), 'Phone screen', { size: 26 });
+    hmArrow(p, 525, 286, 525, 366, COL.task, m('screen', .3), .4);
+    hmSay(p, 'fewer trips for every person hired', 800, 575, m('screen', .7), { size: 30, fill: COL.good, weight: 600 });
+    hmArrow(p, 1330, 660, 270, 660, COL.dim, m('back'), 1.2);
+    hmSay(p, 'graduation', 1350, 669, m('back'), { size: 26, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'Schedule each step backward from the date.', m('back', .7), 725);
+  }],
+
+  ['kinds', 'Process, assembly, test', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Three operations in every kind of work');
+    const cx = [520, 880, 1240];
+    [['p', 'Process', 'changes the material'], ['a', 'Assembly', 'puts parts together'], ['t', 'Test', 'examines the result']]
+      .forEach(([k, a, b], i) => hmBox(p, cx[i], 240, 320, 120, COL.whole, m(k), a, { size: 34, sub: [b] }));
+    hmSay(p, 'Breakfast', 70, 408, m('p'), { size: 30, anchor: 'start', weight: 600, fill: COL.dim });
+    [['p', 'boil the egg'], ['a', 'load the tray'], ['t', 'is the toast brown?']].forEach(([k, s], i) => hmSay(p, s, cx[i], 408, m(k, .5), { size: 30 }));
+    path(p, 'M70 460H1420', { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, 'Sales training', 70, 540, m('sales'), { size: 30, anchor: 'start', weight: 600, fill: COL.dim });
+    [['sp', ['turn product data', 'into selling points']], ['sa', ['combine them into', 'one program']], ['st', ['dry run with a', 'test audience']]].forEach(([k, s], i) => hmLines(p, s, cx[i], 524, m(k), { size: 30 }));
+    draw(path(p, 'M1240 600Q880 700 520 600', { stroke: COL.bad, 'stroke-width': 3.5 }, { d: 0 }), m('rework'), .9);
+    draw(path(p, 'M544 588L520 600L536 622', { stroke: COL.bad, 'stroke-width': 3.5 }, { d: 0 }), m('rework', .8), .25);
+    hmSay(p, 'fails the test: back for rework', 880, 700, m('rework', .4), { size: 28, fill: COL.bad, weight: 600 });
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-kinds', prompt: ['You are preparing a quarterly business review. Which operation is each step?'],
+    build: grid([
+      { parts: ['Turn raw sales data into three findings'], ans: ['p'], why: 'Raw data becomes something new: that is process.' },
+      { parts: ['Merge each team’s slides into one deck'], ans: ['a'], why: 'Finished parts are put together: that is assembly.' },
+      { parts: ['Rehearse with a colleague playing the executive'], ans: ['t'], why: 'A rehearsal examines the result before it ships: that is test.' },
+    ], [['p', 'Process'], ['a', 'Assembly'], ['t', 'Test']], { multi: false, text: true }),
+  }], done) }],
+
+  ['queue', 'When the constraint moves', (m) => {
+    const p = panel(0);
+    hmSay(p, 'A line for the toaster', 800, 110, .2, { size: 40, weight: 600 });
+    const f = c1Flow(p, { frame: .2, egg: .3, name: .5, toast: .35, coffee: .4, ready: .6 });
+    const tq = m('queue');
+    hmBarBack(p, X_READY - 1.5 * PXM, ROW.toast, 4.5 * PXM, BH, COL.bad, tq, 1.3, { 'fill-opacity': .22, stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' });
+    hmSay(p, 'waiting for a free toaster  4½ min', 757, ROW.toast + 42, tq + .9, { size: 26, fill: COL.bad, weight: 600 });
+    tw(f.order, { x: -150 }, tq, 1.3);
+    const tm = m('move');
+    tw(f.lim, { x: -75, y: ROW.toast - ROW.egg }, tm, .9);
+    tw(f.egg, { c_fill: COL.whole }, tm, .6);
+    tw(f.toast, { c_fill: COL.task }, tm, .6);
+    hmSay(p, 'When the constraint changes, replan around the new one.', 800, 745, m('rule'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['trade', 'Three ways to buy time', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Three ways to ease a constraint', 800, 120, .2, { size: 40, weight: 600 });
+    const rows = [['people', 'More people', 'even a specialist per step', 'costs: overhead', 260], ['equip', 'More equipment', 'a second toaster', 'costs: capital', 430], ['inv', 'Inventory', 'toast made ahead of time', 'costs: waste', 600]];
+    rows.forEach(([k, a, b, c, y]) => {
+      hmBox(p, 380, y, 440, 130, COL.whole, m(k), a, { size: 34, sub: b });
+      hmArrow(p, 620, y, 960, 430 + (y - 430) * .25, COL.dim, m(k, .3));
+      hmSay(p, c, 790, y + (y < 430 ? -8 : y > 430 ? 44 : -22), m('cost'), { size: 24, fill: COL.bad, weight: 600 });
+    });
+    hmBox(p, 1200, 430, 440, 150, COL.good, .5, 'Faster delivery', { size: 38, fill: COL.good });
+    hmSay(p, 'There is a right answer: best delivery and quality at the lowest cost.', 800, 745, m('job'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-trade', prompt: ['Approvals are piling up behind one person. Which kind of fix is each of these?'],
+    build: grid([
+      { parts: ['Train a second person to approve'], ans: ['p'], why: 'A second approver is more people on the constrained step.' },
+      { parts: ['Buy software that checks the routine cases'], ans: ['e'], why: 'A tool that adds capacity is equipment.' },
+      { parts: ['Keep pre-approved templates ready to use'], ans: ['i'], why: 'Work done ahead and held ready is inventory.' },
+    ], [['p', 'People'], ['e', 'Equipment'], ['i', 'Inventory']], { multi: false, text: true }),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 1 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Find the limiting step: longest, hardest or costliest.', 'w1'], ['Work backward from delivery; offset the rest.', 'w2'], ['All work is process, assembly and test.', 'w3'], ['When the constraint moves, redraw the plan.', 'w4'], ['People, equipment, inventory: each buys time at a cost.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-limit', prompt: ['A report is due Friday. Legal review takes three days; every other task takes a few hours. What do you schedule first?'],
+      build: choice([['Legal review'], ['Formatting the report'], ['Whichever task is easiest']], 0,
+        'Legal review is the limiting step. Everything else is offset from when it finishes.',
+        [null, 'Formatting takes hours and can be offset to the end. It does not set the pace.', 'Easy tasks feel like progress, but the three-day step decides whether Friday is possible.']) },
+    { id: 'p-move', prompt: ['Last month writing was your slowest step. Now a shared test server has a two-day queue. What should you do?'],
+      build: choice([['Keep last month’s plan'], ['Redraw the plan around the server queue'], ['Ask everyone to write faster']], 1,
+        'The constraint moved, so the plan is rebuilt around the queue: book the server first and work backward.',
+        ['The old plan was built around a constraint that is no longer the slowest step.', null, 'Writing is no longer the limiting step, so speeding it up does not bring delivery forward.']) },
+    { id: 'p-cost', prompt: ['Customer site visits are your most expensive sales step. How do you reduce the visits needed per sale?'],
+      build: choice([['Make each visit shorter'], ['Qualify prospects by phone before visiting'], ['Visit every prospect sooner']], 1,
+        'A cheap screen before the costly step means fewer visits for every sale, just like the phone interview before the plant visit.',
+        ['A shorter visit still spends the travel on prospects who were never going to buy.', null, 'More visits, sooner, uses more of the expensive step, not less.']) },
+    { id: 'p-kinds', prompt: ['A draft contract goes to a colleague who checks every clause against the template. Which operation is that?'],
+      build: choice([['Process'], ['Assembly'], ['Test']], 2,
+        'Checking the result against a standard is a test. If it fails, the draft goes back for rework.',
+        ['Process would change the material, such as drafting the clauses.', 'Assembly would combine finished parts, such as merging the schedules into the contract.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

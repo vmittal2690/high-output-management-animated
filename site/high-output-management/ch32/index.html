@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One more thing: your homework</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 32, title: 'One more thing: your homework', kicker: 'One More Thing · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch33/index.html' };
+
+/* Colours: salmon = production homework; purple = leverage homework; pink = performance homework;
+   grey = topics the list leaves out; green = the goal (Grove's 100 points); amber = the rule.
+   Point values are Grove's (1983). */
+const L32_SEC = { prod: COL.nat, lev: COL.real, perf: COL.rat };
+
+// One homework item: points disc, one or two lines of text, and a pill naming the lesson that taught it.
+function l32Item(p, y, pts, lines, tag, color, t0) {
+  const g = G(p, { o: 0 });
+  mk('circle', { cx: 210, cy: y, r: 34, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  T(g, String(pts), { x: 210, y: y + 9, size: 26, fill: color, weight: 700, anchor: 'middle' });
+  const L = [].concat(lines), y0 = L.length > 1 ? y - 8 : y + 9;
+  L.forEach((s, i) => T(g, s, { x: 272, y: y0 + i * 34, size: 26, fill: COL.chalk, weight: i ? 400 : 600 }));
+  mk('rect', { x: 1230, y: y - 22, width: 270, height: 44, rx: 22, fill: '#16211d', stroke: COL.faint, 'stroke-width': 2 }, g);
+  T(g, tag, { x: 1365, y: y + 8, size: 22, fill: COL.dim, anchor: 'middle' });
+  show(g, t0);
+  return g;
+}
+// Rows of items, spaced to fit between the heading and the rule.
+function l32Rows(p, items, color, m, { y0 = 220, step } = {}) {
+  const dy = step || (items.length >= 5 ? 104 : items.length === 4 ? 124 : 150);
+  return items.map(([pts, lines, tag, mark], i) => l32Item(p, y0 + i * dy, pts, lines, tag, color, m(mark)));
+}
+const l32Sec = (p, name, pts, color, t0 = .2) => {
+  hmHead(p, name, t0);
+  hmSay(p, pts, 800, 160, t0 + .2, { size: 24, fill: color, weight: 600 });
+};
+
+// Grove's list, in his order (One More Thing..., printed pp. 221–224).
+const L32_PROD1 = [
+  [10, ['Find the parts of your work most like', 'process, assembly and test'], 'Lesson 1', 'ops'],
+  [10, ['Find a project’s limiting step and map', 'the flow of work around it'], 'Lesson 1', 'limit'],
+  [10, ['Place receiving, in-process and final inspection:', 'gate or monitor? When can it go variable?'], 'Lesson 4', 'insp'],
+];
+const L32_PROD2 = [
+  [10, ['Six new indicators of your group’s output,', 'for quantity and quality'], 'Lesson 3', 'ind'],
+  [20, ['Make them routine, and review them', 'in your staff meetings'], 'Lessons 3, 9', 'install'],
+  [20, ['Your key strategy: the demand behind it, your', 'status, and whether success would be enough'], 'Lesson 12', 'strat'],
+];
+const L32_LEV1 = [
+  [10, ['Simplify your most tedious task:', 'cut at least 30% of its steps'], 'Lesson 4', 'simp'],
+  [10, ['Define your output, and that of the groups', 'you influence, in order of importance'], 'Lesson 5', 'out'],
+  [10, ['Balance headlines, articles and magazines', 'in your information, with redundancy'], 'Lesson 5', 'info'],
+  [10, ['Take a tour, then list the transactions', 'you got involved in'], 'Lesson 5', 'tour'],
+  [10, ['Create a once-a-month excuse for a tour'], 'Lesson 5', 'excuse'],
+];
+const L32_LEV2 = [
+  [10, ['Plan how you will monitor your next delegated', 'project: what, how, how often'], 'Lesson 6', 'mon'],
+  [10, ['Keep an inventory of projects', 'for discretionary time'], 'Lesson 7', 'inv'],
+  [20, ['Hold a scheduled one-on-one with each report,', 'explained in advance and prepared for'], 'Lesson 8', 'one'],
+  [10, ['Sort last week’s calendar into low, medium and', 'high leverage; plan more high. Cut what?'], 'Lessons 6, 7', 'cal'],
+];
+const L32_LEV3 = [
+  [10, ['Forecast next week’s meetings: process or', 'mission? Mission over 25% of time? Cut back'], 'Lessons 7–9', 'fore'],
+  [20, ['Your group’s three key objectives for the', 'next three months, with key results'], 'Lesson 13', 'okr'],
+  [20, ['Your reports do the same, after', 'a thorough discussion of yours'], 'Lesson 13', 'theirs'],
+  [10, ['List your pending decisions; structure three', 'with the six questions'], 'Lessons 10, 11', 'dec'],
+];
+const L32_PERF1 = [
+  [10, ['Place your motivation, and each report’s,', 'on Maslow’s hierarchy'], 'Lesson 21', 'mas'],
+  [20, ['Give each report a racetrack:', 'a set of performance indicators'], 'Lesson 22', 'race'],
+  [10, ['List the task-relevant feedback your reports', 'get: can they gauge their progress?'], 'Lessons 22, 30–31', 'fb'],
+  [10, ['Rate each report’s task-relevant maturity, the', 'style that fits, and compare it with yours'], 'Lessons 23–24', 'trm'],
+];
+const L32_PERF2 = [
+  [20, ['Judge the last review you got and the last ones', 'you gave: did they improve performance?'], 'Lessons 25–27', 'rev'],
+  [10, ['Redo one of those reviews', 'as it should have been done'], 'Lessons 25–27', 'redo'],
+];
+
+const BEATS = [
+  ['intro', 'One more thing: your homework', (m, D) => hmTitle(m, D, 'One More Thing... · Lesson 1 of 1', 'One more thing: your homework', 'Grove’s closing assignments, and where each was taught')],
+
+  ['deal', 'Grove’s deal', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s deal with the reader');
+    l32Chip(p, 'the price of the book', 620, 200, COL.dim, m('cost'), 330);
+    l32Chip(p, 'about eight hours', 990, 200, COL.dim, m('cost', .6), 280);
+    // to scale: 4 px per point; 330 points from x 140 to x 1460
+    [[0, 80, 'prod', 'Production 80'], [80, 170, 'lev', 'Leverage 170'], [250, 80, 'perf', 'Performance 80']].forEach(([a, n, k, s], i) => {
+      const r = mk('rect', { x: 140 + a * 4 + 2, y: 400, width: 0, height: 70, rx: 6, fill: L32_SEC[k] }, p);
+      put(r, { a_width: 0 }); tw(r, { a_width: n * 4 - 4 }, m('list', .4 + i * .9), .7, out);
+      hmSay(p, s, 140 + (a + n / 2) * 4, 380, m('list', .4 + i * .9), { size: 26, fill: L32_SEC[k], weight: 600 });
+    });
+    hmSay(p, '330 points in all (Grove’s values, 1983; to scale)', 800, 505, m('list', 3), { size: 20, fill: COL.faint });
+    const mark = path(p, 'M540 350V560', { stroke: COL.good, 'stroke-width': 5 }, { d: 0 }); draw(mark, m('hundred'), .5);
+    hmSay(p, 'at least 100 points', 560, 590, m('hundred', .3), { size: 26, fill: COL.good, weight: 700, anchor: 'start' });
+    hmSay(p, '“Choose what you like, but choose some.”', 800, 660, m('pick'), { size: 30 });
+    hmRule(p, 'At least 100 points, done honestly.', m('hundred', 3), 745);
+  }],
+
+  ['prod', 'Production homework', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Production', '80 points · first three items', L32_SEC.prod);
+    S.prod = l32Rows(p, L32_PROD1, L32_SEC.prod, m);
+    hmRule(p, 'Map your flow and your checks first.', m('insp', 6), 745);
+  }],
+
+  ['q1', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-insp', prompt: ['Device builds pass every step, then fail final system test. Click the item.'],
+    build: pickEls(S.prod.map((g, i) => ({ el: g, box: [160, 220 + i * 150 - 50, 1350, 100], label: ['process, assembly, test', 'limiting step', 'inspection points'][i] })), 2,
+      'Defects found only at the end need an earlier, in-process check.',
+      i => i === 0 ? 'Naming the operations helps, but the problem is where you check.' : 'Nothing is waiting on a slow step; defects are found too late.'),
+  }], done) }],
+
+  ['prod2', 'Indicators and strategy', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Production, continued', '80 points · three more items', L32_SEC.prod);
+    l32Rows(p, L32_PROD2, L32_SEC.prod, m);
+    hmRule(p, 'Measure output, then review it as a routine.', m('strat', 7), 745);
+  }],
+
+  ['lev1', 'Leverage: output and information', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Leverage', '170 points · the biggest group', L32_SEC.lev);
+    l32Rows(p, L32_LEV1, L32_SEC.lev, m, { y0: 215 });
+    hmRule(p, 'Know your output, and go and see the work.', m('excuse', 3), 745);
+  }],
+
+  ['lev2', 'Leverage: delegation and your week', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Leverage, continued', 'delegation, slack and your calendar', L32_SEC.lev);
+    l32Rows(p, L32_LEV2, L32_SEC.lev, m);
+    hmRule(p, 'Plan your monitoring, your slack and your week.', m('cal', 4.5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-mon', prompt: ['A month ago you handed a report a supplier audit. You have heard nothing since. Which homework item fits?'],
+    build: choice([['Plan how you will monitor delegated work'], ['Keep an inventory of discretionary projects'], ['Take a tour and list the transactions']], 0,
+      'Delegation without follow-through is abdication: decide what, how and how often you will check.',
+      [null, 'That fills your slack time; it does not follow up the audit.', 'A tour shows you the work, but the gap is a plan to monitor the task.']),
+  }], done) }],
+
+  ['lev3', 'Leverage: meetings, objectives, decisions', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Leverage, last four', 'meetings, objectives and decisions', L32_SEC.lev);
+    l32Rows(p, L32_LEV3, L32_SEC.lev, m);
+    hmRule(p, 'Give meetings, objectives and decisions a structure.', m('dec', 5), 745);
+  }],
+
+  ['perf1', 'Performance: people', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Performance', '80 points · motivation, feedback, maturity', L32_SEC.perf);
+    l32Rows(p, L32_PERF1, L32_SEC.perf, m);
+    hmRule(p, 'Fit motivation, feedback and style to each person.', m('trm', 7), 745);
+  }],
+
+  ['perf2', 'Performance: reviews', (m) => {
+    const p = panel(0);
+    l32Sec(p, 'Performance, last two', 'the review as task-relevant feedback', L32_SEC.perf);
+    l32Rows(p, L32_PERF2, L32_SEC.perf, m, { y0: 260 });
+    hmSay(p, 'Also ask: how did the conversation go, each time?', 800, 560, m('rev', 4), { size: 26, fill: COL.dim });
+    hmRule(p, 'Judge a review by the performance it changes.', m('both', 2.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-pts', prompt: ['This month you hold one-on-ones (20), set your group’s objectives (20) and give each report a racetrack (20). How many more points to reach Grove’s 100?'],
+    build: blanks([{ parts: ['100 − 60 = ', { box: '40' }, '  points'], why: 'Forty more: for example, the calendar sort, the maturity ratings and two ten-point items.', hint: 'Add the three items, then subtract from 100.' }]),
+  }], done) }],
+
+  ['beyond', 'What the list leaves out', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Not on Grove’s list');
+    hmBox(p, 480, 320, 620, 220, COL.faint, m('gap'), 'Organizing', { size: 30, sub: ['Lesson 14: the factory goes national', 'Lessons 15–16: hybrid organizations', 'Lessons 17–18: dual reporting', 'Lessons 19–20: modes of control'] });
+    hmBox(p, 1120, 320, 620, 220, COL.faint, m('hire'), 'People', { size: 30, sub: ['Lessons 28–29: interviewing, “I quit!”', 'Lessons 30–31: pay (one item touches it)'] });
+    hmSay(p, 'our observation, not Grove’s', 800, 490, m('hire', 3), { size: 22, fill: COL.dim });
+    hmSay(p, 'These arrive with the situation. Then reopen the lesson.', 800, 600, m('when'), { size: 30, fill: COL.good, weight: 600 });
+    hmRule(p, 'When the situation comes, the lesson is here.', m('when', 4), 745);
+  }],
+
+  ['start', 'A first hundred points', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One possible first hundred');
+    // to scale: 10 px per point; 100 points from x 300 to x 1300
+    const segs = [[20, 'one-on-ones', 'lev', 'a'], [20, 'your OKRs', 'lev', 'a'], [20, 'their OKRs', 'lev', 'a'], [20, 'indicators', 'prod', 'b'], [10, 'calendar', 'lev', 'c'], [10, 'maturity', 'perf', 'c']];
+    let x = 300;
+    segs.forEach(([n, s, k, mk2], i) => {
+      const t = m(mk2, (i === 1 ? .5 : i === 2 ? 1 : i === 5 ? .6 : 0));
+      const r = mk('rect', { x: x + 3, y: 300, width: n * 10 - 6, height: 80, rx: 6, fill: L32_SEC[k] }, p); put(r, { o: 0 }); show(r, t);
+      hmSay(p, s, x + n * 5, n === 10 ? (i === 4 ? 422 : 452) : 349, t, { size: n === 10 ? 20 : 22, fill: n === 10 ? L32_SEC[k] : COL.board, weight: 700 });
+      x += n * 10;
+    });
+    [[900, '60', 'a', 1.5], [1100, '80', 'b', .5], [1300, '100', 'c', 1.2]].forEach(([xx, s, k, o]) => {
+      draw(path(p, `M${xx} 280V250`, { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), m(k, o), .3);
+      hmSay(p, s, xx, 236, m(k, o), { size: 26, fill: xx === 1300 ? COL.good : COL.dim, weight: 700 });
+    });
+    hmSay(p, 'illustrative pick · to scale', 800, 490, m('first'), { size: 20, fill: COL.faint });
+    [['production', 'prod', 520], ['leverage', 'lev', 800], ['performance', 'perf', 1080]].forEach(([s, k, xx]) => {
+      show(hmDot(p, xx - 70, 571, L32_SEC[k], 10), m('first', .3));
+      hmSay(p, s, xx - 50, 580, m('first', .3), { size: 22, fill: L32_SEC[k], anchor: 'start' });
+    });
+    hmRule(p, 'Start with what you can do this week.', m('c', 3), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 32 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Do at least 100 of Grove’s points, honestly.', 'w1'], ['Production: map the flow, checks, indicators.', 'w2'], ['Leverage: output, go and see, monitor.', 'w3'], ['Structure meetings, objectives, decisions.', 'w4'], ['Performance: motivation, maturity, reviews.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-limit', prompt: ['Every device-software release waits on one overloaded verification lab. Which homework item fits first? (illustrative)'],
+      build: choice([['Find the limiting step and map the flow around it'], ['Add six new indicators for output'], ['Simplify your own most tedious task']], 0,
+        'The lab sets the pace of everything, so plan the flow around it first.',
+        [null, 'Indicators help later; first find the step that sets the pace.', 'Simplifying your own task will not unblock the lab.']) },
+    { id: 'p-tour', prompt: ['You only visit your clinical-study sites when something goes wrong. Which item fits? (illustrative)'],
+      build: choice([['Hold a one-on-one with each report'], ['Create a once-a-month excuse for a tour'], ['Forecast next week’s meetings']], 1,
+        'A regular, programmed reason to go and see brings the news before it becomes a crisis.',
+        ['One-on-ones are with your reports; this is about seeing the work where it happens.', null, 'That organizes your calendar, but the gap is going to see the work.']) },
+    { id: 'p-trm', prompt: ['A senior firmware engineer is new to leading a regulatory submission, and you manage everyone the same way. Which item fits? (illustrative)'],
+      build: choice([['Place her motivation on Maslow’s hierarchy'], ['Give her a racetrack of indicators'], ['Rate task-relevant maturity and match your style']], 2,
+        'She is mature at firmware but new to this task, so she needs a more structured style here.',
+        ['Motivation matters, but the mismatch is her experience with this task.', 'Indicators show progress; first match your style to her maturity on the task.', null]) },
+    { id: 'p-six', prompt: ['Two teams keep reopening which sensor supplier to qualify, and a director vetoed it late last time. Which item fits? (illustrative)'],
+      build: choice([['Set three objectives with key results'], ['Structure the decision with the six questions'], ['Cut mission meetings below a quarter of your time']], 1,
+        'Settle what, when, who decides, who is consulted, who can veto and who is told, in advance.',
+        ['Objectives set direction; this is about who decides and who can veto.', null, 'Fewer meetings will not settle who decides.']) },
+    { id: 'p-redo', prompt: ['The review you gave last cycle listed problems but changed nothing. Which item fits? (illustrative)'],
+      build: choice([['Review indicators in your staff meetings'], ['Give each report a racetrack'], ['Judge that review, then redo it as it should have been done']], 2,
+        'A review is task-relevant feedback; judge it by what it improved, then rewrite it.',
+        ['Indicators help, but the item here is to judge the review itself.', 'A racetrack helps from now on; the past review still needs redoing.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['closing', 'One more thing', (m) => {
+    const p = panel(0);
+    hmSay(p, 'That is the whole book.', 800, 230, m('thanks'), { size: 64, weight: 600 });
+    hmLines(p, ['Your output = your team’s output', '+ the output of the teams you influence'], 800, 360, m('core'), { size: 34, fill: COL.good, weight: 600 });
+    hmSay(p, 'Pick your first item this week.', 800, 530, m('week'), { size: 34 });
+    const ck = G(p, { x: 800, y: 630, o: 0 });
+    mk('circle', { r: 40, fill: '#16211d', stroke: COL.good, 'stroke-width': 4 }, ck);
+    show(ck, m('go'));
+    draw(path(ck, 'M-18 2L-5 16L20 -14', { stroke: COL.good, 'stroke-width': 7 }, { d: 0 }), m('go', .3), .4);
+    hmRule(p, 'Choose some. Do them honestly.', m('go', 1), 745);
+  }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+
+function l32Chip(p, s, x, y, color, t0, w, size = 24) {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+}
+boot();
+</script>
+</body>
+</html>

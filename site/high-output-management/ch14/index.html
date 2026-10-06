@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Breakfast Factory goes national</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 14, title: 'The Breakfast Factory goes national', kicker: 'Chapter 7 · Lesson 1', minutes: 11, language: 'en', silent: true, next: '../ch15/index.html' };
+
+/* Colours: blue = each local branch (ordinary work); pink = the regional middle; purple = headquarters (central);
+   green = the goal (quality, output); red = a problem or cost (overhead, crossed-out options); amber = the rule. */
+const L14_COLS = [['each branch', 300, COL.whole], ['region', 800, COL.rat], ['headquarters', 1300, COL.real]];
+// The decision board, filled in over three beats: [label, column, beat, mark, offset].
+const L14_ITEMS = [
+  ['local advertising', 0, 'local', 'ad', 2.5], ['hiring and firing', 0, 'local', 'hire', 0], ['wage scales', 0, 'local', 'hire', 1.5],
+  ['automatic machinery', 2, 'local', 'mach', 0], ['machine-testing group', 2, 'local', 'chi', 0],
+  ['egg purchasing centers', 1, 'middle', 'reg', .5], ['quality standards', 2, 'middle', 'std', .5], ['core menu', 2, 'middle', 'menu', .5],
+  ['regional dishes', 0, 'middle', 'taste', .3],
+  ['building, found locally', 0, 'more', 're', 3.5], ['building standards', 2, 'more', 're', 4.5], ['tableware, bought once', 2, 'more', 'table', 3],
+  ['tableware warehouses', 1, 'more', 'plates', 3], ['new-site choice', 2, 'more', 'ask', .3], ['advice on new sites', 1, 'more', 'ask', 1.5],
+];
+const L14_ORDER = ['local', 'middle', 'more'];
+const l14Chip = (p, s, col, slot, t0, { color, dash } = {}) => {
+  const [, cx, c] = L14_COLS[col], y = 250 + slot * 58, g = G(p, { o: 0 });
+  mk('rect', { x: cx - 200, y: y - 23, width: 400, height: 46, rx: 23, fill: '#16211d', stroke: color || c, 'stroke-width': 2.5, ...(dash ? { 'stroke-dasharray': '8 6' } : {}) }, g);
+  T(g, s, { x: cx, y: y + 8, size: 23, fill: color || c, anchor: 'middle' });
+  show(g, t0); return g;
+};
+// Draws the three columns, earlier beats' items at once, this beat's items on their marks. Returns the next free slot per column.
+function l14Board(p, beat, m) {
+  L14_COLS.forEach(([n, x, c]) => {
+    const f = mk('rect', { x: x - 225, y: 160, width: 450, height: 530, rx: 16, fill: 'none', stroke: c, 'stroke-width': 2, opacity: .55 }, p);
+    put(f, { o: 0 }); show(f, .25);
+    hmSay(p, n, x, 200, .3, { size: 28, fill: c, weight: 700 });
+  });
+  const upto = L14_ORDER.indexOf(beat), slots = [0, 0, 0];
+  L14_ITEMS.forEach(([s, col, b, k, off]) => {
+    const i = L14_ORDER.indexOf(b); if (i > upto) return;
+    l14Chip(p, s, col, slots[col]++, i < upto ? .4 : m(k, off));
+  });
+  return slots;
+}
+
+const BEATS = [
+  ['intro', 'The Breakfast Factory goes national', (m, D) => hmTitle(m, D, 'Chapter 7 · The Breakfast Factory Goes National · Lesson 1 of 1', 'The Breakfast Factory goes national', 'When one team becomes many: what to centralize, what to leave local')],
+
+  ['success', 'Success brings scale', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Success brings scale');
+    hmBox(p, 290, 320, 340, 150, COL.whole, m('egg'), ['Egg-boiling', 'machine'], { size: 30, sub: ['continuous, expensive'] });
+    for (let i = 0; i < 6; i++) { const d = hmDot(p, 580 + i * 72, 300, COL.good, 26); show(d, m('uni', .2 + i * .15), .3); }
+    hmSay(p, 'uniform breakfasts', 760, 370, m('uni', .5), { size: 24, fill: COL.good });
+    hmArrow(p, 470, 300, 540, 300, COL.dim, m('uni'), .3);
+    hmSay(p, 'machine at full capacity', 760, 450, m('full'), { size: 24, fill: COL.dim });
+    mk('rect', { x: 560, y: 470, width: 400, height: 34, rx: 8, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, p);
+    const cap = mk('rect', { x: 560, y: 470, width: 0, height: 34, rx: 8, fill: COL.whole }, p); put(cap, { a_width: 0 }); tw(cap, { a_width: 400 }, m('full', .3), 1.4, out);
+    // illustrative: cost per breakfast falling as volume rises (heights in px, no scale)
+    [190, 150, 120, 100].forEach((h, i) => hmBarUp(p, 1090 + i * 95, 520, 70, h, COL.whole, m('cost', .2 + i * .4)));
+    path(p, 'M1070 520H1470', { stroke: COL.faint, 'stroke-width': 2 });
+    hmLines(p, ['cost per breakfast', '(illustrative)'], 1270, 560, m('cost'), { size: 22, fill: COL.dim });
+    hmSay(p, 'savings passed on: the reputation spreads', 800, 660, m('pass'), { size: 30, fill: COL.good, weight: 600 });
+    hmRule(p, 'Volume and good equipment made each breakfast better and cheaper.', m('pass', 3.5), 745);
+  }],
+
+  ['grow', 'From one to a hundred', (m) => {
+    const p = panel(0);
+    hmHead(p, 'From one restaurant to a network');
+    show(hmDot(p, 200, 330, COL.whole, 22), .4); hmSay(p, 'the first', 200, 390, .4, { size: 22, fill: COL.dim });
+    show(hmDot(p, 330, 330, COL.whole, 22), m('two')); hmSay(p, 'across town', 330, 390, m('two'), { size: 22, fill: COL.dim });
+    const mag = G(p, { o: 0 });
+    mk('rect', { x: 470, y: 230, width: 190, height: 230, rx: 8, fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 }, mag);
+    T(mag, 'Neighborhood', { x: 565, y: 275, size: 22, fill: COL.chalk, anchor: 'middle', weight: 700 });
+    T(mag, 'Gourmet', { x: 565, y: 302, size: 22, fill: COL.chalk, anchor: 'middle', weight: 700 });
+    for (let j = 0; j < 5; j++) mk('rect', { x: 495, y: 330 + j * 22, width: j % 2 ? 100 : 140, height: 6, rx: 3, fill: COL.faint }, mag);
+    show(mag, m('mag'));
+    hmLines(p, ['a national magazine', 'runs a story'], 565, 500, m('mag', .5), { size: 22, fill: COL.dim });
+    const map = mk('rect', { x: 760, y: 170, width: 740, height: 450, rx: 24, fill: 'none', stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '10 8' }, p);
+    put(map, { o: 0 }); show(map, m('fran'));
+    hmSay(p, 'franchised nationwide (dots illustrative)', 1130, 652, m('fran'), { size: 22, fill: COL.dim });
+    let r = 7;
+    const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280;
+    for (let i = 0; i < 110; i++) {
+      const x = 800 + rnd() * 660, y = 205 + rnd() * 380, d = hmDot(p, x, y, COL.whole, 7);
+      show(d, m(i < 40 ? 'fran' : 'net', 1 + (i % 40) * .06), .2);
+    }
+    hmSay(p, 'more than a hundred restaurants', 1130, 692, m('net', 1), { size: 26, fill: COL.whole, weight: 600 });
+    hmRule(p, 'A network needs different tasks and skills than one restaurant.', m('diff', 1), 745);
+  }],
+
+  ['tension', 'Local knowledge or scale', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The balance at the heart of the network');
+    hmSay(p, 'centralization  versus  decentralization', 800, 200, m('theme'), { size: 30, fill: COL.task, weight: 600 });
+    draw(path(p, 'M180 460H1420', { stroke: COL.dim, 'stroke-width': 6 }, { d: 0 }), m('local', -.3), .8);
+    path(p, 'M800 462L755 535H845Z', { fill: COL.dim, stroke: 'none' });
+    hmBox(p, 430, 360, 460, 160, COL.whole, m('local'), 'Local knowledge', { size: 32, sub: ['the owner knows the neighborhood', 'and adapts for the best profit'] });
+    hmBox(p, 1170, 360, 460, 160, COL.real, m('scale'), 'Economies of scale', { size: 32, sub: ['100+ restaurants buy together', 'better and cheaper, centrally'] });
+    hmBox(p, 800, 625, 640, 100, COL.good, m('qual'), 'Quality: the real secret', { size: 30, fill: COL.good, sub: ['no branch or region may put it at risk'] });
+    hmRule(p, 'Every decision weighs local knowledge against scale.', m('theme', 4), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-qual', prompt: ['You oversee five clinical study sites (illustrative). Each site lead wants to choose how adverse events are recorded. What risk does Grove’s dilemma point to?'],
+    build: choice([['Losing purchasing power'], ['One site’s lapse can damage the reputation all the sites depend on'], ['None: local managers always know best']], 1,
+      'Quality is what the whole network is trusted for. No single site can be allowed to put it at risk.',
+      ['Buying power is not the issue here; the shared standard of quality is.', null, 'Local knowledge helps with local matters, but a shared standard protects everyone.']),
+  }], done) }],
+
+  ['local', 'What stays local, what goes central', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Where should each decision sit?');
+    l14Board(p, 'local', m);
+    hmLines(p, ['he knows who reads', 'the Daily Blatt'], 300, 600, m('ad', 1), { size: 22, fill: COL.dim });
+    hmLines(p, ['labor markets', 'differ by region'], 300, 520, m('hire', 3), { size: 22, fill: COL.dim, lh: 28 });
+    hmLines(p, ['years to find vendors', 'and learn to test', 'machines: one group,', 'in Chicago'], 1300, 450, m('chi', 1), { size: 22, fill: COL.dim, lh: 30 });
+    hmRule(p, 'Leave local what local knowledge improves.', m('chi', 4), 745);
+  }],
+
+  ['middle', 'A regional middle', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Some things belong in between');
+    l14Board(p, 'middle', m);
+    const a = l14Chip(p, 'all eggs from Chicago', 2, 2, m('eggs', .5), { color: COL.bad, dash: true });
+    const xa = hmCross(p, 1470, 250 + 2 * 58, COL.bad, 14); pop(xa, m('eggs', 3));
+    const b = l14Chip(p, 'every branch inspects eggs', 0, 3, m('insp', .3), { color: COL.bad, dash: true });
+    const xb = hmCross(p, 470, 250 + 3 * 58, COL.bad, 14); pop(xb, m('insp', 2));
+    [a, b, xa, xb].forEach(e => hide(e, m('reg', 3)));
+    hmLines(p, ['a few hours by truck', 'from every branch'], 800, 330, m('reg', 1.5), { size: 22, fill: COL.dim, lh: 28 });
+    hmSay(p, 'monitored everywhere', 1300, 520, m('std', 2.5), { size: 22, fill: COL.dim });
+    hmRule(p, 'When both matter, look for a regional middle.', m('taste', 2.5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-where', prompt: ['A medical device company with offices in many regions (illustrative). Where should each decision sit?'],
+    build: grid([
+      { parts: ['Which local surgical conferences to sponsor'], ans: ['l'], why: 'The local team knows its audience, like the manager who knows who reads the local paper.' },
+      { parts: ['Hiring a clinical specialist for one city'], ans: ['l'], why: 'Labor markets differ; the local manager knows the people and the pay.' },
+      { parts: ['The quality system for handling complaints'], ans: ['c'], why: 'One uniform standard, monitored everywhere: quality is the shared secret.' },
+      { parts: ['Validating incoming parts with scarce test experts'], ans: ['c'], why: 'Scarce skills that took years to build should not be duplicated in every region.' },
+    ], [['l', 'Local', COL.whole, 'L'], ['r', 'Regional', COL.rat, 'R'], ['c', 'Central', COL.real, 'C']], { multi: false, text: true }),
+  }], done) }],
+
+  ['more', 'Splitting a decision', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Often a decision splits across levels');
+    l14Board(p, 'more', m);
+    hmSay(p, 'still open: furniture', 800, 600, m('furn'), { size: 22, fill: COL.dim });
+    hmLines(p, ['not Chicago, for a', 'few broken plates'], 800, 470, m('plates', 4), { size: 22, fill: COL.dim, lh: 28 });
+    hmRule(p, 'Decide locally, within standards set centrally.', m('ask', 4.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => {
+    const p = panel(0);
+    S.q3 = L14_COLS.map(([n, x, c], i) => {
+      const g = G(p, { o: 0 });
+      mk('rect', { x: x - 200, y: 150, width: 400, height: 190, rx: 16, fill: '#16211d', stroke: c, 'stroke-width': 3 }, g);
+      T(g, ['at every lab', 'at regional hubs', 'at headquarters'][i], { x, y: 255, size: 30, fill: c, weight: 700, anchor: 'middle' });
+      show(g, .3 + i * .15); return g;
+    });
+  }, { ask: done => quiz({ x: 200, y: 400, w: 1200, cls: 'side' }, [{
+    id: 'c-spares', prompt: ['Thirty surgical training labs use identical instruments (illustrative). A lab needs a replacement within a day when one breaks. Where should spares be stocked? Click it.'],
+    build: pickEls(S.q3.map((g, i) => ({ el: g, box: [L14_COLS[i][1] - 210, 140, 420, 210], label: ['at every lab', 'at regional hubs', 'at headquarters'][i] })), 1,
+      'Regional hubs are close enough for next-day delivery without stocking all thirty labs.',
+      i => i === 0 ? 'Stocking all thirty labs duplicates inventory that mostly sits unused.' : 'One central store makes every lab wait on long shipping for a small part.'),
+  }], done) }],
+
+  ['overhead', 'The price of complexity', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Things have become very complicated');
+    hmSay(p, 'then', 330, 190, m('wish'), { size: 26, fill: COL.dim, weight: 600 });
+    hmSay(p, 'the CEO’s wish: pour the coffee again', 330, 250, m('wish', .5), { size: 22, fill: COL.dim });
+    hmBox(p, 330, 340, 360, 90, COL.whole, m('one'), 'One restaurant', { size: 30 });
+    hmLines(p, ['knew everybody by name', 'decided without a mountain', 'of pros and cons'], 330, 430, m('one', 2.5), { size: 22, fill: COL.whole, lh: 30 });
+    hmSay(p, 'almost no overhead', 330, 560, m('none'), { size: 26, fill: COL.good, weight: 600 });
+    path(p, 'M560 170V620', { stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '6 8' });
+    hmSay(p, 'now', 1050, 190, m('now', -.5), { size: 26, fill: COL.dim, weight: 600 });
+    hmBox(p, 1050, 260, 380, 70, COL.real, m('now', -.5), 'Headquarters', { size: 28 });
+    [[760, 'personnel manager', 'now'], [1050, 'traffic manager', 'traffic'], [1340, 'real estate manager', 'estate']].forEach(([x, s, k], i) => {
+      draw(path(p, `M1050 295V340H${x}V375`, { stroke: COL.faint, 'stroke-width': 2.5 }, { d: 0 }), m(k, .2), .4);
+      const g = G(p, { o: 0 });
+      mk('rect', { x: x - 135, y: 375, width: 270, height: 50, rx: 25, fill: '#16211d', stroke: COL.bad, 'stroke-width': 2.5, ...(i === 2 ? { 'stroke-dasharray': '8 6' } : {}) }, g);
+      T(g, s, { x, y: 408, size: 22, fill: COL.bad, anchor: 'middle' });
+      show(g, m(k, .5));
+    });
+    hmSay(p, 'soon', 1340, 455, m('estate', 1), { size: 20, fill: COL.dim });
+    hmLines(p, ['wants a computer to route eggs:', 'lower trucking cost, same-day', 'delivery, least tableware stock'], 1050, 470, m('traffic', 2), { size: 22, fill: COL.dim, lh: 30 });
+    hmRule(p, 'Coordinating many teams is real work, with costs of its own.', m('point', 3), 745);
+  }],
+
+  ['teams', 'A team of teams', (m) => {
+    const p = panel(0);
+    hmHead(p, 'From a team to a team of teams');
+    const team = (x, y, r, t0) => {
+      const g = G(p, { x, y, o: 0 });
+      mk('circle', { r, fill: COL.board, stroke: COL.whole, 'stroke-width': 3 }, g);
+      mk('circle', { cy: -r * .35, r: r * .16, fill: COL.chalk }, g);
+      [-.45, 0, .45].forEach(dx => mk('circle', { cx: dx * r, cy: r * .3, r: r * .12, fill: COL.whole }, g));
+      show(g, t0); return g;
+    };
+    team(330, 360, 120, .4);
+    hmSay(p, 'a team game', 330, 210, .4, { size: 26, fill: COL.dim });
+    hmLines(p, ['manager’s output =', 'the output of the', 'organization she leads'], 330, 540, m('out', .5), { size: 26, fill: COL.good, weight: 600 });
+    const pts = [[1100, 370], [910, 250], [1290, 250], [910, 490], [1290, 490]];
+    [[0, 1], [0, 2], [0, 3], [0, 4], [1, 2], [3, 4], [1, 3], [2, 4]].forEach(([a, b], i) =>
+      draw(path(p, `M${pts[a][0]} ${pts[a][1]}L${pts[b][0]} ${pts[b][1]}`, { stroke: COL.good, 'stroke-width': 3 }, { d: 0 }), m('fit', .3 + i * .15), .4));
+    pts.forEach(([x, y], i) => team(x, y, 62, m('tot', 1 + i * .25)));
+    hmSay(p, 'a team of teams', 1100, 600, m('tot', 2), { size: 28, fill: COL.whole, weight: 700 });
+    hmSay(p, 'suitable, mutually supportive links', 1100, 640, m('fit', 1.5), { size: 22, fill: COL.good });
+    hmSay(p, 'next: hybrid organizations · dual reporting · modes of control', 800, 692, m('next'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Management becomes a team of teams.', m('next', 4.5), 750);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-tot', prompt: ['Your group has grown from one team to four. You now spend more time linking the teams than doing the work. What does this chapter suggest?'],
+    build: choice([['Something is wrong: go back to doing the work yourself'], ['That is the job now: making the teams support each other'], ['Merge the four teams into one so nothing needs linking']], 1,
+      'With many teams, a manager’s work is fashioning a team of teams that support one another.',
+      ['That is the CEO’s wish for the old days. The network’s output depends on the links.', null, 'One giant team loses the local knowledge each team brings; the links are the work.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 14 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Growth turns one team into a network.', 'w1'], ['Weigh local knowledge against scale.', 'w2'], ['Keep local what local knowledge improves.', 'w3'], ['Centralize scale, scarce skills and standards.', 'w4'], ['Use a regional middle; build a team of teams.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-wage', prompt: ['You open a second engineering site in another country. HR proposes one global pay scale for both sites. What should you ask first?'],
+      build: choice([['Nothing: one scale is simplest'], ['Do the two labor markets differ? If so, set pay locally'], ['Can each engineer negotiate alone?']], 1,
+        'Labor markets vary from place to place, so one central pay scale hardly makes sense.',
+        ['Simple for HR, but wrong for at least one of the two markets.', null, 'That drops any shared structure; the question is which level sets pay.']) },
+    { id: 'p-test', prompt: ['Two of your sites each want their own lab to validate incoming sensor parts. Each needs experts who took years to develop. What fits?'],
+      build: choice([['Each site builds its own lab'], ['One shared validation group serves both sites'], ['Skip validation to save time']], 1,
+        'Scarce skills and hard-won vendor knowledge are worth centralizing, not duplicating.',
+        ['That doubles a scarce effort for no gain in local knowledge.', null, 'Quality is what the business is trusted for; it cannot be skipped.']) },
+    { id: 'p-std', prompt: ['A regional team asks to relax its protocol-deviation reporting rules so its study sites can move faster. What do you say?'],
+      build: choice([['Yes: they know their sites best'], ['Let each site decide for itself'], ['No: quality standards are set centrally and checked everywhere']], 2,
+        'One region’s lapse can damage the trust every site depends on, so the standard is uniform.',
+        ['Local knowledge helps with local choices, not with the shared standard.', 'That puts the shared standard in many different hands.', null]) },
+    { id: 'p-site', prompt: ['Which hospitals should join a new multi-site device study? Who should decide?'],
+      build: choice([['Headquarters alone, from a spreadsheet'], ['Each regional lead alone, with no shared criteria'], ['Headquarters, after consulting the regional leads who know the sites']], 2,
+        'The central decision gains from the people who know their own areas best.',
+        ['Headquarters does not know the local sites as well as the regional leads do.', 'Without shared criteria, the study would not hang together.', null]) },
+    { id: 'p-core', prompt: ['Your device software ships to hospitals in many countries. Sales asks for a different feature set in each one. What fits?'],
+      build: choice([['One core everywhere, with some local configuration'], ['A separate product for every country'], ['No local options at all']], 0,
+        'A shared core that customers can count on, with some room for local needs.',
+        [null, 'That loses the economies of one product and makes quality harder to keep.', 'Real local differences deserve some discretion.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

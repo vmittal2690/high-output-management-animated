@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delegating to agents</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 33, title: 'Delegating to agents', kicker: 'Bonus · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch34/index.html' };
+
+/* Not from Grove's book: our application of his ideas to AI agents. Every beat carries a "Beyond the book" chip.
+   Product facts are as announced or reported in Aug–Sep 2026 and are dated on screen. No real logos: the agent icon is our own.
+   Colours: blue = people and ordinary work; purple = agents; green = the goal or output; red = a problem; amber = the rule. */
+function l33Beyond(p) {
+  const g = G(p, { x: 34, y: 26, o: 0 });
+  mk('rect', { x: 0, y: 0, width: 200, height: 36, rx: 18, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, g);
+  T(g, 'Beyond the book', { x: 100, y: 25, size: 18, fill: COL.dim, anchor: 'middle', weight: 600 });
+  show(g, .05); return g;
+}
+// Our own generic agent icon: a rounded square with two eyes and an antenna.
+function l33Agent(p, x, y, t0, s = 1, color = COL.real) {
+  const g = G(p, { x, y, s, o: 0 });
+  path(g, 'M0 -30V-42', { stroke: color, 'stroke-width': 3 });
+  mk('circle', { cy: -46, r: 5, fill: color }, g);
+  mk('rect', { x: -32, y: -30, width: 64, height: 58, rx: 18, fill: '#16211d', stroke: color, 'stroke-width': 3.5 }, g);
+  mk('circle', { cx: -12, cy: -4, r: 6, fill: color }, g);
+  mk('circle', { cx: 12, cy: -4, r: 6, fill: color }, g);
+  path(g, 'M-10 13H10', { stroke: color, 'stroke-width': 3 });
+  show(g, t0); return g;
+}
+function l33Person(p, x, y, t0, color = COL.whole, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  show(g, t0); return g;
+}
+const l33Chip = (p, s, x, y, color, t0, w, size = 22) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 22, width: w, height: 44, rx: 22, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l33Doc(p, x, y, w, h, color, lines, t0, mark) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  if (mark) T(g, mark, { x, y: y + 16, size: Math.round(h * .42), fill: color, anchor: 'middle', weight: 700 });
+  else for (let j = 0; j < lines; j++) mk('rect', { x: x - w / 2 + w * .14, y: y - h / 2 + h * .18 + j * h * .7 / lines, width: w * (j % 3 === 2 ? .45 : .72), height: Math.max(4, h * .045), rx: 2, fill: color, opacity: .6 }, g);
+  show(g, t0); return g;
+}
+// A product card: our icon, the name, a date line and two short facts.
+function l33Card(p, x, y, name, date, subs, t0) {
+  const g = G(p, { x, y, o: 0 });
+  mk('rect', { x: -230, y: -125, width: 460, height: 250, rx: 16, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, g);
+  T(g, name, { x: 0, y: -2, size: 32, fill: COL.real, anchor: 'middle', weight: 600 });
+  T(g, date, { x: 0, y: 30, size: 20, fill: COL.dim, anchor: 'middle' });
+  subs.forEach((s, i) => T(g, s, { x: 0, y: 70 + i * 30, size: 22, fill: COL.chalk, anchor: 'middle' }));
+  show(g, t0);
+  l33Agent(p, x, y - 72, t0 + .2, .8);
+  return g;
+}
+
+const quickRun = () => { const p = panel(0); l33Beyond(p); };
+
+const BEATS = [
+  ['intro', 'Delegating to agents', (m, D) => { hmTitle(m, D, 'Bonus chapter · Grove for the age of agents · Lesson 1 of 3', 'Delegating to agents', 'Grove’s ideas, applied by us to AI agents'); l33Beyond(scene); }],
+
+  ['new', 'Agents that do work', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Fall 2026: agents that do work');
+    l33Card(p, 290, 320, 'OpenAI Dots', 'announced Sep 2026', ['hand it a goal; it works on', 'its own cloud computer'], m('dots'));
+    l33Card(p, 800, 320, 'Meta Muse', 'announced Sep 2026', ['books, fills forms, negotiates;', 'works after the app closes'], m('muse'));
+    l33Card(p, 1310, 320, 'Instinct', 'invite-only, Aug 2026', ['text or call it: trips,', 'groceries, cancellations'], m('inst'));
+    l33Chip(p, 'answers questions', 560, 545, COL.dim, m('shift'), 260);
+    draw(path(p, 'M445 545H675', { stroke: COL.bad, 'stroke-width': 4 }, { d: 0 }), m('shift', 1), .4);
+    hmArrow(p, 710, 545, 870, 545, COL.dim, m('shift', 2), .4);
+    l33Chip(p, 'does work', 1010, 545, COL.real, m('shift', 2.4), 200, 24);
+    hmSay(p, 'Products as announced or reported, Aug–Sep 2026; details may change.', 800, 640, m('dots'), { size: 20, fill: COL.faint });
+    hmRule(p, 'Agents do work. Delegated work needs managing.', m('shift', 4.5), 745);
+  }],
+
+  ['output', 'Your output includes your agents', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Your agents are part of your output');
+    hmSay(p, 'Manager’s output = your organization’s output + neighbours you influence', 800, 180, m('def'), { size: 26 });
+    hmSay(p, 'Grove’s definition, lesson 5', 800, 215, m('def'), { size: 20, fill: COL.dim });
+    const org = mk('rect', { x: 140, y: 255, width: 680, height: 345, rx: 18, fill: 'none', stroke: COL.dim, 'stroke-width': 2.5, 'stroke-dasharray': '10 8' }, p); put(org, { o: 0 }); show(org, m('def', 1));
+    hmSay(p, 'your organization', 480, 292, m('def', 1), { size: 22, fill: COL.dim });
+    l33Person(p, 480, 375, m('def', 1.2)); hmSay(p, 'you', 480, 425, m('def', 1.2), { size: 20, fill: COL.whole });
+    l33Person(p, 240, 520, m('def', 1.6)); l33Person(p, 360, 520, m('def', 1.8));
+    hmSay(p, 'your team', 300, 575, m('def', 1.8), { size: 20, fill: COL.whole });
+    l33Agent(p, 600, 515, m('now')); l33Agent(p, 720, 515, m('now', .4));
+    hmSay(p, 'agents you direct', 660, 575, m('now', .4), { size: 20, fill: COL.real });
+    const nb = mk('rect', { x: 860, y: 330, width: 220, height: 190, rx: 16, fill: 'none', stroke: COL.faint, 'stroke-width': 2.5, 'stroke-dasharray': '8 8' }, p); put(nb, { o: 0 }); show(nb, m('def', 2));
+    l33Person(p, 970, 420, m('def', 2.2)); hmSay(p, 'neighbours', 970, 490, m('def', 2.2), { size: 20, fill: COL.dim });
+    hmArrow(p, 1095, 395, 1250, 340, COL.good, m('yours'), .5);
+    l33Doc(p, 1330, 330, 110, 130, COL.good, 5, m('yours', .4));
+    hmSay(p, 'your output', 1330, 430, m('yours', .4), { size: 24, fill: COL.good, weight: 600 });
+    hmArrow(p, 1095, 455, 1250, 545, COL.bad, m('mist'), .5);
+    l33Doc(p, 1330, 560, 110, 120, COL.bad, 4, m('mist', .3));
+    pop(hmCross(p, 1385, 510, COL.bad, 14), m('mist', .6));
+    hmSay(p, 'their mistakes, too', 1330, 660, m('mist', .3), { size: 24, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Your agents’ output is yours. So are their mistakes.', m('mist', 1.5), 745);
+  }],
+
+  ['lever', 'Leverage, both ways', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Leverage: output per activity (lesson 6)');
+    hmSay(p, 'One brief can drive hours of agent work.', 800, 175, m('mult'), { size: 26, fill: COL.dim });
+    l33Doc(p, 260, 300, 90, 110, COL.whole, 4, m('mult', .2));
+    hmSay(p, 'one clear brief', 260, 390, m('mult', .2), { size: 22, fill: COL.whole });
+    hmArrow(p, 320, 300, 470, 300, COL.dim, m('mult', .6), .4);
+    l33Agent(p, 540, 305, m('mult', .9));
+    hmArrow(p, 600, 300, 760, 300, COL.dim, m('mult', 1.3), .4);
+    for (let i = 0; i < 8; i++) l33Doc(p, 820 + i * 72, 300, 56, 76, COL.good, 3, m('mult', 1.6 + i * .25));
+    hmSay(p, 'hours of useful work (illustrative)', 1072, 380, m('mult', 3), { size: 22, fill: COL.good });
+    hmSay(p, 'A clear brief: one of a manager’s highest-leverage acts', 800, 460, m('brief'), { size: 28, fill: COL.good, weight: 600 });
+    l33Doc(p, 260, 580, 90, 110, COL.bad, 0, m('neg', .2), '?');
+    hmSay(p, 'a vague brief', 260, 672, m('neg', .2), { size: 22, fill: COL.bad });
+    hmArrow(p, 320, 580, 470, 580, COL.dim, m('neg', .6), .4);
+    l33Agent(p, 540, 585, m('neg', .9));
+    hmArrow(p, 600, 580, 760, 580, COL.dim, m('neg', 1.3), .4);
+    for (let i = 0; i < 8; i++) l33Doc(p, 820 + i * 72, 580, 56, 76, COL.bad, 3, m('neg', 1.5 + i * .15));
+    hmSay(p, 'wrong work, at machine speed', 1072, 672, m('neg', 2.8), { size: 22, fill: COL.bad });
+    hmRule(p, 'A clear brief multiplies output. A vague one multiplies waste.', m('neg', 5), 745);
+  }],
+
+  ['q1', 'Quick check', quickRun, { ask: done => quiz(MID, [{
+    id: 'c-brief', prompt: ['At 6 pm you gave an agent a one-line brief. By morning it had written 40 pages on the wrong question. What went wrong?'],
+    build: choice([['The agent isn’t capable enough: switch tools'], ['A vague brief: negative leverage. Give the objective, priorities and preferred approach'], ['It ran too long: cap it at one hour']], 1,
+      'The agent multiplied your one line. Leverage cuts both ways, so brief it as you would a person (lesson 6).',
+      ['It did what the brief allowed. A stronger agent would chase a vague brief just as fast.', null, 'A shorter run only gives fewer pages on the wrong question.']),
+  }], done) }],
+
+  ['base', 'A shared base', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'A shared base, then a clear brief (lesson 6)');
+    l33Person(p, 300, 310, .4); hmSay(p, 'you', 300, 370, .4, { size: 22, fill: COL.whole });
+    l33Agent(p, 1300, 310, .5, 1.2); hmSay(p, 'your agent', 1300, 370, .5, { size: 22, fill: COL.real });
+    l33Chip(p, 'the same information', 800, 260, COL.chalk, m('info'), 330);
+    l33Chip(p, 'the same approach to problems', 800, 330, COL.chalk, m('approach'), 420);
+    hmArrow(p, 360, 295, 570, 295, COL.faint, m('info', .2), .4); hmArrow(p, 1240, 295, 1030, 295, COL.faint, m('info', .2), .4);
+    l33Chip(p, 'OpenAI Dots learn your preferences from feedback · Sep 2026', 800, 440, COL.real, m('learn'), 780);
+    l33Chip(p, 'Meta Muse remembers what matters; can be told to forget · Sep 2026', 800, 505, COL.real, m('learn', 4), 860);
+    hmSay(p, 'Brief it as you would a new report:', 800, 600, m('write'), { size: 26 });
+    l33Chip(p, 'the objective', 430, 660, COL.good, m('write', 1.5), 230, 24);
+    l33Chip(p, 'your priorities', 790, 660, COL.good, m('write', 2.3), 250, 24);
+    l33Chip(p, 'how you prefer it done', 1190, 660, COL.good, m('write', 3.1), 340, 24);
+    hmRule(p, 'Brief an agent as you would a new report.', m('write', 6), 745);
+  }],
+
+  ['follow', 'Follow through', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Delegate, then follow through (lesson 6)');
+    hmSay(p, 'Delegation without follow-through is abdication.', 800, 170, .8, { size: 26, fill: COL.dim });
+    l33Person(p, 220, 330, m('still'));
+    l33Chip(p, 'still responsible', 220, 410, COL.whole, m('still', .5), 240);
+    const scr = G(p, { o: 0 });
+    mk('rect', { x: 540, y: 230, width: 340, height: 210, rx: 12, fill: '#121a17', stroke: COL.real, 'stroke-width': 3 }, scr);
+    path(scr, 'M710 440V465M650 468H770', { stroke: COL.real, 'stroke-width': 3 });
+    show(scr, m('watch'));
+    l33Agent(p, 710, 340, m('watch', .3));
+    hmSay(p, 'open its cloud computer and watch', 710, 505, m('watch', .5), { size: 22 });
+    hmSay(p, 'OpenAI Dots · Sep 2026', 710, 535, m('watch', .5), { size: 18, fill: COL.dim });
+    l33Chip(p, 'progress update', 590, 600, COL.real, m('watch', 4), 220);
+    l33Chip(p, 'a question for you', 850, 600, COL.real, m('watch', 6), 260);
+    const doc = G(p, { o: 0 });
+    mk('rect', { x: 1040, y: 220, width: 400, height: 280, rx: 12, fill: '#16211d', stroke: COL.real, 'stroke-width': 3 }, doc);
+    T(doc, 'audit trail', { x: 1240, y: 262, size: 26, fill: COL.real, anchor: 'middle', weight: 600 });
+    [['done: compared three quotes', COL.chalk], ['done: drafted the reply', COL.chalk], ['plan: send the reply', COL.dim], ['(asks you first)', COL.dim]].forEach(([s, c], i) => T(doc, s, { x: 1075, y: 318 + i * 44, size: 21, fill: c }));
+    show(doc, m('trail'));
+    hmSay(p, 'Meta Muse · Sep 2026', 1240, 535, m('trail'), { size: 18, fill: COL.dim });
+    hmSay(p, 'Monitoring isn’t meddling.', 800, 675, m('use'), { size: 30, weight: 700 });
+    hmRule(p, 'You stay responsible. Use the windows the tools give you.', m('use', 2.5), 745);
+  }],
+
+  ['gate', 'Gate the irreversible', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Gate the irreversible, sample the rest (lesson 4)');
+    hmChain(p, ['research', 'draft', 'compare'], [200, 430, 660], 260, 190, 80, COL.real, [.5, .8, 1.1]);
+    hmArrow(p, 763, 260, 838, 260, COL.dim, m('gate'), .3);
+    const gt = G(p, { o: 0 });
+    path(gt, 'M845 200V320M905 200V320M845 230H905M845 290H905', { stroke: COL.chalk, 'stroke-width': 5 });
+    show(gt, m('gate', .3));
+    hmSay(p, 'you approve', 875, 355, m('gate', .5), { size: 22, fill: COL.whole, weight: 600 });
+    hmArrow(p, 912, 260, 978, 260, COL.dim, m('irrev'), .3);
+    hmBox(p, 1190, 260, 410, 80, COL.real, m('irrev', .2), 'send · pay · sign · submit', { size: 26 });
+    hmSay(p, 'can’t be undone', 1190, 195, m('irrev', .5), { size: 22, fill: COL.dim });
+    hmBox(p, 500, 450, 620, 120, COL.real, m('ex'), 'Meta Muse · Sep 2026', { size: 26, sub: ['asks before it sends an email or buys'] });
+    hmBox(p, 1150, 450, 620, 130, COL.real, m('ex', 3), 'OpenAI Dots · Sep 2026', { size: 26, sub: ['a tester’s Dot drafted a forgotten invoice,', 'then waited for approval'] });
+    [200, 430, 660].forEach((x, i) => {
+      const g = G(p, { x: x + 70, y: 186, o: 0 });
+      mk('circle', { r: 13, fill: 'none', stroke: COL.dim, 'stroke-width': 3 }, g);
+      path(g, 'M9 9L19 19', { stroke: COL.dim, 'stroke-width': 4 });
+      show(g, m('sample', .3 + i * .3));
+    });
+    hmSay(p, 'reversible: spot-check a sample', 430, 345, m('sample', .5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Regulated work: anything that reaches a patient, a customer or a regulator', 800, 580, m('med'), { size: 26 });
+    hmSay(p, 'gets a gate, and a person who signs.', 800, 625, m('med', 1.5), { size: 28, weight: 700 });
+    hmRule(p, 'Gate what you can’t undo. Sample what you can.', m('med', 6), 745);
+  }],
+
+  ['q2', 'Quick check', quickRun, { ask: done => quiz(MID, [{
+    id: 'c-gate', prompt: ['Gate (approve before it happens) or monitor (sample afterwards)?'],
+    build: grid([
+      { parts: ['Agent emails a supplier a purchase order'], ans: ['g'], why: 'Sending commits money and can’t be taken back: gate it.' },
+      { parts: ['Agent drafts meeting notes for your team'], ans: ['m'], why: 'A draft is reversible and low value: sample it.' },
+      { parts: ['Agent submits a regulatory form'], ans: ['g'], why: 'It reaches a regulator: a person reviews and signs first.' },
+      { parts: ['Agent summarizes literature for a study plan'], ans: ['m'], why: 'Internal input you will read anyway: spot-check it.' },
+    ], [['g', 'Gate', COL.chalk, 'G'], ['m', 'Monitor', COL.whole, 'M']], { multi: false, text: true }),
+  }], done) }],
+
+  ['trm', 'Autonomy by task', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmHead(p, 'Autonomy by task-relevant maturity (lessons 12, 23–24)');
+    hmSay(p, 'It belongs to the task, not the agent.', 800, 172, m('task'), { size: 28, weight: 600 });
+    hmArrow(p, 200, 245, 900, 245, COL.dim, m('low', -.5), .6);
+    hmSay(p, 'track record on this task', 550, 228, m('low', -.2), { size: 20, fill: COL.dim });
+    hmBox(p, 380, 470, 380, 130, COL.real, m('low'), 'Structured', { size: 30, sub: ['read-only, or', 'approval at every step'] });
+    hmSay(p, 'Idle Dots research read-only · Sep 2026', 200, 580, m('low', 6), { size: 20, fill: COL.real, anchor: 'start' });
+    hmBox(p, 800, 380, 380, 130, COL.real, m('mid'), 'Approve at key points', { size: 28, sub: ['as the record builds'] });
+    hmBox(p, 1220, 290, 380, 130, COL.real, m('high'), 'Spot checks', { size: 30, sub: ['once it’s proven'] });
+    draw(path(p, 'M1220 355V655H160V470H180', { stroke: COL.bad, 'stroke-width': 3.5 }, { d: 0 }), m('back'), 1.2);
+    draw(path(p, 'M170 460L184 470L170 480', { stroke: COL.bad, 'stroke-width': 3.5 }, { d: 0 }), m('back', 1.1), .2);
+    hmSay(p, 'if it slips: back to structure, as Grove would with a person', 760, 695, m('back', 1), { size: 22, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Autonomy is earned per task, by track record.', m('back', 4), 745);
+  }],
+
+  ['q3', 'Quick check', quickRun, { ask: done => quiz(MID, [{
+    id: 'c-trm', prompt: ['An agent has categorized expenses flawlessly for two months. Now you want it to negotiate with vendors, which it has never done. How much autonomy?'],
+    build: choice([['Full autonomy: it has proven itself'], ['Structured: approve each step of the negotiation at first'], ['None: agents should never negotiate']], 1,
+      'Maturity belongs to the task. Start structured, then loosen as its negotiation record builds (lessons 12, 23–24).',
+      ['Its record is in expenses. For negotiations it is new.', null, 'Grove builds maturity step by step; he doesn’t refuse the task for good.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0); l33Beyond(p);
+    hmSay(p, 'Bonus lesson 1 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Agents you direct are part of your output.', 'w1'], ['Clear brief: high leverage. Vague: negative.', 'w2'], ['Share objective, priorities, preferred approach.', 'w3'], ['Gate the irreversible; sample the rest.', 'w4'], ['Grant autonomy per task, as the record grows.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', quickRun, { ask: done => quiz(SCREEN, [
+    { id: 'p-brief', prompt: ['Illustrative: you ask an agent to “pull together the verification test results.” Which addition helps most?'],
+      build: choice([['Nothing: it will work it out'], ['The objective, which tests matter most, and the format you want'], ['A longer deadline']], 1,
+        'Objective, priorities and preferred approach are the shared base that makes delegation work.',
+        ['It will work out something, fast, and perhaps the wrong thing.', null, 'More time on an unclear task only produces more unclear work.']) },
+    { id: 'p-own', prompt: ['Illustrative: an agent’s supplier summary, forwarded to your director, had a wrong price. Who is accountable?'],
+      build: choice([['The company that makes the agent'], ['You: your agent’s output is your output'], ['Your director, for not checking']], 1,
+        'Agents you direct are part of your organization, so their mistakes are yours to own and fix.',
+        ['You chose to delegate to it, and the summary went out from your team.', null, 'The work came from your organization; checking it was your job.']) },
+    { id: 'p-gate', prompt: ['Illustrative: an agent drafts a device complaint report that will go to a regulator. Where is the gate?'],
+      build: choice([['Before it searches the complaint database'], ['Before the report is submitted, with a person who signs'], ['No gate: the audit trail is enough']], 1,
+        'Submitting can’t be undone and reaches a regulator, so a person reviews and signs first.',
+        ['Searching is read-only and reversible; sample it instead.', null, 'An audit trail shows what happened afterwards; it can’t stop a bad submission.']) },
+    { id: 'p-slip', prompt: ['Illustrative: an agent that has sent good study-site emails for weeks sends one with a wrong visit date. What now?'],
+      build: choice([['Switch the agent off for good'], ['Drop back to approving its site emails for a while'], ['Nothing: one slip doesn’t matter']], 1,
+        'When something goes wrong, drop back to more structure, then loosen again as the record recovers.',
+        ['Grove would add structure, not give up on a capable worker.', null, 'A wrong visit date can reach a patient; tighten the checks.']) },
+    { id: 'p-follow', prompt: ['Illustrative: your report set an agent on a literature review a week ago and hasn’t looked since. Your advice?'],
+      build: choice([['Fine: that is what delegating means'], ['Read its progress updates and sample its work now'], ['Redo the review by hand to be safe']], 1,
+        'Delegation without follow-through is abdication. Monitoring keeps the leverage and catches drift early.',
+        ['Handing off and never checking is abdication, not delegation.', null, 'That throws the leverage away; monitor instead of redoing.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', quickRun, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

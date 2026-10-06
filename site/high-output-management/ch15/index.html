@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission, function and the hybrid</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 15, title: 'Mission, function and the hybrid', kicker: 'Chapter 8 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch16/index.html' };
+
+/* Colours: blue = mission-oriented (business) units; purple = functional groups; green = the goal (responsiveness,
+   leverage, output); red = a problem or cost; amber = the rule. Org charts are our own drawings after Grove's figures. */
+// A plain org-chart box centred on (x, y), with one or two lines of text.
+function l15Box(p, x, y, w, h, color, lines, t0, { size = 24, dash } = {}) {
+  const g = G(p, { o: 0 }), L = [].concat(lines);
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 10, fill: '#16211d', stroke: color, 'stroke-width': 3, ...(dash ? { 'stroke-dasharray': '8 6' } : {}) }, g);
+  L.forEach((s, i) => T(g, s, { x, y: y + size * .36 + (i - (L.length - 1) / 2) * size * 1.2, size, fill: color === COL.faint ? COL.dim : color, anchor: 'middle', weight: 600 }));
+  show(g, t0); return g;
+}
+// An elbow connector from a parent's bottom (x1, y1) to a child's top (x2, y2).
+const l15Link = (p, x1, y1, x2, y2, t0, color = COL.faint) => {
+  const ym = (y1 + y2) / 2;
+  draw(path(p, `M${x1} ${y1}V${ym}H${x2}V${y2}`, { stroke: color, 'stroke-width': 2.5 }, { d: 0 }), t0, .4);
+};
+const l15Chip = (p, s, x, y, color, t0, w, size = 22) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 22, width: w, height: 44, rx: 22, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+const l15Sq = (p, x, y, color, t0, r = 18) => { const g = G(p, { o: 0 }); mk('rect', { x: x - r, y: y - r, width: 2 * r, height: 2 * r, rx: 4, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g); show(g, t0); return g; };
+const L15_Q2 = [['Endoscopy', 'division'], ['Imaging', 'division'], ['Shared', 'manufacturing'], ['Monitoring', 'division']];
+const L15_Q2X = [290, 630, 970, 1310];
+
+const BEATS = [
+  ['intro', 'Mission, function and the hybrid', (m, D) => hmTitle(m, D, 'Chapter 8 · Hybrid Organizations · Lesson 1 of 2', 'Mission, function and the hybrid', 'Two pure ways to organize, and why the answer is a mix')],
+
+  ['boxes', 'Black boxes wired together', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Your group is one box among many');
+    const pts = [[800, 330], [470, 230], [1130, 230], [430, 470], [1170, 470], [800, 560]];
+    pts.slice(1).forEach(([x, y], i) => draw(path(p, `M800 330L${x} ${y}`, { stroke: COL.faint, 'stroke-width': 3 }, { d: 0 }), m('link', .2 + i * .2), .4));
+    draw(path(p, 'M470 230L430 470M1130 230L1170 470', { stroke: COL.faint, 'stroke-width': 3 }, { d: 0 }), m('link', 1.4), .4);
+    pts.forEach(([x, y], i) => {
+      const g = G(p, { x, y, o: 0 });
+      mk('rect', { x: -95, y: -50, width: 190, height: 100, rx: 10, fill: i ? '#121a17' : '#26362f', stroke: i ? COL.dim : COL.whole, 'stroke-width': i ? 3 : 4 }, g);
+      show(g, i ? m('link', .2 + i * .2) : m('most'));
+    });
+    hmLines(p, ['your', 'department'], 800, 322, m('most', .3), { size: 24, fill: COL.whole, weight: 700, lh: 30 });
+    hmSay(p, 'like branches wired to each other and to headquarters', 800, 660, m('link', 2.5), { size: 24, fill: COL.dim });
+    hmRule(p, 'Every black box is wired to other black boxes.', m('look', 1), 745);
+  }],
+
+  ['mission', 'The totally mission-oriented form', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Extreme 1: totally mission-oriented');
+    hmSay(p, 'completely decentralized', 800, 160, m('first', 1), { size: 24, fill: COL.whole });
+    l15Box(p, 800, 220, 300, 64, COL.chalk, 'Corporate office', m('first', .5));
+    const RX = [290, 630, 970, 1310];
+    RX.forEach((x, i) => { l15Link(p, 800, 252, x, 312, m('regions', i * .25)); l15Box(p, x, 340, 280, 56, COL.whole, ['Northwest region', 'Southwest region', 'Northeast region', 'Southeast region'][i], m('regions', .2 + i * .25), { size: 22 }); });
+    RX.forEach((x, i) => [-80, 0, 80].forEach((dx, j) => { l15Link(p, x, 368, x + dx, 412, m('regions', 1.6 + i * .2)); l15Sq(p, x + dx, 430, COL.whole, m('regions', 1.8 + i * .2)); }));
+    hmSay(p, 'each branch does it all:', 800, 520, m('all'), { size: 26, weight: 600 });
+    [['location and building', 290, 280], ['merchandising', 600, 210], ['its own people', 870, 200], ['its own buying', 1140, 210]].forEach(([s, x, w], i) => l15Chip(p, s, x, 575, COL.whole, m('all', 1.5 + i * 1.4), w));
+    hmSay(p, 'monthly financial statements go up to the corporate office: that is the tie-in', 800, 660, m('report'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Mission form: each unit does everything for itself.', m('report', 4), 745);
+  }],
+
+  ['functional', 'The totally functional form', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Extreme 2: totally functional');
+    hmSay(p, 'completely centralized', 800, 160, m('depts', -1), { size: 24, fill: COL.real });
+    l15Box(p, 800, 220, 300, 64, COL.chalk, 'Corporate office', .4);
+    const DX = [220, 510, 800, 1090, 1380], N = ['Merchandising', 'Personnel', ['Real estate', '& construction'], 'Purchasing', 'Finance'];
+    DX.forEach((x, i) => { l15Link(p, 800, 252, x, 312, m('depts', i * .5)); l15Box(p, x, 350, 250, 76, COL.real, N[i], m('depts', .2 + i * .5), { size: 22 }); });
+    const BX = Array.from({ length: 12 }, (_, i) => 250 + i * 100);
+    BX.forEach((x, i) => l15Sq(p, x, 560, COL.whole, m('every', i * .08)));
+    hmSay(p, 'branches', 800, 620, m('every', .5), { size: 22, fill: COL.whole });
+    // each department drops to a shared line that reaches every branch
+    DX.forEach((x, i) => draw(path(p, `M${x} 388V470`, { stroke: COL.real, 'stroke-width': 2.5 }, { d: 0 }), m('every', 1.2 + i * .15), .3));
+    draw(path(p, 'M220 470H1380', { stroke: COL.real, 'stroke-width': 3 }, { d: 0 }), m('every', 2), .6);
+    BX.forEach((x, i) => draw(path(p, `M${x} 470V542`, { stroke: COL.real, 'stroke-width': 2.5 }, { d: 0 }), m('hire', .3 + i * .06), .3));
+    hmSay(p, 'each department works at every branch: personnel hires, fires and evaluates everywhere', 800, 670, m('hire', 1), { size: 22, fill: COL.dim });
+    hmRule(p, 'Functional form: each activity is run once, for all units.', m('hire', 5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-form', prompt: ['A medical device company (illustrative). Is each arrangement mission-oriented or functional?'],
+    build: grid([
+      { parts: ['Each product line has its own engineers, regulatory staff and sales team'], ans: ['m'], why: 'Each unit has everything it needs for its own business.' },
+      { parts: ['One regulatory affairs group files for every product line'], ans: ['f'], why: 'One activity, run once, for all the units.' },
+      { parts: ['Each country office runs its own marketing, hiring and buying'], ans: ['m'], why: 'Like a branch that does it all and reports its results upward.' },
+      { parts: ['A central purchasing group buys components for all divisions'], ans: ['f'], why: 'Purchasing is centralized and serves everyone.' },
+    ], [['m', 'Mission', COL.whole, 'M'], ['f', 'Functional', COL.real, 'F']], { multi: false, text: true }),
+  }], done) }],
+
+  ['pull', 'Responsiveness or leverage', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two legitimate pulls');
+    draw(path(p, 'M180 420H1420', { stroke: COL.dim, 'stroke-width': 6 }, { d: 0 }), m('local', -.4), .8);
+    path(p, 'M800 422L755 495H845Z', { fill: COL.dim, stroke: 'none' });
+    hmBox(p, 440, 320, 480, 150, COL.whole, m('local'), 'Respond to local needs', { size: 30, sub: ['pulls toward mission'] });
+    hmArrow(p, 190, 320, 120, 320, COL.whole, m('local', 2), .4);
+    hmBox(p, 1160, 320, 480, 150, COL.real, m('scale'), ['Scale and expertise', 'across the company'], { size: 30, sub: ['pulls toward function'] });
+    hmArrow(p, 1410, 320, 1480, 320, COL.real, m('scale', 3), .4);
+    hmSay(p, 'real organizations look for a compromise', 800, 545, m('comp'), { size: 26, fill: COL.dim });
+    hmLines(p, ['Alfred Sloan, after decades at General Motors: good management rests on', 'reconciling centralization and decentralization'], 800, 600, m('sloan'), { size: 24, fill: COL.chalk, lh: 32 });
+    hmRule(p, 'Balance responsiveness against leverage.', m('bal', 2), 745);
+  }],
+
+  ['intel', 'Intel is a hybrid', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Intel is a hybrid');
+    l15Box(p, 1000, 200, 300, 64, COL.chalk, 'Executive office', .4);
+    const BX = [740, 1050, 1360];
+    BX.forEach((x, i) => { l15Link(p, 1000, 232, x, 300, m('biz', i * .5)); l15Box(p, x, 340, 280, 80, COL.whole, [['Components', 'Microcomputers', 'Systems'][i], 'business group'], m('biz', .2 + i * .5), { size: 22 }); });
+    hmSay(p, 'business units: mission-oriented', 1050, 420, m('biz', 2), { size: 22, fill: COL.whole });
+    draw(path(p, 'M850 200H560V600H470', { stroke: COL.faint, 'stroke-width': 2.5 }, { d: 0 }), m('fun'), .6);
+    const FN = ['Sales', 'Manufacturing', ['Technology', 'development'], 'Administration'];
+    FN.forEach((s, i) => { const y = 255 + i * 115; draw(path(p, `M560 ${y}H470`, { stroke: COL.faint, 'stroke-width': 2.5 }, { d: 0 }), m('fun', .4 + i * .5), .3); l15Box(p, 330, y, 280, 80, COL.real, s, m('fun', .5 + i * .5), { size: 22 }); });
+    hmSay(p, 'functional units', 330, 680, m('fun', 2.5), { size: 22, fill: COL.real });
+    hmLines(p, ['Like an army: shared groups supply', 'blankets, pay, surveillance, intelligence', 'to every fighting unit'], 1150, 500, m('army'), { size: 22, fill: COL.dim, lh: 30 });
+    hmSay(p, 'each unit is free to take its hill', 1150, 640, m('hill'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'A hybrid: mission units served by functional groups.', m('hill', 4), 745);
+  }],
+
+  ['subcon', 'Internal subcontractors', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Functional groups are internal subcontractors');
+    l15Box(p, 380, 250, 340, 80, COL.faint, 'Outside sales reps', m('sales', 1), { size: 26, dash: true });
+    l15Box(p, 1220, 250, 340, 80, COL.real, 'Internal sales group', m('sales', 3), { size: 26 });
+    hmArrow(p, 570, 250, 1030, 250, COL.dim, m('sales', 3.5), .5);
+    hmSay(p, 'same job: cheaper, more responsive', 800, 220, m('sales', 4.5), { size: 22, fill: COL.good, weight: 600 });
+    hmSay(p, 'also serving every business unit:', 800, 370, m('also'), { size: 24, fill: COL.dim });
+    [['manufacturing', 520, 220], ['finance', 800, 160], ['data processing', 1080, 230]].forEach(([s, x, w], i) => l15Chip(p, s, x, 420, COL.real, m('also', .5 + i * .6), w));
+    // to scale: 900 px = all of Intel's employees; two thirds = 600 px
+    mk('rect', { x: 350, y: 500, width: 900, height: 50, rx: 8, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, p);
+    const a = mk('rect', { x: 350, y: 500, width: 0, height: 50, rx: 8, fill: COL.real }, p); put(a, { a_width: 0 }); tw(a, { a_width: 600 }, m('third', .3), 1.2, out);
+    const b = mk('rect', { x: 950, y: 500, width: 300, height: 50, rx: 8, fill: COL.whole }, p); put(b, { o: 0 }); show(b, m('third', 1.6));
+    hmSay(p, 'functional: about two thirds', 650, 590, m('third', 1), { size: 22, fill: COL.real, weight: 600 });
+    hmSay(p, 'business units', 1100, 590, m('third', 1.6), { size: 22, fill: COL.whole, weight: 600 });
+    hmSay(p, 'Intel’s employees (Grove, 1983; drawn to scale)', 800, 640, m('third', 2), { size: 20, fill: COL.dim });
+    hmRule(p, 'Shared groups serve every unit, like subcontractors.', m('third', 5), 745);
+  }],
+
+  ['q2', 'Quick check', () => {
+    const p = panel(0);
+    l15Box(p, 800, 190, 300, 64, COL.chalk, 'Executive office', .3);
+    S.q2 = L15_Q2.map((s, i) => { l15Link(p, 800, 222, L15_Q2X[i], 280, .4); return l15Box(p, L15_Q2X[i], 325, 270, 90, COL.chalk, s, .5 + i * .1, { size: 24 }); });
+  }, { ask: done => quiz({ x: 200, y: 420, w: 1200, cls: 'side' }, [{
+    id: 'c-sub', prompt: ['In this illustrative device company, which group works as an internal subcontractor? Click it.'],
+    build: pickEls(S.q2.map((g, i) => ({ el: g, box: [L15_Q2X[i] - 140, 275, 280, 100], label: L15_Q2[i].join(' ') })), 2,
+      'Shared manufacturing serves all three divisions, as an outside contractor would, but cheaper and closer.',
+      i => 'A division pursues its own product mission; it is the customer of the shared groups.'),
+  }], done) }],
+
+  ['pros', 'What the functional form buys', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What functional groups buy');
+    hmBox(p, 480, 270, 580, 140, COL.real, m('econ'), '1  Economies of scale', { size: 30, sub: ['one shared computer, well used,', 'not one per unit, idle much of the time'] });
+    hmBox(p, 1120, 270, 580, 140, COL.real, m('shift'), '2  Resources can shift', { size: 30, sub: ['one manufacturing group changes', 'the product mix for the whole company'] });
+    hmBox(p, 480, 460, 580, 140, COL.real, m('exp'), '3  Leverage of expertise', { size: 30, sub: ['specialists, like research engineers,', 'serve the whole company'] });
+    hmBox(p, 1120, 460, 580, 140, COL.real, m('focus'), '4  Units master their trade', { size: 30, sub: ['no worrying about computers,', 'production or technology'] });
+    hmSay(p, 'separate factories: moving capacity is slow and sticky', 800, 610, m('shift', 5), { size: 22, fill: COL.bad });
+    hmRule(p, 'Function buys scale, flexibility and leverage.', m('focus', 4), 745);
+  }],
+
+  ['cons', 'The price of the functional form', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The price');
+    const UX = [140, 250, 360, 470, 580];
+    UX.forEach((x, i) => { l15Sq(p, x, 210, COL.whole, m('over', i * .15), 30); hmArrow(p, x, 245, 360 + (x - 360) * .25, 395, COL.bad, m('over', .8 + i * .15), .4); });
+    hmSay(p, 'many business units', 360, 170, m('over'), { size: 22, fill: COL.whole });
+    [290, 325, 360].forEach((y, i) => { const r = mk('rect', { x: 120, y, width: 480, height: 8, rx: 4, fill: COL.real, opacity: .6 }, p); put(r, { o: 0 }); show(r, m('layers', .5 + i * .3)); });
+    hmLines(p, ['layers of', 'management'], 640, 320, m('layers', 1.2), { size: 22, fill: COL.real, anchor: 'start' });
+    l15Box(p, 360, 440, 320, 80, COL.real, 'A functional group', m('over', .5), { size: 26 });
+    hmSay(p, 'information overload', 360, 520, m('over', 2), { size: 26, fill: COL.bad, weight: 700 });
+    path(p, 'M820 170V560', { stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '6 8' });
+    l15Box(p, 1180, 290, 340, 90, COL.real, ['shared, limited', 'capacity'], m('neg'), { size: 24 });
+    l15Sq(p, 940, 440, COL.whole, m('neg', 1), 32); l15Sq(p, 1420, 440, COL.whole, m('neg', 1), 32);
+    hmArrow(p, 975, 425, 1040, 330, COL.bad, m('neg', 1.5), .4); hmArrow(p, 1385, 425, 1320, 330, COL.bad, m('neg', 1.5), .4);
+    hmLines(p, ['production capacity,', 'computer time, space'], 1180, 205, m('neg', 2), { size: 20, fill: COL.dim, lh: 26 });
+    hmLines(p, ['negotiation turns', 'into open competition'], 1180, 440, m('fight'), { size: 22, fill: COL.bad, weight: 600, lh: 30 });
+    hmSay(p, 'both waste time and energy, and add nothing to output', 800, 640, m('waste'), { size: 28, fill: COL.bad, weight: 600 });
+    hmRule(p, 'The price: overload, layers, fights over resources.', m('waste', 4), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-price', prompt: ['A shared test lab serves four product teams (illustrative). Advantage of the functional form, or its price?'],
+    build: grid([
+      { parts: ['The expensive lab equipment is busy every day, not idle'], ans: ['a'], why: 'Economies of scale: one shared lab is well used.' },
+      { parts: ['Teams lobby each other for slots on the lab schedule'], ans: ['p'], why: 'Competition for a shared, limited resource wastes energy.' },
+      { parts: ['Lab time can move to whichever product the company most needs'], ans: ['a'], why: 'Resources shift with company-wide priorities.' },
+      { parts: ['A request to the lab must go through three managers'], ans: ['p'], why: 'Layers make it hard for a unit to state its needs.' },
+    ], [['a', 'Advantage', COL.good, 'A'], ['p', 'Price', COL.bad, 'P']], { multi: false, text: true }),
+  }], done) }],
+
+  ['one', 'One advantage, and it is vital', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Mission form: one advantage, but a vital one');
+    hmSay(p, 'function', 480, 190, m('only'), { size: 28, fill: COL.real, weight: 700 });
+    ['scale', 'flexibility', 'expertise', 'focus'].forEach((s, i) => l15Chip(p, s, 480, 250 + i * 60, COL.real, m('only', 6 + i * .3), 220));
+    hmSay(p, 'mission', 1120, 190, m('only'), { size: 28, fill: COL.whole, weight: 700 });
+    hmBox(p, 1120, 320, 440, 150, COL.whole, m('only', 1), 'Responsiveness', { size: 32, sub: ['close to its business,', 'changes fast when needs change'] });
+    hmSay(p, 'the business of any business: respond to its environment', 800, 540, m('resp'), { size: 28, fill: COL.good, weight: 600 });
+    hmSay(p, 'Intel checked again and again: no alternative to the hybrid', 800, 620, m('none'), { size: 26, fill: COL.chalk });
+    hmRule(p, 'Responsiveness keeps mission units. So: a hybrid.', m('none', 5), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 15 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Mission form: each unit has all it needs.', 'w1'], ['Functional form: each activity serves all.', 'w2'], ['Function brings scale, flexibility, leverage.', 'w3'], ['Its price: overload, layers, resource fights.', 'w4'], ['Mission brings responsiveness. So, a hybrid.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-lab', prompt: ['Each of your three product teams asks for its own verification lab with the same costly equipment. What does the functional argument say?'],
+      build: choice([['Give each team its own lab so nobody waits'], ['One shared lab, kept busy by all three, gives economies of scale'], ['Let the teams skip verification instead']], 1,
+        'Expensive equipment is best used when every unit draws on it, rather than sitting idle in three places.',
+        ['Three labs mostly sit idle; the waiting is a cost to manage, not a reason to triple the spend.', null, 'Verification is required work for a regulated product; the question is only how to organize it.']) },
+    { id: 'p-resp', prompt: ['A small clinical AI team must change direction quickly as clinician feedback arrives. A proposal would move its engineers into a central pool. What does Grove warn you could lose?'],
+      build: choice([['Economies of scale'], ['Responsiveness: staying close to its users and changing fast'], ['Nothing: central pools are always better']], 1,
+        'Responsiveness is the one advantage of the mission form, and here it matters most.',
+        ['A central pool would gain scale, not lose it.', null, 'Everything else may favor function, but responsiveness is vital.']) },
+    { id: 'p-fight', prompt: ['Two divisions argue every week over time on the shared manufacturing line. How does Grove see this?'],
+      build: choice([['As the built-in price of shared resources: it uses energy and adds no output'], ['As proof that shared manufacturing must be split up'], ['As healthy competition that improves output']], 0,
+        'Negotiation and competition over limited central resources waste time and energy, so they need a good way to be settled.',
+        [null, 'Splitting it would lose scale and the ability to shift capacity; the price comes with the benefits.', 'Grove says neither the negotiation nor the competition adds to output.']) },
+    { id: 'p-sub', prompt: ['You lead a central biostatistics group that serves four product divisions. What is a useful way to see your role?'],
+      build: choice([['An internal subcontractor: better and faster than hiring outside'], ['The divisions’ boss, since they depend on you'], ['A separate business with its own mission']], 0,
+        'Functional groups serve the business units, like a contractor that is cheaper and more responsive.',
+        [null, 'You serve the divisions; they pursue the product missions.', 'Your work exists to serve the divisions’ missions, not one of your own.']) },
+    { id: 'p-pure', prompt: ['A new vice president proposes going fully functional to end the confusion of a mixed structure. What would Grove expect?'],
+      build: choice([['It will work if the leaders are strong enough'], ['The units lose touch with their markets; the company drifts back to a hybrid'], ['It is the same as going fully mission-oriented']], 1,
+        'The need to respond to the market always puts much of an organization back into mission units.',
+        ['Strong leaders cannot replace the responsiveness that mission units provide.', null, 'The two extremes trade opposite things: leverage versus responsiveness.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

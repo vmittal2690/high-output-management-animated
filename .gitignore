@@ -1,0 +1,8 @@
+*.pdf
+books/*/pages/
+books/*/sections.json
+__pycache__/
+.DS_Store
+shots*/
+CLAUDE.md
+.vercel

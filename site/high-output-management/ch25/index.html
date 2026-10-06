@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why reviews matter, and judging performance</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 25, title: 'Why reviews matter, and judging performance', kicker: 'Chapter 13 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch26/index.html' };
+
+/* Colours: blue = output measures and ordinary work; purple = internal measures (inside the black box);
+   pink = long-term, future-oriented work; green = the goal or a good result; red = a problem; amber = the rule. */
+function l25Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l25Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+
+const L25_WHY = ['to assess the work', 'to improve performance', 'to motivate', 'to give feedback', 'to justify raises', 'to reward performance', 'to discipline', 'to give direction', 'to reinforce the culture'];
+const L25_FEEL = ['pride', 'anger', 'anxiety', 'discomfort', 'guilt', 'empathy, concern', 'embarrassment', 'frustration'];
+const L25_WRONG = ['too general', 'mixed messages', 'no hint how to improve', 'negatives avoided', 'boss didn’t know my work', 'only recent work counted', 'surprises'];
+
+const BEATS = [
+  ['intro', 'Why reviews matter, and judging performance', (m, D) => hmTitle(m, D, 'Chapter 13 · Performance Appraisal: Manager as Judge and Jury · Lesson 1 of 3', 'Why reviews matter', 'What a performance review is for, and how to judge performance fairly')],
+
+  ['asked', 'Three questions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove asked middle managers three questions');
+    const col = (x, head, items, c, k, step) => {
+      hmSay(p, head, x, 190, m(k), { size: 28, fill: c, weight: 700 });
+      items.forEach((s, i) => hmSay(p, s, x, 240 + i * 36, m(k, .4 + i * step), { size: 22, fill: c === COL.chalk ? COL.dim : c }));
+    };
+    col(300, 'Why review?', L25_WHY, COL.chalk, 'why', .25);
+    col(800, 'How does giving one feel?', L25_FEEL, COL.chalk, 'feel', .25);
+    col(1300, 'What was wrong with yours?', L25_WRONG, COL.bad, 'wrong', .6);
+    hmSay(p, 'Grove’s list, as the managers answered', 800, 620, m('wrong'), { size: 20, fill: COL.faint });
+    hmRule(p, 'Reviews are hard, and most of us do them badly.', m('hard', .5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-complaint', prompt: ['Which complaint from Grove’s list does each review show? (illustrative)'],
+    build: grid([
+      { parts: ['“Solid year, keep it up.” Nothing else.'], ans: ['g'], why: 'Too general: nothing to act on.' },
+      { parts: ['Rated “exceeds requirements”, but the smallest raise on the team'], ans: ['x'], why: 'A mixed message: the words and the money disagree.' },
+      { parts: ['Covers last month’s audit, not the whole year'], ans: ['r'], why: 'Only recent performance was considered.' },
+      { parts: ['The first you hear of a problem with your test reports'], ans: ['s'], why: 'A surprise: it should have come up in a one-on-one.' },
+    ], [['g', 'Too general', COL.bad, 'G'], ['x', 'Mixed message', COL.bad, 'M'], ['r', 'Only recent', COL.bad, 'R'], ['s', 'Surprise', COL.bad, 'S']], { multi: false, text: true }),
+  }], done) }],
+
+  ['purpose', 'The purpose', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The most important feedback you give');
+    hmSay(p, 'the single most important form of task-relevant feedback', 800, 190, .3, { size: 28 });
+    [['promotions', 330, 200], ['money', 560, 150], ['stock', 750, 140]].forEach(([s, x, w], i) => l25Chip(p, s, x, 270, COL.whole, m('rew', .3 + i * .5), w));
+    hmSay(p, 'it hands out rewards', 540, 330, m('rew', 1.5), { size: 22, fill: COL.dim });
+    l25Chip(p, 'lasts a long time: high leverage', 1190, 270, COL.whole, m('long'), 420);
+    hmBox(p, 800, 430, 760, 100, COL.good, m('one'), 'Purpose: improve their performance', { size: 30, fill: COL.good });
+    hmArrow(p, 640, 482, 480, 548, COL.dim, m('skill'), .4);
+    hmBox(p, 420, 610, 480, 110, COL.good, m('skill', .3), 'Skills', { size: 30, sub: ['find what is missing; fix it'] });
+    hmArrow(p, 960, 482, 1120, 548, COL.dim, m('mot'), .4);
+    hmBox(p, 1180, 610, 480, 110, COL.good, m('mot', .3), 'Motivation', { size: 30, sub: ['same skills, a higher curve (lesson 21)'] });
+    hmRule(p, 'A review exists to improve performance.', m('mot', 5), 745);
+  }],
+
+  ['judge', 'Judge and jury', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The manager as judge and jury');
+    show(l25Person(p, 300, 280, COL.chalk, 1.2), .3); show(l25Person(p, 560, 280, COL.whole, 1.2), .4);
+    hmSay(p, 'you', 300, 350, .3, { size: 22, fill: COL.dim }); hmSay(p, 'your report', 560, 350, .4, { size: 22, fill: COL.dim });
+    hmSay(p, 'judge, jury, and the verdict', 430, 200, m('jury'), { size: 26, weight: 700 });
+    hmSay(p, 'delivered face to face', 430, 400, m('jury', 1.5), { size: 24, fill: COL.dim });
+    hmSay(p, 'Our culture avoids confrontation', 1150, 200, m('prep'), { size: 26, weight: 700 });
+    const arg = hmSay(p, '“argument”', 1000, 280, m('hung'), { size: 30, fill: COL.chalk, weight: 600 });
+    draw(path(p, 'M920 270H1080', { stroke: COL.bad, 'stroke-width': 4 }, { d: 0 }), m('hung', 1.8), .4);
+    hmArrow(p, 1108, 270, 1172, 270, COL.dim, m('hung', 2), .3);
+    hmSay(p, '“you mean discussion”', 1350, 280, m('hung', 2.3), { size: 26, fill: COL.dim });
+    hmSay(p, 'Grove, new from Hungary, being corrected', 1150, 330, m('hung'), { size: 20, fill: COL.faint });
+    hmSay(p, 'safe: football, gardening, the weather', 1150, 395, m('hung', 5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Not only big companies:', 800, 520, m('size'), { size: 28, weight: 700 });
+    [['an insurance agent with two assistants', 450, 540], ['schools, government, nonprofits', 1100, 460]].forEach(([s, x, w], i) => l25Chip(p, s, x, 590, COL.whole, m('size', 1 + i * 2), w));
+    hmRule(p, 'If performance matters, reviews are necessary.', m('matters'), 745);
+  }],
+
+  ['tight', 'The tightrope', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Assessing: a tightrope');
+    hmLines(p, ['no cut-and-dried measure;', 'only output is truly objective'], 800, 180, m('obj'), { size: 26, fill: COL.dim });
+    draw(path(p, 'M260 380H1340', { stroke: COL.chalk, 'stroke-width': 3 }, { d: 0 }), m('rope'), .8);
+    [260, 1340].forEach(x => path(p, `M${x} 380V470`, { stroke: COL.faint, 'stroke-width': 6 }));
+    const w = l25Person(p, 800, 340, COL.chalk); show(w, m('rope', .4));
+    draw(path(p, 'M680 318Q800 296 920 318', { stroke: COL.chalk, 'stroke-width': 4 }, { d: 0 }), m('rope', .6), .4);
+    hmSay(p, 'be objective', 420, 340, m('rope', 1), { size: 28, fill: COL.whole, weight: 700 });
+    hmSay(p, 'use judgment', 1180, 340, m('rope', 2), { size: 28, fill: COL.whole, weight: 700 });
+    // a target: decide what you expect first
+    const tg = G(p, { x: 520, y: 560, o: 0 });
+    [56, 36, 16].forEach((r, i) => mk('circle', { r, fill: 'none', stroke: COL.good, 'stroke-width': 4 - i }, tg));
+    show(tg, m('expect'));
+    hmLines(p, ['Decide in advance what you expect,', 'then judge against it'], 610, 550, m('expect', .3), { size: 26, fill: COL.good, weight: 600, anchor: 'start' });
+    hmSay(p, 'objectives help, but are not a legal document (lesson 13)', 800, 670, m('okr'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Know what you expect before you judge.', m('okr', 3), 745);
+  }],
+
+  ['measures', 'Output and internal measures', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two kinds of measure');
+    const bx = G(p, { o: 0 });
+    mk('rect', { x: 460, y: 180, width: 620, height: 270, rx: 16, fill: '#121a17', stroke: COL.faint, 'stroke-width': 4 }, bx);
+    show(bx, .3);
+    hmSay(p, 'the black box', 770, 215, .3, { size: 20, fill: COL.faint });
+    [['people disgruntled in two months?', 'int'], ['developing people for later?', 'int'], ['a well-run department?', 'int']].forEach(([s, k], i) => l25Chip(p, s, 770, 270 + i * 60, COL.real, m(k, 2.5 + i * 2), 520, 22));
+    hmArrow(p, 1086, 315, 1170, 315, COL.whole, m('out'), .3);
+    ['designs finished', 'sales quotas met', 'yield raised'].forEach((s, i) => hmSay(p, s, 1190, 260 + i * 50, m('out', .6 + i * .5), { size: 24, fill: COL.whole, weight: 600, anchor: 'start' }));
+    hmSay(p, 'output measures', 1190, 420, m('out'), { size: 20, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'internal measures', 770, 480, m('int'), { size: 20, fill: COL.real });
+    // the weighting bar: 600 px = 100%; output share in blue, internal share in purple
+    const bg = mk('rect', { x: 500, y: 540, width: 600, height: 40, rx: 8, fill: COL.real }, p); put(bg, { o: 0 }); show(bg, m('weigh'));
+    const fg = mk('rect', { x: 500, y: 540, width: 300, height: 40, rx: 8, fill: COL.whole }, p); put(fg, { o: 0, a_width: 300 }); show(fg, m('weigh'));
+    tw(fg, { a_width: 540 }, m('weigh', 4), .6); tw(fg, { a_width: 60 }, m('weigh', 5.5), .6);
+    hmSay(p, 'output', 480, 568, m('weigh'), { size: 22, fill: COL.whole, anchor: 'end' });
+    hmSay(p, 'internal', 1120, 568, m('weigh'), { size: 22, fill: COL.real, anchor: 'start' });
+    hmSay(p, '50 : 50,  90 : 10,  10 : 90 … and it can shift', 800, 625, m('weigh', 2), { size: 24, fill: COL.dim });
+    hmSay(p, 'No formula. But know which two you are trading off.', 800, 685, m('know'), { size: 28, weight: 600 });
+    hmRule(p, 'Weigh output against what goes on inside.', m('know', 3), 745);
+  }],
+
+  ['longshort', 'Now against later', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The long term against the short');
+    show(l25Person(p, 800, 250, COL.chalk, 1.2), m('eng'));
+    hmSay(p, 'one engineer, two kinds of work', 800, 320, m('eng'), { size: 22, fill: COL.dim });
+    hmBox(p, 400, 420, 520, 120, COL.whole, m('eng', 1), 'A product on a strict schedule', { size: 28, sub: ['revenue now'] });
+    hmBox(p, 1200, 420, 520, 120, COL.rat, m('method'), 'A design method for others', { size: 28, fill: COL.rat, sub: ['similar products, easier later'] });
+    hmSay(p, 'Present value: what will it pay back, and what is that worth today?', 800, 560, m('pv'), { size: 26, weight: 600 });
+    // schematic: future paybacks shrink when valued today (illustrative)
+    [50, 44, 38, 33].forEach((h, i) => hmBarUp(p, 1000 + i * 80, 690, 50, h, COL.rat, m('pv', 3 + i * .2), .4));
+    hmSay(p, 'later years', 1140, 715, m('pv', 3), { size: 18, fill: COL.faint });
+    hmArrow(p, 990, 660, 830, 660, COL.dim, m('pv', 4.2), .4);
+    hmBarUp(p, 740, 690, 70, 90, COL.good, m('pv', 4.6), .5);
+    hmSay(p, 'worth today', 775, 715, m('pv', 4.6), { size: 18, fill: COL.faint });
+    hmSay(p, 'illustrative', 560, 690, m('pv', 3), { size: 18, fill: COL.faint });
+    hmRule(p, 'Review both; weigh future work by its value today.', m('pv', 7), 760);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-measure', prompt: ['Output measure or internal measure? (illustrative)'],
+    build: grid([
+      { parts: ['Verification tests completed on schedule'], ans: ['o'], why: 'A result that comes out of the box, ready to chart.' },
+      { parts: ['Two senior engineers quietly interviewing elsewhere'], ans: ['i'], why: 'What is going on inside: trouble for future output.' },
+      { parts: ['The regulatory submission filed'], ans: ['o'], why: 'A concrete output of the period.' },
+      { parts: ['A second reviewer trained to back up the lead'], ans: ['i'], why: 'Developing people so the group can handle future work.' },
+    ], [['o', 'Output', COL.whole, 'O'], ['i', 'Internal', COL.real, 'I']], { multi: false, text: true }),
+  }], done) }],
+
+  ['offset', 'Light from distant stars', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The time offset: Grove’s mistake');
+    // schematic, not data: bars show relative size only
+    const X = [450, 800, 1150];
+    path(p, 'M330 330H1270', { stroke: COL.faint, 'stroke-width': 2 });
+    path(p, 'M330 560H1270', { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, 'group output', 310, 320, .3, { size: 22, fill: COL.whole, anchor: 'end' });
+    hmSay(p, 'his real work', 310, 550, .3, { size: 22, fill: COL.real, anchor: 'end' });
+    ['year 0', 'year 1', 'year 2'].forEach((s, i) => hmSay(p, s, X[i], 595, .3, { size: 20, fill: COL.dim }));
+    hmBarUp(p, X[0] - 50, 560, 100, 120, COL.real, m('good', .3), .6);
+    hmBarUp(p, X[1] - 50, 330, 100, 130, COL.whole, m('good', .6), .6);
+    hmSay(p, 'superb year', X[1], 160, m('good', .6), { size: 24, fill: COL.whole, weight: 600 });
+    hmBarUp(p, X[1] - 50, 560, 100, 40, COL.real, m('straw'), .5);
+    hmSay(p, 'turnover, grumbling', X[1] - 62, 550, m('straw'), { size: 20, fill: COL.real, anchor: 'end' });
+    hmSay(p, 'rated superior', X[1], 190, m('straw', 3.5), { size: 22, fill: COL.chalk });
+    hmBarUp(p, X[2] - 50, 330, 100, 40, COL.bad, m('dive'), .5);
+    hmSay(p, 'nose dive', X[2], 280, m('dive'), { size: 24, fill: COL.bad, weight: 600 });
+    hmBarUp(p, X[2] - 50, 560, 100, 85, COL.real, m('stars', .5), .5);
+    hmSay(p, 'improving', X[2], 460, m('stars', .5), { size: 20, fill: COL.real });
+    hmArrow(p, X[0] + 55, 440, X[1] - 60, 340, COL.dim, m('stars', 3), .5);
+    hmArrow(p, X[1] + 55, 515, X[2] - 60, 340, COL.dim, m('stars', 3.5), .5);
+    hmLines(p, ['output lags', 'the work by', 'about a year'], 1290, 400, m('stars', 4), { size: 20, fill: COL.dim, anchor: 'start' });
+    pop(hmCross(p, X[1] + 110, 183, COL.bad, 14), m('wrong'));
+    hmSay(p, 'Other way round: a new factory, no output yet, still earned credit.', 800, 650, m('other'), { size: 24 });
+    hmSay(p, 'schematic', 1290, 600, .3, { size: 18, fill: COL.faint, anchor: 'start' });
+    hmRule(p, 'Judge performance; don’t just record output.', m('judge'), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-offset', prompt: ['A clinical program lead posts record enrollment this year. Meanwhile two site coordinators quit and her team complains of churn. How should you weigh it? (illustrative)'],
+    build: choice([['Superior: the output speaks for itself'], ['Weigh the internal signs: this year’s output may reflect last year’s work'], ['Skip the review until next year’s results are in']], 1,
+      'Output can be light from distant stars. The internal measures show this year’s work.',
+      ['That is exactly Grove’s mistake with his manager.', null, 'You must judge performance now, not wait for it to be in plain sight.']),
+  }], done) }],
+
+  ['potential', 'The potential trap', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Performance, not potential');
+    hmSay(p, 'Judge the manager and the group', 400, 200, .3, { size: 26, weight: 700 });
+    show(l25Person(p, 400, 270, COL.chalk), .4);
+    [330, 400, 470].forEach((x, i) => show(l25Person(p, x, 345, COL.whole, .6), .5 + i * .1));
+    ['hiring', 'training', 'improving future output'].forEach((s, i) => l25Chip(p, s, 400, 430 + i * 60, COL.whole, m('add', .5 + i * .6), 320));
+    hmSay(p, 'what value do they add?', 400, 620, m('add'), { size: 22, fill: COL.dim });
+    hmSay(p, 'The potential trap', 1170, 200, m('trap'), { size: 26, fill: COL.bad, weight: 700 });
+    [['lost money', 950, 170], ['missed forecasts', 1165, 220], ['slipped schedules', 1408, 230]].forEach(([s, x, w], i) => l25Chip(p, s, x, 260, COL.bad, m('gm', .5 + i * .6), w, 22));
+    hmSay(p, '“But he is outstanding. His group did badly.”', 1170, 325, m('gm', 4), { size: 22, fill: COL.dim });
+    // ratings: a manager's bar may not rise above the organization's (schematic)
+    path(p, 'M1000 600H1380', { stroke: COL.faint, 'stroke-width': 2 });
+    hmBarUp(p, 1040, 600, 110, 90, COL.bad, m('cap'), .5);
+    const mb = hmBarUp(p, 1220, 600, 110, 200, COL.chalk, m('gm', 5), .6);
+    tw(mb, { a_y: 510, a_height: 90 }, m('cap', 1.2), .6);
+    draw(path(p, 'M1000 510H1380', { stroke: COL.task, 'stroke-width': 2.5, 'stroke-dasharray': '8 6' }, { d: 0 }), m('cap', .8), .5);
+    hmSay(p, 'group', 1095, 630, m('cap'), { size: 20, fill: COL.dim });
+    hmSay(p, 'manager', 1275, 630, m('gm', 5), { size: 20, fill: COL.dim });
+    hmSay(p, 'otherwise: act the part, no need to perform', 1170, 680, m('signal'), { size: 22, fill: COL.bad });
+    hmRule(p, 'A manager’s rating can’t top the group’s.', m('signal', 4), 745);
+  }],
+
+  ['promote', 'Promote performance', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who you promote shows your values');
+    // illustrative sales bars
+    path(p, 'M220 540H660', { stroke: COL.faint, 'stroke-width': 2 });
+    [['best', 260, 200], ['middle', 400, 130], ['worst', 540, 60]].forEach(([s, x, h], i) => { hmBarUp(p, x, 540, 100, h, COL.whole, m('role', .2 + i * .2), .5); hmSay(p, s, x + 50, 575, m('role', .2 + i * .2), { size: 22, fill: COL.dim }); });
+    hmSay(p, 'sales (illustrative)', 440, 610, m('role'), { size: 18, fill: COL.faint });
+    hmBox(p, 440, 220, 220, 70, COL.chalk, m('sales'), 'manager', { size: 26 });
+    hmArrow(p, 310, 335, 380, 260, COL.good, m('sales', .5), .4);
+    hmLines(p, ['lose a salesman,', 'gain a bad manager?'], 720, 210, m('sales', 1.5), { size: 22, fill: COL.dim, anchor: 'start' });
+    pop(hmCross(p, 590, 450, COL.bad, 14), m('worst'));
+    hmSay(p, 'Promote the best: performance counts.', 440, 670, m('worst', 2.5), { size: 26, fill: COL.good, weight: 700 });
+    hmSay(p, 'Always suggest improvement', 1200, 320, m('better'), { size: 26, weight: 700 });
+    const a = mk('rect', { x: 980, y: 380, width: 0, height: 40, rx: 6, fill: COL.whole }, p); put(a, { a_width: 0 }); tw(a, { a_width: 320 }, m('better', 2), .6);
+    hmSay(p, 'what they did', 1310, 408, m('better', 2), { size: 22, fill: COL.whole, anchor: 'start' });
+    const b = mk('rect', { x: 980, y: 450, width: 0, height: 40, rx: 6, fill: 'none', stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, p); put(b, { a_width: 0 }); tw(b, { a_width: 440 }, m('better', 4), .6);
+    hmSay(p, 'what they might have done', 1200, 525, m('better', 4), { size: 22, fill: COL.good });
+    hmSay(p, 'the gap: how to do better', 1200, 570, m('better', 6), { size: 22, fill: COL.dim });
+    hmRule(p, 'Promote performance, and always find the next step.', m('better', 8), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-potential', prompt: ['A peer wants to rate a polished quality manager “superior”. Her group missed every audit-readiness milestone this year. What would Grove say? (illustrative)'],
+    build: choice([['Fine: she clearly has potential'], ['Her rating cannot be higher than her group’s performance'], ['Rate the group low and her high, to keep her motivated']], 1,
+      'A manager’s rating cannot be higher than her organization’s. Rate substance, not form.',
+      ['That is the potential trap: form rather than substance.', null, 'Splitting them sends the message that acting the part is enough.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 25 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['A review exists to improve performance.', 'w1'], ['You are judge and jury: set expectations first.', 'w2'], ['Weigh output and internal, now and later.', 'w3'], ['Mind the time offset: judge, don’t record.', 'w4'], ['Rate performance, not potential; promote it.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-purpose', prompt: ['You are writing your first annual reviews. Above all, what should each one be built to do?'],
+      build: choice([['Justify the raise numbers'], ['Improve the person’s performance'], ['Document problems in case of a dispute']], 1,
+        'All the purposes are real, but improving performance, through skills and motivation, comes first.',
+        ['Raises follow from the review; they are not its main purpose.', null, 'A review built as a legal record rarely helps anyone do better.']) },
+    { id: 'p-expect', prompt: ['Review time is near, and you never pinned down what you expected from a new regulatory specialist. Best first step?'],
+      build: choice([['Rate her on whatever stood out this year'], ['Clarify what you expected of her, then judge against it'], ['Skip her review this cycle']], 1,
+        'Decide what you want first. If you don’t know what you want, you won’t get it, or judge it fairly.',
+        ['Without expectations, the judgment drifts toward whatever is most recent or vivid.', null, 'If performance matters, the review is necessary.']) },
+    { id: 'p-new', prompt: ['A device-software lead joined six months ago to rebuild a struggling team. Nothing has shipped yet. How do you assess her? (illustrative)'],
+      build: choice([['You can’t: there is no output yet'], ['Judge the work itself: hiring, process, groundwork for releases'], ['Rate her low: only output is objective']], 1,
+        'Like Grove’s factory builder: judge performance even when output is not yet in plain sight.',
+        ['Grove reviewed a factory builder before anything was made.', null, 'Output is objective, but it lags the work. Use judgment.']) },
+    { id: 'p-promote', prompt: ['A team-lead role opens. Candidates: your strongest clinical data analyst, and a weaker one who “seems more managerial”. Grove’s view?'],
+      build: choice([['Promote the strongest performer'], ['Promote the one who looks like a manager'], ['Promote neither, to keep a good analyst']], 0,
+        'Promoting the best tells everyone that performance is what counts.',
+        [null, 'That rewards form over substance: the potential trap.', 'Then strong performers learn that performance leads nowhere.']) },
+    { id: 'p-weigh', prompt: ['A manufacturing engineer hit every yield target but documented nothing of the new process for others. How do you weigh it?'],
+      build: choice([['Only the yield matters'], ['Weigh both, knowing what you are trading off'], ['Ignore the yield: documentation is everything']], 1,
+        'There is no formula, but know the trade-off: output now against the inside and the future.',
+        ['Output alone misses work that sets up future output.', null, 'The yield is real output and deserves its weight too.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

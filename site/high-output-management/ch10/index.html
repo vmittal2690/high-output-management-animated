@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How good decisions get made</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 10, title: 'How good decisions get made', kicker: 'Chapter 5 · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch11/index.html' };
+
+/* Colours: purple = position power; blue = knowledge power and ordinary work; green = the goal; red = a problem; amber = the rule. */
+function l10Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l10Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// The three stages, small, across the top; `on` is the stage being taught.
+const L10_ST = ['free discussion', 'clear decision', 'full support'];
+function l10Mini(p, on) {
+  L10_ST.forEach((s, i) => {
+    const x = 500 + i * 300;
+    l10Chip(p, s, x, 175, i === on ? COL.good : COL.faint, .2, 220, 22);
+    if (i) hmArrow(p, x - 186, 175, x - 116, 175, COL.faint, .2, .2);
+  });
+}
+
+const BEATS = [
+  ['intro', 'How good decisions get made', (m, D) => hmTitle(m, D, 'Chapter 5 · Decisions, Decisions · Lesson 1 of 2', 'How good decisions get made', 'Two kinds of power, and the three stages of a good decision')],
+
+  ['range', 'Decisions of every size', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Decisions of every size');
+    const rows = [['profound', 'big', [['buy or lease the building?', 340], ['borrow or sell shares?', 300]]], ['personal', 'mid', [['a 7% or a 12% raise?', 300]]], ['technical, legal', 'tech', [['change a process recipe?', 330], ['appeal under a tax rule?', 320]]], ['trivial', 'small', [['free drinks at the holiday party?', 420]]]];
+    rows.forEach(([lab, k, chips], i) => {
+      const y = 230 + i * 110;
+      hmSay(p, lab, 380, y + 9, m(k), { size: 26, fill: COL.dim, anchor: 'end' });
+      chips.reduce((x, [s, w], j) => { l10Chip(p, s, x + w / 2, y, COL.whole, m(k, .3 + j * .8), w); return x + w + 24; }, 420);
+    });
+    hmRule(p, 'Managers take part in decisions of every size.', m('small', 3), 745);
+  }],
+
+  ['power', 'Two kinds of power', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two kinds of power');
+    // an org chart: power from the box you sit in
+    hmBox(p, 420, 230, 180, 64, COL.real, .3, 'director', { size: 24 });
+    [300, 540].forEach(x => { draw(path(p, `M420 262V300H${x}V330`, { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), .4, .4); hmBox(p, x, 362, 180, 64, COL.real, .6, 'manager', { size: 24 }); });
+    hmSay(p, 'position power', 420, 470, m('pos'), { size: 30, fill: COL.real, weight: 700 });
+    hmSay(p, 'authority goes with the box', 420, 510, m('pos', .3), { size: 22, fill: COL.dim });
+    const ex = l10Person(p, 1180, 330, COL.whole, 1.3); show(ex, m('know'));
+    const bk = G(p, { x: 1260, y: 300, o: 0 }); mk('rect', { x: -26, y: -34, width: 52, height: 68, rx: 4, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, bk); path(bk, 'M-14 -16H14M-14 -4H14M-14 8H6', { stroke: COL.whole, 'stroke-width': 3 }); show(bk, m('know', .3));
+    hmSay(p, 'knowledge power', 1180, 470, m('know'), { size: 30, fill: COL.whole, weight: 700 });
+    hmSay(p, 'authority goes with what you know', 1180, 510, m('know', .3), { size: 22, fill: COL.dim });
+    hmArrow(p, 800, 600, 560, 640, COL.real, m('split'), .5); hmArrow(p, 800, 600, 1040, 640, COL.whole, m('split'), .5);
+    hmSay(p, 'the knowledge base changes fast', 800, 590, m('split', .3), { size: 22, fill: COL.dim });
+    hmRule(p, 'In a know-how business, the two kinds of power drift apart.', m('split', 3), 750);
+  }],
+
+  ['obsolete', 'A little more obsolete every day', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A career: two kinds of power');
+    path(p, 'M300 220V560H1300', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'years in the company', 1300, 595, .3, { size: 22, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'power', 290, 230, .3, { size: 22, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'illustrative', 320, 610, .3, { size: 18, fill: COL.faint, anchor: 'start' });
+    const gd = hmDot(p, 320, 260, COL.whole, 12); show(gd, m('grad'));
+    hmSay(p, 'new graduate: fully up to date', 340, 250, m('grad', .3), { size: 22, fill: COL.whole, anchor: 'start' });
+    draw(path(p, 'M320 530C600 500 900 330 1280 250', { stroke: COL.real, 'stroke-width': 6 }, { d: 0 }), m('rise'), 2);
+    hmSay(p, 'position power', 1290, 236, m('rise', 1.8), { size: 24, fill: COL.real, weight: 700, anchor: 'end' });
+    draw(path(p, 'M320 260C600 290 900 420 1280 500', { stroke: COL.whole, 'stroke-width': 6 }, { d: 0 }), m('fade'), 2);
+    hmSay(p, 'current know-how', 1290, 535, m('fade', 1.8), { size: 24, fill: COL.whole, weight: 700, anchor: 'end' });
+    hmSay(p, '“We managers get a little more obsolete every day.”', 800, 650, m('fade', 3.5), { size: 28, fill: COL.chalk });
+    hmSay(p, 'faster change, wider gap', 1100, 392, m('gap'), { size: 24, fill: COL.bad, weight: 600 });
+    hmRule(p, 'A manager’s job: make the two kinds of power mesh.', m('mesh'), 750);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-power', prompt: ['Mostly position power, or mostly knowledge power?'],
+    build: grid([
+      { parts: ['The data scientist who built the risk model'], ans: ['k'], why: 'Her authority comes from what she knows.' },
+      { parts: ['The vice president who owns the budget'], ans: ['p'], why: 'His authority comes from where he sits.' },
+      { parts: ['A new graduate fluent in the latest method'], ans: ['k'], why: 'Up to date: lots of knowledge power, little position power.' },
+      { parts: ['The director who signs off on headcount'], ans: ['p'], why: 'Authority from the role.' },
+    ], [['p', 'Position', COL.real, 'P'], ['k', 'Knowledge', COL.whole, 'K']], { multi: false, text: true }),
+  }], done) }],
+
+  ['model', 'The ideal model', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The ideal decision process');
+    const xs = [400, 800, 1200], ks = ['free', 'clear', 'supp'];
+    L10_ST.forEach((s, i) => {
+      const g = G(p, { x: xs[i], y: 360, o: 0 });
+      mk('circle', { r: 120, fill: '#16211d', stroke: COL.good, 'stroke-width': 4 }, g);
+      s.split(' ').forEach((w, j) => T(g, w, { x: 0, y: -6 + j * 40, size: 32, weight: 700, fill: COL.good, anchor: 'middle' }));
+      show(g, m(ks[i]));
+      if (i) hmArrow(p, xs[i] - 270, 360, xs[i] - 130, 360, COL.dim, m(ks[i], -.2), .3);
+    });
+    draw(path(p, 'M1200 490V560H400V494', { stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, { d: 0 }), m('loop'), 1.2);
+    draw(path(p, 'M388 508L400 488L412 508', { stroke: COL.bad, 'stroke-width': 3 }, { d: 0 }), m('loop', 1.1), .2);
+    hmSay(p, 'if wrong: back to discussion', 800, 600, m('loop', 1), { size: 26, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Free discussion, clear decision, full support.', m('loop', 4), 745);
+  }],
+
+  ['free', 'Free discussion', (m) => {
+    const p = panel(0);
+    l10Mini(p, 0);
+    hmSay(p, 'The more heated the issue, the more “free” matters.', 800, 260, m('heat'), { size: 30, weight: 700 });
+    const xs = [380, 540, 700, 900, 1060, 1220];
+    xs.forEach((x, i) => { const q = l10Person(p, x, 400, COL.whole, .8); show(q, m('hang', i * .1)); hmSay(p, '…', x, 350, m('hang', .8), { size: 30, fill: COL.dim }); });
+    const win = l10Person(p, 800, 400, COL.real, 1.1); show(win, m('hang', 2.5));
+    hmSay(p, 'likely winner', 800, 300, m('hang', 2.5), { size: 20, fill: COL.real });
+    hmSay(p, 'everyone waits, then backs the likely winner', 800, 470, m('hang', 4), { size: 22, fill: COL.dim });
+    hmLines(p, ['A car company told a departing executive: people who do well here', 'wait to hear their bosses’ view, then support it. (paraphrased)'], 800, 540, m('car'), { size: 24, fill: COL.dim, lh: 32 });
+    hmSay(p, 'Withheld knowledge means worse decisions.', 800, 650, m('bad'), { size: 30, fill: COL.bad, weight: 700 });
+    hmRule(p, 'The hotter the issue, the freer the discussion must be.', m('bad', 4), 750);
+  }],
+
+  ['clear', 'A clear decision', (m) => {
+    const p = panel(0);
+    l10Mini(p, 1);
+    hmSay(p, 'The more controversy, the more “clear” matters.', 800, 260, m('heat'), { size: 30, weight: 700 });
+    const fog = G(p, { o: 0 });
+    mk('rect', { x: 160, y: 320, width: 600, height: 120, rx: 16, fill: '#26362f', stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, fog);
+    T(fog, '“We’ll keep exploring options', { x: 460, y: 372, size: 26, fill: COL.dim, anchor: 'middle' });
+    T(fog, 'and see how things develop.”', { x: 460, y: 408, size: 26, fill: COL.dim, anchor: 'middle' });
+    show(fog, m('fog'));
+    hmSay(p, 'blurred to dodge an argument', 460, 480, m('fog', 1), { size: 22, fill: COL.bad });
+    const cl = G(p, { o: 0 });
+    mk('rect', { x: 840, y: 320, width: 600, height: 120, rx: 16, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, cl);
+    T(cl, '“We launch in March,', { x: 1140, y: 372, size: 26, fill: COL.good, anchor: 'middle', weight: 600 });
+    T(cl, 'without the second sensor.”', { x: 1140, y: 408, size: 26, fill: COL.good, anchor: 'middle', weight: 600 });
+    show(cl, m('fog', 3));
+    hmSay(p, 'illustrative', 1140, 480, m('fog', 3), { size: 20, fill: COL.faint });
+    hmSay(p, 'Vagueness doesn’t avoid the argument. It postpones it,', 800, 580, m('later'), { size: 28 });
+    hmSay(p, 'and people are angrier without a prompt, straight story.', 800, 625, m('mad'), { size: 28, fill: COL.bad });
+    hmRule(p, 'The hotter the issue, the clearer the decision must be.', m('mad', 4), 750);
+  }],
+
+  ['support', 'Full support', (m) => {
+    const p = panel(0);
+    l10Mini(p, 2);
+    hmBox(p, 480, 340, 520, 150, COL.faint, m('agree'), 'Agreement', { size: 36, sub: ['not required'] });
+    pop(hmCross(p, 720, 280, COL.bad, 18), m('agree', .6));
+    hmBox(p, 1120, 340, 520, 150, COL.good, m('commit'), 'Commitment to support', { size: 32, fill: COL.good, sub: ['required, from everyone'] });
+    const a = l10Person(p, 380, 540, COL.whole, .8), b = l10Person(p, 580, 540, COL.whole, .8); show(a, m('diff')); show(b, m('diff'));
+    l10Chip(p, 'A', 380, 480, COL.whole, m('diff', .5), 60); l10Chip(p, 'B', 580, 480, COL.whole, m('diff', .5), 60);
+    hmSay(p, 'same facts, same goals, honest disagreement', 480, 610, m('diff', 1), { size: 22, fill: COL.dim });
+    hmSay(p, 'An organization lives by commitment,', 1120, 560, m('commit', 2), { size: 26, fill: COL.good });
+    hmSay(p, 'not by agreement.', 1120, 600, m('commit', 2), { size: 26, fill: COL.good });
+    hmRule(p, 'Ask for commitment, not agreement.', m('expect', 2), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-support', prompt: ['You argued for vendor A. After full discussion, the group chose vendor B. You still think A was better. What does full support mean?'],
+    build: choice([['Keep arguing for A in every meeting'], ['Commit to making B succeed, even though you disagree'], ['Go along quietly and wait for B to fail']], 1,
+      'Support means commitment, not agreement. Your disagreement was heard; now the decision needs you.',
+      ['The discussion stage is over. Reopening it every meeting stalls the work.', null, 'That is compliance without commitment, and it undermines the decision.']),
+  }], done) }],
+
+  ['who', 'Who finds it easy', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Easy to accept, harder to practise');
+    hmBox(p, 300, 300, 400, 130, COL.good, m('senior'), 'Long-tenured seniors', { size: 28, sub: ['at home with how things are done'] });
+    hmBox(p, 800, 300, 400, 130, COL.good, m('grads'), 'New graduates', { size: 28, sub: ['it is how lab partners work'] });
+    hmBox(p, 1300, 300, 400, 130, COL.bad, m('mid'), 'Middle managers', { size: 28, sub: ['find it hard'] });
+    [['stating views forcefully', 'h1'], ['making unpleasant decisions', 'h2'], ['backing a decision they opposed', 'h3']].forEach(([s, k], i) => hmSay(p, s, 1300, 420 + i * 44, m(k), { size: 24, fill: COL.bad }));
+    hmSay(p, 'In time, the logic wins everyone over.', 800, 640, m('win'), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'Expect middle managers to need practice.', m('win', 3), 750);
+  }],
+
+  ['lowest', 'The lowest competent level', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Decide at the lowest competent level');
+    // levels from top to bottom; the arrow lands where competence meets closeness
+    [['senior', 220, 300], ['lowest competent level', 320, 500], ['front line', 420, 700]].forEach(([s, y, w], i) => { const r = mk('rect', { x: 400 - w / 2, y: y - 36, width: w, height: 72, rx: 10, fill: '#16211d', stroke: i === 1 ? COL.good : COL.faint, 'stroke-width': 3 }, p); put(r, { o: 0 }); show(r, .3 + i * .1); hmSay(p, s, 400, y + 9, .3 + i * .1, { size: 24, fill: i === 1 ? COL.good : COL.dim }); });
+    hmSay(p, 'as close to the situation as competence allows', 400, 500, m('close'), { size: 22, fill: COL.good });
+    const A = G(p, { x: 1000, y: 330, o: 0 }), B = G(p, { x: 1220, y: 330, o: 0 });
+    mk('circle', { r: 150, fill: 'rgba(134,201,232,.10)', stroke: COL.whole, 'stroke-width': 3 }, A);
+    mk('circle', { r: 150, fill: 'rgba(240,140,122,.10)', stroke: COL.nat, 'stroke-width': 3 }, B);
+    show(A, m('know')); show(B, m('bruise'));
+    hmLines(p, ['technical', 'knowledge'], 950, 320, m('know'), { size: 24, fill: COL.whole });
+    hmLines(p, ['judgment', 'from bruises'], 1275, 320, m('bruise'), { size: 24, fill: COL.nat });
+    hmSay(p, 'both', 1110, 335, m('bruise', 1), { size: 26, fill: COL.good, weight: 700 });
+    hmSay(p, 'Missing one? Add someone more senior, for experience.', 800, 580, m('mix'), { size: 26 });
+    hmSay(p, 'In discussion, everyone speaks as an equal.', 800, 630, m('equal'), { size: 28, fill: COL.good, weight: 700 });
+    hmRule(p, 'Push decisions down to where knowledge and judgment meet.', m('equal', 3.5), 750);
+  }],
+
+  ['equal', 'Status symbols', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Affectation, or survival?');
+    [['informal dress', 330], ['partitions, not offices', 800], ['no reserved parking', 1270]].forEach(([s, x], i) => l10Chip(p, s, x, 230, COL.whole, .4 + i * .4, 320));
+    hmSay(p, 'A journalist asked: just affectation?', 800, 320, .6, { size: 26, fill: COL.dim });
+    hmSay(p, 'Grove: survival.', 800, 400, m('surv'), { size: 40, fill: COL.good, weight: 700 });
+    const a = l10Person(p, 640, 520, COL.whole), b = l10Person(p, 960, 520, COL.real); show(a, m('mix')); show(b, m('mix'));
+    hmSay(p, 'knowledge', 640, 580, m('mix'), { size: 22, fill: COL.whole }); hmSay(p, 'position', 960, 580, m('mix'), { size: 22, fill: COL.real });
+    hmArrow(p, 690, 510, 910, 510, COL.chalk, m('mix', 1), .4); hmArrow(p, 910, 535, 690, 535, COL.chalk, m('mix', 1.2), .4);
+    hmSay(p, 'status symbols block ideas, facts and views', 800, 650, m('status'), { size: 26, fill: COL.bad, weight: 600 });
+    hmRule(p, 'What looks like style is necessity.', m('nec'), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-level', prompt: ['Senior leaders want to settle a detailed device-software design question themselves, but the engineers closest to it understand it best. What would Grove do?'],
+    build: choice([['Let the senior leaders decide: they carry the responsibility'], ['Decide at the lowest competent level: the engineers, plus someone experienced, all speaking as equals'], ['Let the engineers decide with no one senior present']], 1,
+      'Closest to the situation, with expertise tempered by judgment, and no rank in the discussion.',
+      ['Position power alone is a long way from the technical facts.', null, 'Expertise without the bruises of experience can miss what judgment would catch.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 10 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Position and knowledge power drift apart: mesh them.', 'w1'], ['Free discussion, clear decision, full support.', 'w2'], ['Support means commitment, not agreement.', 'w3'], ['Decide at the lowest competent level.', 'w4'], ['In discussion, everyone speaks as an equal.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-obs', prompt: ['You were a strong engineer ten years ago; now you manage the team. How should you weigh your own view in a design debate?'],
+      build: choice([['As the final word: you know the field'], ['As one input: people current with the technology may know better'], ['Not at all: managers should stay out']], 1,
+        'Position power grows as technical currency fades. Mesh the two; don’t let one override the other.',
+        ['Your know-how is ten years older than theirs.', null, 'Your judgment and experience are part of the mix the decision needs.']) },
+    { id: 'p-free', prompt: ['In heated reviews, your team stays quiet until you speak, then agrees with you. What is going wrong?'],
+      build: choice([['Nothing: they trust you'], ['Discussion is not free. Ask for their views before you give yours'], ['They need to prepare more']], 1,
+        'When people wait for the boss’s view, the decision loses what they know.',
+        ['Agreement after the boss speaks is not information.', null, 'Preparation helps, but the pattern is about waiting to see who will win.']) },
+    { id: 'p-clear', prompt: ['A decision will upset half the team. How should you announce it?'],
+      build: choice([['Keep the wording vague to avoid a fight'], ['Plainly and promptly, with the reasons'], ['Wait until people have calmed down about the issue']], 1,
+        'The more controversial the decision, the clearer it must be. Vagueness only postpones the argument.',
+        ['People who dislike it will be angrier without a straight story.', null, 'Delay leaves them guessing, which is worse.']) },
+    { id: 'p-commit', prompt: ['A peer still disagrees with the decision but commits to support it. Is that enough?'],
+      build: choice([['No: keep talking until she agrees'], ['Yes: commitment, not agreement, is what you need'], ['No: she should step back from the project']], 1,
+        'Honest disagreement is normal. Commitment to support is what the organization lives by.',
+        ['On many issues, agreement never comes.', null, 'Disagreeing and committing is exactly what full support asks.']) },
+    { id: 'p-low', prompt: ['Who should decide which test method a lab adopts?'],
+      build: choice([['The site director'], ['The lab team closest to it, with an experienced person in the room'], ['Whoever has been at the company longest']], 1,
+        'The lowest competent level: closest to the situation, with knowledge and judgment both present.',
+        ['That is position power far from the technical facts.', null, 'Tenure alone is neither knowledge nor closeness.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

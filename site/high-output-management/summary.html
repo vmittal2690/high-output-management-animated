@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>High Output Management on one page</title>
+<meta name="description" content="The gist of Andrew Grove’s High Output Management on one page, plus what it means for managing AI agents.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d2b27'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-size='48' fill='%23f0b45a'%3E∞%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --board: #1d2b27; --panel: #22322d; --edge: #3a5047;
+  --chalk: #ece8dc; --dim: #9aaba3; --faint: #6b7f76; --task: #f0b45a; --blue: #86c9e8; --good: #8fd6b0; --bad: #f08c7a; --agent: #bba8ee;
+  --ui: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --book: "Iowan Old Style", Palatino, Georgia, serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--board); color: var(--chalk); font: 16px/1.45 var(--ui); }
+a { color: inherit; text-decoration-color: var(--faint); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--task); }
+a:focus-visible { outline: 3px solid var(--task); outline-offset: 3px; }
+main { max-width: 1120px; margin: 0 auto; padding: 0 20px 40px; }
+section { padding: 30px 0 14px; border-top: 1px solid var(--edge); }
+section:first-child { border-top: 0; }
+.kicker { margin: 0 0 6px; font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); }
+h1 { margin: 0 0 10px; font: 500 clamp(38px, 6vw, 64px)/1.02 var(--book); }
+h1 i, h2 i { color: var(--task); }
+h2 { margin: 0 0 14px; font: 500 clamp(26px, 3.4vw, 34px)/1.1 var(--book); }
+h3 { margin: 0 0 6px; font-size: 17px; }
+p { margin: 0 0 10px; }
+.lede { color: var(--dim); font-size: 18px; max-width: 46em; }
+.dim { color: var(--dim); }
+.small { font-size: 13px; color: var(--faint); }
+.rule { color: var(--task); font-weight: 600; }
+/* hero */
+.hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 28px; align-items: center; padding-top: 40px; }
+.formula { background: var(--panel); border: 1px solid var(--edge); border-left: 6px solid var(--task); border-radius: 16px; padding: 18px 20px; }
+.formula .eq { font: 500 22px/1.3 var(--book); margin-bottom: 8px; }
+.formula .eq b { color: var(--good); font-weight: 600; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+.pill { background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 12px 14px; }
+.pill b { display: block; color: var(--task); font-size: 15px; margin-bottom: 2px; }
+.acts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn { display: inline-block; padding: 10px 20px; border-radius: 999px; font-weight: 600; text-decoration: none; font-size: 15px; }
+.btn.go { background: var(--chalk); color: var(--board); }
+.btn.quiet { border: 1.5px solid var(--edge); }
+/* parts */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid.two { grid-template-columns: repeat(2, 1fr); }
+.card { background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 14px 16px; }
+.card h3 a { text-decoration: none; }
+.card .tag { float: right; font-size: 12px; color: var(--faint); font-weight: 600; }
+.card ul { margin: 6px 0 0; padding-left: 18px; }
+.card li { margin: 2px 0; }
+.card .rule { display: block; margin-top: 8px; font-size: 14.5px; }
+.part { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin: 4px 0 8px; }
+/* homework strip */
+.strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; counter-reset: n; }
+.strip div { background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; font-size: 14.5px; counter-increment: n; }
+.strip div::before { content: counter(n); display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--task); color: var(--board); font-weight: 700; font-size: 13px; margin-right: 6px; }
+/* agents */
+.agents { border-top: 2px solid var(--agent); }
+.agents .kicker { color: var(--agent); }
+.badge { display: inline-block; border: 1px solid var(--agent); color: var(--agent); border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; letter-spacing: .04em; margin-left: 8px; vertical-align: middle; }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--edge); }
+th { color: var(--dim); font-weight: 600; font-size: 13px; letter-spacing: .04em; }
+td:first-child { color: var(--task); font-weight: 600; width: 22%; }
+td:nth-child(2) { width: 39%; }
+td:nth-child(3) { color: var(--agent); }
+.products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 14px; }
+.products .card { border-color: #4b4466; padding: 10px 14px; font-size: 14.5px; }
+.products b { color: var(--agent); }
+footer { padding: 16px 0 0; font-size: 13px; color: var(--faint); border-top: 1px solid var(--edge); }
+@media (max-width: 860px) {
+  .hero, .grid, .grid.two, .three, .products { grid-template-columns: 1fr; }
+  .strip { grid-template-columns: 1fr 1fr; }
+  td:first-child, td:nth-child(2) { width: auto; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<!-- 1 · The idea -->
+<section class="hero">
+  <div>
+    <p class="kicker">The book on one page · Andrew S. Grove, 1983</p>
+    <h1>High <i>Output</i> Management</h1>
+    <p class="lede">Intel’s former CEO treats management as production: a manager’s job is to raise the output of the team, using the same discipline a factory uses to make breakfast, chips or anything else.</p>
+    <div class="acts">
+      <a class="btn go" href="index.html#contents">Open the lessons</a>
+      <a class="btn quiet" href="index.html">Cover</a>
+    </div>
+  </div>
+  <div>
+    <div class="formula">
+      <div class="eq">A manager’s output = <b>the output of their organization</b> + <b>the output of the neighbouring organizations they influence</b></div>
+      <p class="dim" style="margin:0">Everything else in the book is how to raise that number. <a href="ch05/index.html">Lesson 5</a></p>
+    </div>
+    <div class="three">
+      <div class="pill"><b>Output, not activity</b>Judge what the team delivers, not how busy anyone looks.</div>
+      <div class="pill"><b>Leverage</b>Spend time where one hour moves the most output.</div>
+      <div class="pill"><b>It’s a team game</b>Training and motivation are the only two levers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · Parts I and II -->
+<section>
+  <p class="kicker">Parts I–II</p>
+  <h2>Run work like a <i>factory</i>, and spend your time where it has <i>leverage</i></h2>
+  <div class="grid">
+    <div class="card"><span class="tag">ch 1–2 · lessons 1–4</span><h3><a href="ch01/index.html">Production basics</a></h3>
+      <ul><li>Plan backward from the <b>limiting step</b> (the longest, costliest or hardest step).</li>
+      <li>Find problems at the <b>lowest-value stage</b>: catch a bad egg raw, not on the plate.</li>
+      <li>Steer with a few <b>indicators</b>, paired so pushing one can’t hide damage to another; windows into the black box.</li>
+      <li><b>Gate</b> what could hurt the customer; <b>monitor</b> by sampling the rest.</li></ul>
+      <span class="rule">Measure output; catch problems early and cheaply.</span></div>
+    <div class="card"><span class="tag">ch 3 · lessons 5–7</span><h3><a href="ch06/index.html">Managerial leverage</a></h3>
+      <ul><li>Output = Σ (leverage × activity). Raise it by speeding up, raising leverage, or shifting the mix.</li>
+      <li>High leverage: affecting many people; a brief act with a long effect; unique knowledge.</li>
+      <li>Negative leverage: waffling, gloom, meddling. <b>Delegation without follow-through is abdication.</b></li>
+      <li>Run your week like a factory: batch, plan the calendar, say no early, keep slack, 6–8 reports.</li></ul>
+      <span class="rule">Pick the few activities with leverage far above the rest.</span></div>
+    <div class="card"><span class="tag">ch 4–6 · lessons 8–13</span><h3><a href="ch08/index.html">Meetings, decisions, planning</a></h3>
+      <ul><li>Meetings are the <b>medium</b> of managerial work. One-on-ones: theirs, an hour, “ask one more question.”</li>
+      <li>Decisions: <b>free discussion → clear decision → full support</b> (commitment, not agreement). Settle the six questions first.</li>
+      <li>Planning: demand, present status, close the gap; act today for tomorrow.</li>
+      <li><b>Objectives and key results</b>: few, short, specific; a stopwatch, not a legal document.</li></ul>
+      <span class="rule">Use meetings well; decide clearly; plan with today’s actions.</span></div>
+  </div>
+</section>
+
+<!-- 3 · Parts III and IV -->
+<section>
+  <p class="kicker">Parts III–IV</p>
+  <h2>Organize a <i>team of teams</i>, then bring out each player’s <i>best</i></h2>
+  <div class="grid">
+    <div class="card"><span class="tag">ch 7–10 · lessons 14–20</span><h3><a href="ch15/index.html">Team of teams</a></h3>
+      <ul><li>Centralize for scale, decentralize for responsiveness. <b>Grove’s Law</b>: large organizations end up hybrid.</li>
+      <li><b>Dual reporting</b>: a mission boss and a functional group of peers; it runs on trust and shared culture.</li>
+      <li>Three <b>modes of control</b>: market, contract, culture. Choose by motivation and by complexity, uncertainty, ambiguity.</li></ul>
+      <span class="rule">Hybrid is unavoidable; middle managers make it work.</span></div>
+    <div class="card"><span class="tag">ch 11–12 · lessons 21–24</span><h3><a href="ch21/index.html">Motivation and maturity</a></h3>
+      <ul><li>Poor performance is “can’t” or “won’t”: train or motivate. Motivation comes from within; create the environment.</li>
+      <li>Set objectives with a 50/50 chance; give task-relevant feedback; be the coach.</li>
+      <li><b>Task-relevant maturity</b>: tell (structured) → talk (communicating) → monitor, <i>per task</i>, not per person.</li></ul>
+      <span class="rule">Match the style to the person’s experience with this task.</span></div>
+    <div class="card"><span class="tag">ch 13–15 · lessons 25–31</span><h3><a href="ch25/index.html">Reviews, hiring, pay</a></h3>
+      <ul><li>The <b>performance review</b> is the most important task-relevant feedback: level, listen, leave yourself out.</li>
+      <li><b>Interview</b> to learn, with the candidate talking 80% of the time. When a valued person says <b>“I quit,”</b> drop everything.</li>
+      <li><b>Pay</b> and promotions are feedback; beware the Peter Principle.</li></ul>
+      <span class="rule">Judge output honestly, and reward it visibly.</span></div>
+  </div>
+  <p class="part" style="margin-top:16px">Five of Grove’s 25 homework items · do at least 100 points’ worth · <a href="ch32/index.html">lesson 32</a></p>
+  <div class="strip">
+    <div>For a project, find the limiting step and map the flow around it.</div>
+    <div>Create half a dozen new indicators of output, quantity and quality.</div>
+    <div>Rate last week’s calendar by leverage; plan more high-leverage time.</div>
+    <div>Schedule a prepared one-on-one with each of your reports.</div>
+    <div>Rate each report’s task-relevant maturity, and fit your style to it.</div>
+  </div>
+</section>
+
+<!-- 4 · Agents -->
+<section class="agents">
+  <p class="kicker">Bonus · beyond the book</p>
+  <h2>What it means for <i>AI agents</i> <span class="badge">our application, not Grove’s</span></h2>
+  <p class="dim">In fall 2026, agents started doing work, not just answering. Products as announced or reported; details may change.</p>
+  <div class="products">
+    <div class="card"><b>OpenAI Dots</b> · Sep 2026<br>Always-on agents in ChatGPT, each on its own cloud computer you can open to watch; learn preferences; auto-review before touching accounts.</div>
+    <div class="card"><b>Meta Muse</b> · Sep 2026<br>Books, fills forms, negotiates, checks out; asks before emailing or buying; a separate Sentinel agent approves what goes out; audit trail.</div>
+    <div class="card"><b>Instinct</b> · Aug 2026<br>A personal agent you text or call to plan trips, buy groceries, cancel subscriptions; sandboxes and short-lived credentials.</div>
+  </div>
+  <table>
+    <thead><tr><th>Grove’s idea</th><th>For agents</th><th>Do this</th></tr></thead>
+    <tbody>
+      <tr><td>Manager’s output</td><td>Agents you direct are part of your organization: their output, and their mistakes, are yours.</td><td>Own the result.</td></tr>
+      <tr><td>Leverage · shared base</td><td>A clear brief drives hours of work; a vague one is negative leverage at machine speed.</td><td>Brief like a new hire: objective, priorities, approach.</td></tr>
+      <tr><td>Follow-through · gate vs monitor</td><td>Delegation without follow-through is abdication.</td><td>Gate the irreversible (send, pay, submit); sample the rest.</td></tr>
+      <tr><td>Task-relevant maturity</td><td>Autonomy belongs to the task, earned by track record.</td><td>Read-only → approve each step → spot check.</td></tr>
+      <tr><td>Limiting step · indicators</td><td>With fast agents, your review becomes the bottleneck.</td><td>Batch approvals; pair output with errors caught.</td></tr>
+      <tr><td>Modes of control · hybrid</td><td>Agents share no culture, so control is by contract.</td><td>Defined jobs, scoped permissions; centralize safety, let teams configure.</td></tr>
+      <tr><td>Decisions · reviews</td><td>Agents bring knowledge, not authority.</td><td>Agents consult and inform; people decide, ratify, and are judged on output and judgment.</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:12px"><a href="ch33/index.html">Lesson 33: Delegating to agents</a> · <a href="ch34/index.html">34: Running an agent workforce</a> · <a href="ch35/index.html">35: Managing people who manage agents</a></p>
+  <p class="rule" style="font-size:18px;margin-top:10px">You are still the manager. The output is still yours.</p>
+</section>
+
+<footer>A retelling of Andrew S. Grove’s <i>High Output Management</i> (1983) in our own words, for new managers. Figures attributed to Grove are his, dated 1983. The agents section is our interpretation; product details are as reported in August–September 2026 by SiliconANGLE, Reuters and others.</footer>
+</main>
+</body>
+</html>

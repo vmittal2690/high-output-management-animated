@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forecasts, quality and leverage</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 4, title: 'Forecasts, quality and leverage', kicker: 'Chapter 2 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch05/index.html' };
+
+/* ---------- staffing chart: people needed for the forecast workload, by month; 7 px per person ---------- */
+const WORK = [30, 45, 60, 40, 30, 50], WX = i => 420 + i * 150, WY = v => 620 - v * 7;
+
+const BEATS = [
+  ['intro', 'Forecasts, quality and leverage', (m, D) => hmTitle(m, D, 'Chapter 2 · Managing the Breakfast Factory · Lesson 2 of 2', 'Forecasts, quality and leverage', 'How to plan ahead of demand, protect quality, and get more from every hour')],
+
+  ['order', 'Build to order or to forecast', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two ways to decide what to make');
+    // 50 px = 1 week; both rows are measured from the moment the customer orders (x = 420)
+    path(p, 'M420 190V560', { stroke: COL.chalk, 'stroke-width': 3 });
+    hmSay(p, 'customer orders', 420, 176, .3, { size: 24, fill: COL.dim });
+    hmSay(p, 'Build to order', 60, 300, m('order'), { size: 32, weight: 700, anchor: 'start' });
+    hmSay(p, 'make it after the order', 60, 336, m('order'), { size: 22, fill: COL.dim, anchor: 'start' });
+    const b1 = mk('rect', { x: 420, y: 270, width: 0, height: 64, rx: 8, fill: COL.whole }, p); put(b1, { a_width: 0 }); tw(b1, { a_width: 800 }, m('order', .3), 1.4, out);
+    hmSay(p, 'four months', 1240, 312, m('wait'), { size: 28, fill: COL.bad, weight: 700, anchor: 'start' });
+    hmSay(p, 'Build to forecast', 60, 480, m('fc'), { size: 32, weight: 700, anchor: 'start' });
+    hmSay(p, 'start before the order', 60, 516, m('fc'), { size: 22, fill: COL.dim, anchor: 'start' });
+    const b2 = mk('rect', { x: 420, y: 450, width: 0, height: 64, rx: 8, fill: COL.task }, p); put(b2, { a_width: 0 }); tw(b2, { a_width: 200 }, m('fc', .5), .7, out);
+    hmSay(p, 'four weeks', 640, 492, m('fc', .9), { size: 28, fill: COL.good, weight: 700, anchor: 'start' });
+    hmSay(p, 'risk: inventory nobody wants', 800, 630, m('risk'), { size: 30, fill: COL.bad, weight: 700 });
+    hmRule(p, 'Hiring ahead of need is the same bet.', m('hire'), 730);
+  }],
+
+  ['flows', 'Two flows, one dock', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two flows that have to meet');
+    const xs = [330, 620, 910], tm = m('make'), ts = m('sell');
+    hmSay(p, 'Making', 50, 290, tm, { size: 30, weight: 700, anchor: 'start' });
+    hmChain(p, ['Raw material', 'Production', 'Finished goods'], xs, 280, 240, 90, COL.whole, [tm, tm + .5, tm + 1]);
+    hmSay(p, 'Selling', 50, 530, ts, { size: 30, weight: 700, anchor: 'start' });
+    hmChain(p, ['Prospect', 'Selling', 'Order'], xs, 520, 240, 90, COL.int, [ts, ts + .5, ts + 1]);
+    const td = m('dock');
+    hmBox(p, 1340, 400, 300, 130, COL.good, td, 'Shipping dock', { size: 30, fill: COL.good, sub: ['both arrive together'] });
+    hmArrow(p, 1040, 290, 1200, 362, COL.whole, td + .2);
+    hmArrow(p, 1040, 510, 1200, 438, COL.int, td + .2);
+    hmSay(p, 'the factory forecasts this', 620, 200, m('own'), { size: 26, fill: COL.whole, weight: 600 });
+    hmSay(p, 'sales forecasts this', 620, 620, m('own', .8), { size: 26, fill: COL.int, weight: 600 });
+    hmRule(p, 'Each team forecasts its own flow, and answers for it.', m('own', 1.6), 730);
+  }],
+
+  ['slack', 'Where to keep slack', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Slack belongs where the work is worth least');
+    path(p, 'M330 620H1280', { stroke: COL.faint, 'stroke-width': 3 });
+    const st3 = hmStairs(p, ['raw material', 'in process', 'finished goods'], [80, 190, 320], 620, [.3, .45, .6], { x0: 400, step: 300, w: 220 });
+    const crate = G(p, { x: st3[2].cx, y: st3[2].top - 50, s: 0, o: 0 });
+    [-50, 0, 50].forEach(x => mk('rect', { x: x - 20, y: -20, width: 40, height: 40, rx: 5, fill: COL.board, stroke: COL.bad, 'stroke-width': 3.5 }, crate));
+    pop(crate, m('slack'));
+    const l1 = hmSay(p, 'inventory = slack', st3[2].cx, st3[2].top - 96, m('slack', .3), { size: 26, weight: 600 });
+    const l2 = hmSay(p, 'costly to build and keep', st3[2].cx + 130, st3[2].top + 60, m('cost'), { size: 24, fill: COL.bad, weight: 600, anchor: 'start' });
+    const tl = m('low');
+    hide(l1, tl, .3); hide(l2, tl, .3);
+    tw(crate, { x: st3[0].cx, y: st3[0].top - 50 }, tl, 1.1);
+    [...crate.children].forEach(c => tw(c, { c_stroke: COL.good }, tl + .9, .4));
+    hmSay(p, 'cheap to hold', st3[0].cx, st3[0].top - 140, tl + 1, { size: 26, fill: COL.good, weight: 600 });
+    hmSay(p, 'can still become anything', st3[0].cx, st3[0].top - 104, m('flex'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'Keep inventory at the lowest-value stage.', m('flex', .8), 740);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-slack', prompt: ['Your team builds custom reports from standard data pulls, and requests are hard to predict. Where should you keep slack?'],
+    build: choice([['A stock of finished reports, in case someone asks'], ['Clean, ready-to-use data pulls'], ['Nowhere: start from scratch each time']], 1,
+      'Clean data is the low-value stage. It is cheap to keep ready and can become whichever report is requested.',
+      ['Finished reports are the most expensive stage, and most will never match a request.', null, 'With no slack, every surprise request waits for the whole flow.']),
+  }], done) }],
+
+  ['staff', 'Forecasting office work', (m) => {
+    const p = panel(0);
+    hmSay(p, 'People needed for the forecast workload', 420, 110, .2, { size: 36, weight: 600, anchor: 'start' });
+    path(p, 'M360 620H1320', { stroke: COL.dim, 'stroke-width': 3 });
+    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].forEach((s, i) => hmSay(p, s, WX(i) + 50, 660, .3, { size: 24, fill: COL.dim }));
+    WORK.forEach((v, i) => { hmBarUp(p, WX(i), 620, 100, v * 7, COL.whole, m('work', i * .15)); hmSay(p, String(v), WX(i) + 50, WY(v) + 34, m('work', .5 + i * .15), { size: 24, fill: COL.board, weight: 700 }); });
+    draw(path(p, `M400 ${WY(60) - 14}H1290`, { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), m('peak'), 1);
+    hmSay(p, 'staffed for the peak all year: work expands to fill the time', 1290, WY(60) - 34, m('peak', .5), { size: 24, fill: COL.bad, weight: 600, anchor: 'end' });
+    WORK.forEach((v, i) => draw(path(p, `M${WX(i) - 8} ${WY(v)}H${WX(i) + 108}`, { stroke: COL.good, 'stroke-width': 7 }, { d: 0 }), m('match', i * .15), .4));
+    hmSay(p, 'staffed to the forecast', 398, WY(30) - 22, m('match', .6), { size: 24, fill: COL.good, weight: 600, anchor: 'end' });
+    hmRule(p, 'Set standards you believe in, then staff by them.', m('std'), 745);
+  }],
+
+  ['inspect', 'Where and how to check', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Three checkpoints', 800, 110, .2, { size: 40, weight: 600 });
+    draw(path(p, 'M200 250H1400', { stroke: COL.dim, 'stroke-width': 5 }, { d: 0 }), .2, .8);
+    hmSay(p, 'work comes in', 200, 215, .4, { size: 24, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'to the customer', 1400, 215, .4, { size: 24, fill: COL.dim, anchor: 'end' });
+    [['c1', 'incoming', 420], ['c2', 'in process', 800], ['c3', 'final', 1180]].forEach(([k, s, x]) => {
+      const g = G(p, { x, y: 250, s: 0, o: 0 });
+      mk('path', { d: 'M0 -30L30 0L0 30L-30 0Z', fill: COL.board, stroke: COL.task, 'stroke-width': 4 }, g);
+      pop(g, m(k));
+      hmSay(p, s, x, 322, m(k, .15), { size: 28, fill: COL.task, weight: 600 });
+    });
+    const bad = hmDot(p, 220, 250, COL.bad, 13);
+    show(bad, m('early', -.6), .3); tw(bad, { x: 388 }, m('early', -.3), .8);
+    hmSay(p, 'cheapest place to stop it', 420, 180, m('early', .4), { size: 24, fill: COL.bad, weight: 600 });
+    // gate: everything waits at the bar
+    const tg = m('gate');
+    hmSay(p, 'Gate', 200, 470, tg, { size: 34, weight: 700, anchor: 'start' });
+    hmSay(p, 'hold everything until it passes', 200, 506, tg, { size: 24, fill: COL.dim, anchor: 'start' });
+    draw(path(p, 'M1000 420V520', { stroke: COL.task, 'stroke-width': 7 }, { d: 0 }), tg, .4);
+    [0, 1, 2, 3, 4].forEach(i => { const d = hmDot(p, 620, 470, COL.whole); show(d, tg + .2 + i * .12, .2); tw(d, { x: 968 - i * 34 }, tg + .2 + i * .12, .9, out); });
+    hmSay(p, 'safe, but slows the flow', 1040, 480, tg + 1, { size: 26, fill: COL.dim, anchor: 'start' });
+    // monitor: the flow keeps moving, one sample is lifted out
+    const tm = m('mon');
+    hmSay(p, 'Monitor', 200, 630, tm, { size: 34, weight: 700, anchor: 'start' });
+    hmSay(p, 'sample a few, keep the rest moving', 200, 666, tm, { size: 24, fill: COL.dim, anchor: 'start' });
+    [0, 1, 2, 3, 4].forEach(i => {
+      const d = hmDot(p, 620, 630, i === 2 ? COL.task : COL.whole); show(d, tm + .2 + i * .18, .2);
+      tw(d, { x: 1360 - i * 120 }, tm + .2 + i * .18, 1.6, out);
+      if (i === 2) tw(d, { y: 580 }, tm + 1.7, .5);
+    });
+    hmSay(p, 'checked', 1120, 560, tm + 2, { size: 22, fill: COL.task, weight: 600 });
+    hmRule(p, 'Monitor when big problems are unlikely. Gate when they are not.', m('rel'), 750);
+  }],
+
+  ['waive', 'When material fails the check', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The incoming material fails. Now what?');
+    hmBox(p, 420, 250, 480, 130, COL.whole, m('back'), 'Send it back', { size: 32, sub: ['the line may stop until more arrives'] });
+    hmBox(p, 1180, 250, 480, 130, COL.whole, m('use'), 'Use it anyway', { size: 32, sub: ['expect more rejects later'] });
+    hmArrow(p, 420, 326, 660, 400, COL.dim, m('group', -.2), .4);
+    hmArrow(p, 1180, 326, 940, 400, COL.dim, m('group', -.2), .4);
+    hmBox(p, 800, 450, 640, 110, COL.task, m('group'), 'A balanced group decides', { size: 30, sub: ['quality + production + design, weighing the cost'] });
+    const h = G(p, { x: 330, y: 660, s: 0, o: 0 });
+    mk('path', { d: 'M0 34C-52 -4 -40 -44 -16 -44C-4 -44 0 -32 0 -28C0 -32 4 -44 16 -44C40 -44 52 -4 0 34Z', fill: COL.bad }, h);
+    path(h, 'M-30 -6H-12L-4 -24L6 14L14 -6H30', { stroke: COL.board, 'stroke-width': 5 });
+    pop(h, m('pace'));
+    hmSay(p, 'Never pass a possible reliability failure.', 410, 650, m('never'), { size: 32, fill: COL.bad, weight: 700, anchor: 'start' });
+    hmSay(p, 'a pacemaker part that fails after implant costs more than money', 410, 696, m('pace', .3), { size: 26, fill: COL.dim, anchor: 'start' });
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-gate', prompt: ['Gate or monitor? Choose for each kind of work.'],
+    build: grid([
+      { parts: ['Dosage tables in instructions sent to patients'], ans: ['g'], why: 'An error here could harm the customer, so nothing ships until it passes.' },
+      { parts: ['Formatting of internal weekly status notes'], ans: ['m'], why: 'A miss is cheap to fix later. Sample a few and keep the flow moving.' },
+      { parts: ['Routine expense claims under fifty dollars'], ans: ['m'], why: 'Problems are rare and small. Sampling deters abuse without checking each one.' },
+      { parts: ['Contract terms sent to a customer for signature'], ans: ['g'], why: 'A wrong term reaches the customer and is hard to undo. Hold it until it passes.' },
+    ], [['g', 'Gate', null, 'G'], ['m', 'Monitor', null, 'M']], { multi: false, text: true }),
+  }], done) }],
+
+  ['variable', 'How closely to check', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Variable inspection: how often to look', 800, 120, .2, { size: 40, weight: 600 });
+    draw(path(p, 'M240 400H1360', { stroke: COL.dim, 'stroke-width': 4 }, { d: 0 }), .2, .9);
+    hmSay(p, 'time on the task', 1360, 468, .5, { size: 22, fill: COL.dim, anchor: 'end' });
+    const ticks = (xs, t0, step = .08) => xs.forEach((x, i) => draw(path(p, `M${x} 372V428`, { stroke: COL.task, 'stroke-width': 6 }, { d: 0 }), t0 + i * step, .25));
+    ticks([260, 300, 340, 380, 420, 460, 500], m('new'));
+    hmLines(p, ['new to the task:', 'look often'], 380, 300, m('new'), { size: 26, fill: COL.task, weight: 600 });
+    ticks([620, 780], m('less'), .3);
+    hmLines(p, ['work comes back clean:', 'look less'], 700, 300, m('less'), { size: 26, fill: COL.good, weight: 600 });
+    pop(hmCross(p, 900, 400, COL.bad, 16), m('prob'));
+    hmSay(p, 'a problem', 900, 470, m('prob'), { size: 24, fill: COL.bad, weight: 600 });
+    ticks([950, 990, 1030, 1070, 1110], m('again'));
+    ticks([1260], m('again', .9));
+    hmLines(p, ['check closely', 'until it settles'], 1040, 300, m('again'), { size: 26, fill: COL.task, weight: 600 });
+    hmBox(p, 480, 620, 560, 130, COL.bad, m('all'), 'Check everything', { size: 30, sub: ['meddling: people stop owning their work'] });
+    hmBox(p, 1120, 620, 560, 130, COL.bad, m('none'), 'Check nothing', { size: 30, sub: ['you find out too late'] });
+  }],
+
+  ['visa', 'The visa backlog', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Checking everything: the embassy');
+    const dots = Array.from({ length: 100 }, (_, i) => { const d = mk('circle', { cx: 260 + (i % 10) * 40, cy: 220 + Math.floor(i / 10) * 40, r: 12, fill: '#9aaba3' }, p); put(d, { o: 0 }); show(d, m('apps', i * .012), .2); return d; });
+    hmSay(p, 'each dot: 1 in 100 applications', 440, 640, m('apps', .8), { size: 22, fill: COL.dim });
+    hmLines(p, ['about 1,000,000', 'applications a year'], 1120, 240, m('apps', .5), { size: 34, weight: 600 });
+    const to = m('ok');
+    dots.forEach((d, i) => tw(d, { c_fill: i === 37 || i === 82 ? COL.bad : COL.good }, to + (i % 10) * .04, .4));
+    hmSay(p, '98 in 100 approved', 1120, 370, to + .4, { size: 34, fill: COL.good, weight: 700 });
+    const all = mk('rect', { x: 236, y: 196, width: 408, height: 408, rx: 14, fill: 'none', stroke: COL.bad, 'stroke-width': 4 }, p); put(all, { o: 0 });
+    show(all, m('all'));
+    hmSay(p, 'yet all 100 checked in full', 1120, 440, m('all'), { size: 30, fill: COL.bad, weight: 600 });
+    hmLines(p, ['fast and slow lanes added overhead,', 'not output'], 1120, 520, m('fix'), { size: 26, fill: COL.dim });
+    const tsm = m('sample');
+    hide(all, tsm, .4);
+    const smp = mk('rect', { x: 242, y: 324, width: 396, height: 32, rx: 16, fill: 'none', stroke: COL.task, 'stroke-width': 4 }, p); put(smp, { o: 0 });
+    show(smp, tsm + .2);
+    hmSay(p, 'check a sample, thoroughly', 440, 690, tsm + .3, { size: 28, fill: COL.task, weight: 700 });
+    hmRule(p, 'A sample, chosen by set criteria, keeps the whole flow honest.', m('irs'), 750);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-variable', prompt: ['Dana is new, and her first two reports had errors. Lee’s reports have been clean all year. How do you review this week’s reports?'],
+    build: choice([['Read both in full'], ['Read Dana’s in full; sample Lee’s'], ['Sample both']], 1,
+      'Look closely where the work is new or shaky, and lightly where it has been steady. Ease off with Dana as her reports come back clean.',
+      ['That spends your time on work that has been clean for a year, and tells Lee you do not trust it.', null, 'Dana’s work has shown problems. Sampling could let the next one through.']),
+  }], done) }],
+
+  ['leverage', 'Leverage', (m) => {
+    const p = panel(0);
+    hmSay(p, 'productivity  =  output  ÷  labor', 800, 150, .2, { size: 42, weight: 600 });
+    hmSay(p, 'same work, faster', 480, 250, m('fast'), { size: 32, fill: COL.dim });
+    hmSay(p, 'or change the work: leverage', 1020, 250, m('lev'), { size: 32, fill: COL.task, weight: 700 });
+    const cut = [2, 5, 8], keep = [0, 1, 3, 4, 6, 7, 9], ts = m('steps');
+    const boxes = Array.from({ length: 10 }, (_, i) => {
+      const g = G(p, { x: 215 + i * 130, y: 440, o: 0 });
+      mk('rect', { x: -52, y: -52, width: 104, height: 104, rx: 12, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, g);
+      T(g, String(i + 1), { x: 0, y: 12, size: 34, anchor: 'middle', weight: 600 });
+      show(g, ts + i * .09, .3);
+      return g;
+    });
+    const n10 = hmSay(p, '10 steps', 800, 560, ts + 1, { size: 30, fill: COL.dim });
+    const tc = m('why');
+    cut.forEach((i, k) => {
+      const q = hmSay(p, 'why?', 215 + i * 130, 360, tc + k * .3, { size: 28, fill: COL.bad, weight: 700 });
+      hide(q, m('cut', .6), .3);
+    });
+    const tk = m('cut');
+    cut.forEach((i, k) => {
+      draw(path(boxes[i], 'M-44 -44L44 44M44 -44L-44 44', { stroke: COL.bad, 'stroke-width': 6 }, { d: 0 }), tk + k * .2, .3);
+      hide(boxes[i], tk + .9, .4);
+    });
+    keep.forEach((i, k) => tw(boxes[i], { x: 410 + k * 130 }, tk + 1.3, .8));
+    hide(n10, tk + 1.3, .3);
+    hmSay(p, '7 steps, same output', 800, 560, tk + 2, { size: 30, fill: COL.good, weight: 700 });
+    hmSay(p, 'Expect to cut 30 to 50 percent of steps on a first pass.', 800, 700, m('res'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 4 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Build to forecast; each team owns its forecast.', 'w1'], ['Keep slack where the work is worth least.', 'w2'], ['Gate what could hurt the customer. Monitor the rest.', 'w3'], ['Check more when work is new or shaky, less when steady.', 'w4'], ['Raise leverage by removing steps, not by rushing.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-own', prompt: ['Sales and engineering keep missing each other: features arrive with no buyers, and deals close with no feature. What does Grove suggest?'],
+      build: choice([['One planner forecasts for both'], ['Each team forecasts its own flow and is held to it'], ['Stop forecasting and build only to order']], 1,
+        'People perform against predictions they made themselves. Then match the two forecasts so product and order meet.',
+        ['Grove found a single forecaster works less well: nobody else owns the prediction.', null, 'Build to order is safe but slow. A faster competitor takes the customer.']) },
+    { id: 'p-staff', prompt: ['Your support team is staffed for December’s peak all year round. What is the likely result?'],
+      build: choice([['Work expands to fill the time available'], ['Quality rises steadily'], ['Costs fall']], 0,
+        'Without staffing to a forecast, headcount stays at its highest level and the work stretches to match it.',
+        [null, 'Spare time does not turn into quality unless someone directs it there.', 'Carrying peak staffing in quiet months raises cost.']) },
+    { id: 'p-gate', prompt: ['A legal sign-off protects customers from a contract error. Should it be a gate or a monitor?'],
+      build: choice([['A gate: every contract waits for sign-off'], ['A monitor: sample one contract in ten']], 0,
+        'A failure here would reach the customer, so nothing moves on until it passes.',
+        [null, 'Sampling suits work where a miss is cheap to fix later. A contract error that reaches a customer is not.']) },
+    { id: 'p-var', prompt: ['A process you check every week has been clean for six months. What does variable inspection say to do?'],
+      build: choice([['Keep checking weekly: it is working'], ['Check less often, and step up again if problems appear'], ['Stop checking for good']], 1,
+        'Match the checking to the quality. Less when it is steady, more the moment it slips.',
+        ['That is habit, not judgment. The time could go where quality is shaky.', null, 'With no checks at all you would not see the next problem coming.']) },
+    { id: 'p-simplify', prompt: ['An approval process has twelve steps and takes two weeks. What is the first move?'],
+      build: choice([['Ask everyone to do their step faster'], ['Add a tool to track the twelve steps'], ['Write out all twelve steps and ask why each exists']], 2,
+        'Listing every step honestly, then questioning each one, is how you find the steps that exist only out of habit.',
+        ['That is working faster. It leaves the unnecessary steps in place.', 'Tracking adds work without removing any.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

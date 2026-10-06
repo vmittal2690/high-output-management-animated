@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run your week like a factory</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 7, title: 'Run your week like a factory', kicker: 'Chapter 3 · Lesson 3', minutes: 11, language: 'en', silent: true, next: '../ch08/index.html' };
+
+/* Colours: amber = a fixed point / the limiting step and the rule; blue = ordinary work; red = cost, waste or a problem; green = the goal. */
+function l7Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l7Chip = (p, s, x, y, color, t0, w) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 9, size: 24, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A block on a week grid: day 0–4, hours from 9 (start, end), inside a grid at (x0, y0) with column width cw and px per hour ph.
+function l7Block(p, grid, day, h0, h1, fill, t0, label, o = {}) {
+  const { x0, y0, cw, ph } = grid, x = x0 + day * cw + 4, y = y0 + (h0 - 9) * ph + 2;
+  const g = G(p, { o: 0 });
+  mk('rect', { x, y, width: cw - 8, height: (h1 - h0) * ph - 4, rx: 6, fill, stroke: o.stroke || 'none', 'stroke-width': 2 }, g);
+  if (label) T(g, label, { x: x + (cw - 8) / 2, y: y + (h1 - h0) * ph / 2 + 7, size: o.size || 20, fill: o.ink || COL.board, weight: 600, anchor: 'middle' });
+  if (o.drop) { put(g, { y: -60 }); tw(g, { y: 0, o: 1 }, t0, .5, out); } else show(g, t0);
+  return g;
+}
+function l7Grid(p, grid, t0, { days = true, hours = true } = {}) {
+  const { x0, y0, cw, ph } = grid;
+  for (let d = 0; d <= 5; d++) path(p, `M${x0 + d * cw} ${y0}V${y0 + 8 * ph}`, { stroke: COL.faint, 'stroke-width': 1.5 });
+  for (let h = 0; h <= 8; h += 2) path(p, `M${x0} ${y0 + h * ph}H${x0 + 5 * cw}`, { stroke: COL.faint, 'stroke-width': 1.5 });
+  if (days) ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach((s, d) => hmSay(p, s, x0 + d * cw + cw / 2, y0 - 14, t0, { size: 20, fill: COL.dim }));
+  if (hours) [[0, '9'], [2, '11'], [4, '1'], [6, '3'], [8, '5']].forEach(([h, s]) => hmSay(p, s, x0 - 12, y0 + h * ph + 7, t0, { size: 18, fill: COL.dim, anchor: 'end' }));
+}
+
+const BEATS = [
+  ['intro', 'Run your week like a factory', (m, D) => hmTitle(m, D, 'Chapter 3 · Managerial Leverage · Lesson 3 of 3', 'Run your week like a factory', 'Production ideas for a manager’s own time')],
+
+  ['speed', 'Working faster', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The third way: work faster');
+    hmSay(p, 'output ÷ hours  =  leverage × activities ÷ hours', 800, 230, m('eq'), { size: 40, weight: 600 });
+    [['handle each paper once', 330, 320], ['stand-up meetings', 800, 260], ['desk away from the door', 1270, 330]].forEach(([s, x, w], i) => l7Chip(p, s, x, 360, COL.dim, m('tips', i * 1.6), w));
+    hmSay(p, 'tips that only shrink the hours', 800, 440, m('tips', 5.5), { size: 26, fill: COL.dim });
+    hmSay(p, 'Better: apply production principles.', 800, 560, m('better'), { size: 34, fill: COL.good, weight: 700 });
+    hmRule(p, 'Borrow from the factory, not from time-management tips.', m('better', 2.5), 745);
+  }],
+
+  ['limit', 'Your limiting step', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Plan around what cannot move');
+    const GR = { x0: 300, y0: 200, cw: 200, ph: 50 };
+    l7Grid(p, GR, .3);
+    l7Block(p, GR, 3, 10, 12, COL.task, m('fix'), 'class (200+)');
+    l7Block(p, GR, 2, 14, 16, COL.whole, m('prep'), 'prepare');
+    hmArrow(p, 850, 448, 950, 354, COL.dim, m('prep', .5), .4);
+    [[0, 9, 11, '1:1s'], [1, 13, 15, 'reviews'], [4, 9, 10, 'mail'], [0, 14, 15, 'hiring'], [3, 14, 16, 'staff'], [4, 13, 15, 'planning']].forEach(([d, a, b, s], i) => l7Block(p, GR, d, a, b, COL.whole, m('rest', .2 + i * .2), s));
+    hmRule(p, 'Find what cannot move, and schedule the rest around it.', m('rest', 2.2), 745);
+  }],
+
+  ['batch', 'Batch similar work', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Batch similar work');
+    hmSay(p, 'like resetting the egg boiler for four-minute eggs: adjust, then test', 800, 170, m('setup', 1), { size: 22, fill: COL.dim });
+    // illustrative: 12 px = 1 minute; set-up 4 minutes, each task 6 minutes
+    const S1 = 48, W1 = 72;
+    hmSay(p, 'one at a time', 280, 318, m('one'), { size: 26, anchor: 'end' });
+    for (let i = 0; i < 6; i++) {
+      const x = 300 + i * (S1 + W1), t = m('one', .2 + i * .25);
+      const a = mk('rect', { x: x + 2, y: 290, width: S1 - 4, height: 44, rx: 5, fill: COL.bad }, p); put(a, { o: 0 }); show(a, t, .2);
+      const b = mk('rect', { x: x + S1 + 2, y: 290, width: W1 - 4, height: 44, rx: 5, fill: COL.whole }, p); put(b, { o: 0 }); show(b, t + .1, .2);
+    }
+    hmSay(p, 'batched', 280, 448, m('group'), { size: 26, anchor: 'end' });
+    const a2 = mk('rect', { x: 302, y: 420, width: S1 - 4, height: 44, rx: 5, fill: COL.bad }, p); put(a2, { o: 0 }); show(a2, m('group', .2), .2);
+    for (let i = 0; i < 6; i++) { const b = mk('rect', { x: 300 + S1 + i * W1 + 2, y: 420, width: W1 - 4, height: 44, rx: 5, fill: COL.whole }, p); put(b, { o: 0 }); show(b, m('group', .4 + i * .12), .2); }
+    hmSay(p, 'five set-ups saved', 1000, 452, m('group', 1.5), { size: 28, fill: COL.good, weight: 700, anchor: 'start' });
+    const lg = G(p, { o: 0 });
+    mk('rect', { x: 300, y: 516, width: 30, height: 22, rx: 4, fill: COL.bad }, lg); T(lg, 'set-up', { x: 340, y: 535, size: 22, fill: COL.dim });
+    mk('rect', { x: 460, y: 516, width: 30, height: 22, rx: 4, fill: COL.whole }, lg); T(lg, 'the work', { x: 500, y: 535, size: 22, fill: COL.dim });
+    T(lg, 'illustrative', { x: 1300, y: 535, size: 20, fill: COL.faint, anchor: 'end' });
+    show(lg, m('one', 1));
+    hmSay(p, 'Reuse what you set up: the slides for one class serve the next.', 800, 630, m('reuse'), { size: 28 });
+    hmRule(p, 'Pay the set-up once: batch the same kind of work.', m('reuse', 3.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-batch', prompt: ['Six expense approvals each need 5 minutes of set-up and 3 minutes of review. One at a time, that is 48 minutes. How long batched?'],
+    build: blanks([{ parts: ['5 + 6 × 3 = ', { box: '23' }, '  minutes'], why: 'One set-up, then six reviews: 23 minutes instead of 48.', hint: 'Pay the set-up once, then add six reviews.' }]),
+  }], done) }],
+
+  ['calendar', 'Calendar as a production plan', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Job shop or factory?');
+    const L = { x0: 170, y0: 250, cw: 104, ph: 42 }, R = { x0: 910, y0: 250, cw: 104, ph: 42 };
+    hmSay(p, 'job shop: whatever walks in', 430, 190, m('shop'), { size: 26, fill: COL.dim });
+    l7Grid(p, L, m('shop'), { hours: false });
+    [[2, 10, 11], [0, 14, 16], [4, 11, 12], [1, 9, 10], [3, 15, 16], [2, 13, 14], [0, 10, 11], [4, 14, 15], [1, 12, 13], [3, 10, 11]].forEach(([d, a, b], i) => l7Block(p, L, d, a, b, COL.dim, m('shop', .4 + i * .3), '', { drop: true }));
+    hmSay(p, 'mindless passivity', 430, 640, m('shop', 6), { size: 26, fill: COL.bad, weight: 600 });
+    hmSay(p, 'factory: a production plan', 1170, 190, m('plan'), { size: 26, fill: COL.good });
+    l7Grid(p, R, m('plan'), { hours: false });
+    [[1, 9, 11], [3, 13, 15], [4, 9, 10]].forEach(([d, a, b], i) => l7Block(p, R, d, a, b, COL.task, m('plan', .4 + i * .3)));
+    [[0, 9, 12], [2, 9, 11], [0, 14, 16], [2, 14, 16], [4, 13, 15], [1, 13, 15]].forEach(([d, a, b], i) => l7Block(p, R, d, a, b, COL.whole, m('fill', .4 + i * .3)));
+    hmSay(p, 'fixed events, then your own work in the gaps', 1170, 640, m('fill', 2.2), { size: 24, fill: COL.good, weight: 600 });
+    hmRule(p, 'Use your calendar to plan production, not to log orders.', m('fill', 4.5), 745);
+  }],
+
+  ['no', 'Say no at the start', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Do not start what you cannot finish');
+    // a channel with a narrow stage at x 900
+    path(p, 'M240 300H860V330H940V300H1360M240 420H860V390H940V420H1360', { stroke: COL.faint, 'stroke-width': 4 });
+    hmSay(p, 'bottleneck', 900, 280, .4, { size: 22, fill: COL.dim });
+    const tj = m('jam');
+    const pile = Array.from({ length: 14 }, (_, i) => {
+      const d = hmDot(p, 260, 360, COL.whole, 13); const c = i % 7, r = Math.floor(i / 7);
+      show(d, tj + i * .12, .2); tw(d, { x: 840 - c * 32, y: 340 + r * 40 }, tj + i * .12, 1.2, out);
+      tw(d.firstChild, { c_fill: COL.bad }, tj + 2.2 + i * .03, .3);
+      return d;
+    });
+    const stl = hmSay(p, 'stalled halfway, where it is worth more', 640, 470, tj + 2.6, { size: 24, fill: COL.bad, weight: 600 });
+    const tg = m('gate'); hide(stl, tg, .4);
+    pile.forEach(d => hide(d, tg, .5));
+    draw(path(p, 'M320 290V430', { stroke: COL.chalk, 'stroke-width': 8 }, { d: 0 }), tg + .3, .3);
+    hmSay(p, 'no, at the outset', 320, 470, tg + .4, { size: 24, fill: COL.chalk, weight: 600 });
+    [0, 1, 2, 3].forEach(i => { const d = hmDot(p, 380, 360, COL.good, 13); show(d, tg + 1 + i * .5, .2); tw(d, { x: 1340 }, tg + 1 + i * .5, 2.4, lin); });
+    hmSay(p, 'A late no wastes more, and not delivering is a no anyway.', 800, 580, m('late'), { size: 28 });
+    hmRule(p, 'Every yes to one thing is a no to something else.', m('yes'), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-no', prompt: ['A peer asks you to lead a new working group. Your next month is already full. What does Grove’s factory rule suggest?'],
+    build: choice([['Say yes, and fit it in somehow'], ['Say no now, or trade it for something you drop'], ['Say yes, and quietly drop it later if it does not fit']], 1,
+      'Like a factory at capacity, refuse at the start. A clear no, or a clear trade, costs least.',
+      ['Overloading means something stalls halfway, where it costs most.', null, 'Not delivering is still a no, only later and more expensive.']),
+  }], done) }],
+
+  ['slack', 'Allow slack', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Leave some slack');
+    // throughput against traffic: illustrative shape
+    path(p, 'M220 580V230M220 580H900', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'cars getting through', 236, 230, .3, { size: 20, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'cars on the road', 900, 615, .3, { size: 20, fill: COL.dim, anchor: 'end' });
+    draw(path(p, 'M220 580C380 420 560 290 700 280C760 276 780 330 800 420C820 520 840 560 880 570', { stroke: COL.whole, 'stroke-width': 5 }, { d: 0 }), m('road'), 2.6);
+    const best = hmDot(p, 700, 280, COL.good, 13); show(best, m('road', 2));
+    hmSay(p, 'best', 700, 255, m('road', 2), { size: 24, fill: COL.good, weight: 700 });
+    const jam = hmDot(p, 815, 500, COL.bad, 13); show(jam, m('jam'));
+    hmLines(p, ['a few more:', 'jam'], 860, 480, m('jam', .3), { size: 22, fill: COL.bad, weight: 600, anchor: 'start' });
+    hmSay(p, 'illustrative', 900, 230, m('road'), { size: 18, fill: COL.faint, anchor: 'end' });
+    // your day, with slack between blocks
+    hmSay(p, 'your day', 1240, 300, m('day'), { size: 26, weight: 600 });
+    [1000, 1130, 1260, 1390].forEach((x, i) => { const r = mk('rect', { x, y: 330, width: 90, height: 60, rx: 6, fill: COL.whole }, p); put(r, { o: 0 }); show(r, m('day', .2 + i * .15)); });
+    hmSay(p, 'slack', 1110, 420, m('day', 1.2), { size: 20, fill: COL.dim });
+    const call = mk('rect', { x: 1093, y: 230, width: 34, height: 60, rx: 6, fill: COL.bad }, p); put(call, { o: 0 });
+    show(call, m('call')); tw(call, { a_y: 330 }, m('call', .3), .6, out);
+    hmLines(p, ['one surprise call', 'fits in the slack'], 1240, 480, m('call', 1), { size: 24, fill: COL.good, weight: 600 });
+    hmRule(p, 'Load the day fully, but leave room for one surprise.', m('call', 3), 745);
+  }],
+
+  ['inventory', 'A stock of projects', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Keep a stock of projects');
+    const wip = G(p, { x: 380, y: 340, o: 0 });
+    mk('rect', { x: -80, y: -95, width: 160, height: 190, rx: 10, fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, wip);
+    for (let j = 0; j < 6; j++) mk('rect', { x: -60, y: -72 + j * 24, width: j % 3 === 2 ? 70 : 120, height: 7, rx: 3, fill: COL.faint }, wip);
+    show(wip, m('wip')); tw(wip.firstChild, { c_stroke: COL.bad }, m('wip', 1.6), .6);
+    hmLines(p, ['work in process:', 'it spoils'], 380, 480, m('wip', 1.6), { size: 24, fill: COL.bad, weight: 600 });
+    path(p, 'M820 400H1440', { stroke: COL.dim, 'stroke-width': 5 });
+    for (let i = 0; i < 5; i++) { const b = G(p, { o: 0 }); mk('rect', { x: 850 + i * 118, y: 316, width: 100, height: 80, rx: 8, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, b); show(b, m('raw', .3 + i * .2)); }
+    hmLines(p, ['raw material: projects that', 'improve the team over time'], 1130, 450, m('raw', 1.4), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, 'No stock? Free time turns into meddling.', 800, 590, m('idle'), { size: 30, fill: COL.bad, weight: 600 });
+    hmSay(p, 'Reuse methods that work, and keep asking why they work.', 800, 650, m('std'), { size: 26, fill: COL.dim });
+    hmRule(p, 'Keep projects in stock for the gaps in your day.', m('std', 3.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ideas', prompt: ['Which production idea is each manager using?'],
+    build: grid([
+      { parts: ['Prep for the board review is scheduled back from its fixed date.'], ans: ['l'], why: 'The fixed meeting is the limiting step; prep is offset before it.' },
+      { parts: ['All six performance-review approvals go into Thursday afternoon.'], ans: ['b'], why: 'One mental set-up, used six times.' },
+      { parts: ['Each afternoon has one unbooked hour.'], ans: ['s'], why: 'Slack, so one surprise does not wreck the day.' },
+      { parts: ['A list of process fixes to pick up when a meeting is cancelled.'], ans: ['p'], why: 'A raw-material stock of projects, instead of meddling.' },
+    ], [['l', 'Fixed point'], ['b', 'Batch'], ['s', 'Slack'], ['p', 'Projects']], { multi: false, text: true }),
+  }], done) }],
+
+  ['span', 'How many reports', (m) => {
+    const p = panel(0);
+    hmHead(p, 'How many people should report to you?');
+    // a five-day week, 200 px per day; each report takes half a day (100 px)
+    hmSay(p, 'one week', 280, 268, .3, { size: 24, fill: COL.dim, anchor: 'end' });
+    const out1 = mk('rect', { x: 300, y: 232, width: 1000, height: 56, rx: 8, fill: 'none', stroke: COL.faint, 'stroke-width': 2 }, p); put(out1, { o: 0 }); show(out1, .3);
+    const seg = Array.from({ length: 10 }, (_, i) => { const r = mk('rect', { x: 302 + i * 100, y: 234, width: 96, height: 52, rx: 6, fill: COL.whole }, p); put(r, { o: 0 }); return r; });
+    const tf = m('few'), tm = m('many'), tr = m('rule');
+    seg.slice(0, 3).forEach((r, i) => show(r, tf + i * .1, .2));
+    const a = hmSay(p, '3 reports: 1½ days. Leverage too low.', 800, 340, tf + .3, { size: 26, fill: COL.dim });
+    hide(a, tm, .2);
+    seg.slice(3).forEach((r, i) => show(r, tm + i * .08, .2));
+    seg.forEach(r => tw(r, { c_fill: COL.bad }, tm + .6, .3));
+    const b = hmSay(p, '10 reports: the whole week, nothing else', 800, 340, tm + .4, { size: 26, fill: COL.bad });
+    hide(b, tr, .2);
+    seg.slice(8).forEach(r => hide(r, tr, .3));
+    seg.slice(0, 8).forEach((r, i) => tw(r, { c_fill: i < 6 ? COL.good : '#6fb592' }, tr + .2, .4));
+    hmSay(p, '6 to 8 reports: 3 to 4 days of a supervisor’s week', 800, 340, tr + .4, { size: 26, fill: COL.good, weight: 600 });
+    // time per person per week
+    [['two days', 400, COL.bad, 'meddling', 'two'], ['half a day', 100, COL.good, 'about right', 'half'], ['one hour', 25, COL.bad, 'too little to monitor', 'hour']].forEach(([lab, w, c, res, k], i) => {
+      const y = 430 + i * 62, t = m(k);
+      hmSay(p, lab, 540, y + 28, t, { size: 24, anchor: 'end' });
+      const r = mk('rect', { x: 560, y, width: 0, height: 40, rx: 5, fill: c }, p); put(r, { a_width: 0 }); tw(r, { a_width: w }, t + .2, .5, out);
+      hmSay(p, res, 580 + w, y + 28, t + .6, { size: 24, fill: c, weight: 600, anchor: 'start' });
+    });
+    hmSay(p, 'per person, per week', 540, 410, m('half'), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Half a day a week on a planning or advisory group counts as one report.', 800, 680, m('know', 1.5), { size: 26 });
+    hmRule(p, 'Six to eight reports, or their equivalent.', m('know', 6), 750);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-span', prompt: ['You have five direct reports and sit on two advisory groups, each taking half a day a week. How many report-equivalents is that?'],
+    build: blanks([{ parts: ['5 + 2 = ', { box: '7' }], why: 'Seven: inside Grove’s range of six to eight.', hint: 'Each half-day group counts as one report.' }]),
+  }], done) }],
+
+  ['plant', 'Acting as one of your managers', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When the structure fights the rule');
+    const box = (x, y, s, c, t0, dash) => { const g = G(p, { o: 0 }); mk('rect', { x: x - 110, y: y - 36, width: 220, height: 72, rx: 10, fill: '#16211d', stroke: c, 'stroke-width': 3, ...(dash ? { 'stroke-dasharray': '9 7' } : {}) }, g); [].concat(s).forEach((q, i, A) => T(g, q, { x, y: y + 8 + (i - (A.length - 1) / 2) * 26, size: 22, fill: COL.chalk, anchor: 'middle' })); show(g, t0); return g; };
+    const t2 = m('two');
+    hmSay(p, 'not OK', 400, 175, t2, { size: 26, fill: COL.bad, weight: 700 });
+    box(400, 240, 'plant manager', COL.chalk, t2);
+    draw(path(p, 'M400 276V310M270 310H530M270 310V344M530 310V344', { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), t2 + .2, .4);
+    box(270, 380, 'engineering', COL.whole, t2 + .3); box(530, 380, 'manufacturing', COL.whole, t2 + .3);
+    hmLines(p, ['two reports: retire on the job,', 'or meddle'], 400, 490, m('risk'), { size: 24, fill: COL.bad, weight: 600 });
+    const ta = m('act');
+    hmSay(p, 'OK', 1160, 175, ta, { size: 26, fill: COL.good, weight: 700 });
+    box(1160, 240, 'plant manager', COL.chalk, ta);
+    draw(path(p, 'M1160 276V310M1020 310H1300M1300 310V344', { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), ta + .2, .4);
+    draw(path(p, 'M1020 310V344', { stroke: COL.dim, 'stroke-width': 3, 'stroke-dasharray': '6 6' }, { d: 0 }), ta + .2, .4);
+    box(1020, 380, ['acting as', 'engineering mgr'], COL.chalk, ta + .4, true);
+    box(1300, 380, 'manufacturing', COL.whole, ta + .4);
+    const ts = m('six');
+    [900, 960, 1020, 1080, 1140].forEach((x, i) => { draw(path(p, `M1020 416L${x} 500`, { stroke: COL.dim, 'stroke-width': 2 }, { d: 0 }), ts + i * .1, .3); const e = l7Person(p, x, 530, COL.whole, .55); show(e, ts + .2 + i * .1); });
+    hmSay(p, '5 engineers', 1020, 590, ts + .6, { size: 22, fill: COL.whole });
+    hmSay(p, 'six direct reports', 1160, 640, ts + 1, { size: 28, fill: COL.good, weight: 700 });
+    hmSay(p, 'engineers drawn below the manufacturing manager’s level', 1160, 680, m('level'), { size: 20, fill: COL.dim });
+    hmRule(p, 'Too few reports? Act as one of your own managers.', m('level', 5), 750);
+  }],
+
+  ['regular', 'Strive for regularity', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Make the load regular');
+    hmSay(p, 'in ones and twos', 380, 228, m('arr'), { size: 24, anchor: 'end' });
+    [430, 456, 640, 700, 726, 1010, 1250, 1276, 1302].forEach((x, i) => show(hmDot(p, x, 220, COL.bad, 12), m('arr', .2 + i * .15), .2));
+    hmSay(p, 'a steady stream', 380, 308, m('arr', 2.5), { size: 24, anchor: 'end' });
+    for (let i = 0; i < 9; i++) show(hmDot(p, 420 + i * 110, 300, COL.good, 12), m('arr', 2.7 + i * .12), .2);
+    hmSay(p, 'smooth your own load where you can', 800, 380, m('smooth'), { size: 26, fill: COL.dim });
+    // a window into the black box shows the time bomb early
+    const bx = G(p, { o: 0 });
+    mk('rect', { x: 230, y: 430, width: 340, height: 180, rx: 14, fill: '#121a17', stroke: COL.faint, 'stroke-width': 4 }, bx);
+    mk('rect', { x: 330, y: 470, width: 140, height: 100, rx: 8, fill: '#26362f', stroke: COL.chalk, 'stroke-width': 3 }, bx);
+    mk('circle', { cx: 400, cy: 528, r: 22, fill: COL.bad }, bx); path(bx, 'M412 510Q426 490 440 494', { stroke: COL.task, 'stroke-width': 3, fill: 'none' });
+    show(bx, m('bomb'));
+    hmSay(p, 'see the time bomb early', 400, 650, m('bomb', .5), { size: 24, fill: COL.bad, weight: 600 });
+    const GR = { x0: 900, y0: 460, cw: 100, ph: 18 };
+    l7Grid(p, GR, m('mon'), { hours: false });
+    l7Block(p, GR, 0, 9, 13, COL.whole, m('mon', .5), '', {});
+    hmLines(p, ['Monday mornings:', 'planning groups, company-wide'], 1150, 640, m('mon', .8), { size: 22, fill: COL.whole, weight: 600 });
+    hmRule(p, 'Same blocks of time for the same kind of work.', m('mon', 5), 745);
+  }],
+
+  ['interrupt', 'Interruptions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The plague of managerial work');
+    const you = l7Person(p, 800, 420, COL.chalk); show(you, .3);
+    const tt = m('top');
+    [[300, 250], [300, 420], [300, 590], [1300, 250], [1300, 420], [1300, 590], [600, 200], [1000, 200]].forEach(([x, y], i) => hmArrow(p, x, y, x < 800 ? 740 : 860, 400 + (y - 420) * .25, COL.bad, tt + i * .15, .4));
+    hmSay(p, 'uncontrolled interruptions', 800, 168, tt + 1.2, { size: 28, fill: COL.bad, weight: 700 });
+    hmLines(p, ['your', 'reports'], 200, 410, m('who'), { size: 24, fill: COL.dim });
+    hmLines(p, ['users of your', 'authority and', 'information'], 1420, 390, m('who', 1.5), { size: 24, fill: COL.dim });
+    const door = mk('rect', { x: 740, y: 460, width: 120, height: 0, rx: 4, fill: '#3b4f47', stroke: COL.dim, 'stroke-width': 3 }, p);
+    put(door, { a_y: 460, a_height: 0 }); tw(door, { a_y: 350, a_height: 120 }, m('hide'), .5);
+    hmSay(p, 'hide?', 800, 520, m('hide', .4), { size: 26, fill: COL.dim });
+    for (let i = 0; i < 10; i++) { const d = hmDot(p, 690 - (i % 5) * 26, 580 - Math.floor(i / 5) * 26, COL.bad, 11); show(d, m('no', 1 + i * .2), .2); }
+    hmSay(p, 'problems pile up', 600, 640, m('no', 2.5), { size: 24, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Interrupters have real problems. Hiding just piles them up.', m('no', 4.5), 745);
+  }],
+
+  ['fixes', 'Channel the interruptions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Turn interruptions into a pattern');
+    hmBox(p, 240, 270, 340, 140, COL.whole, m('std'), 'Standard answers', { size: 26, sub: ['others can give them too'] });
+    hmBox(p, 610, 270, 340, 140, COL.whole, m('batch'), 'Batch them', { size: 26, sub: ['in 1:1s and staff meetings'] });
+    hmBox(p, 980, 270, 340, 140, COL.whole, m('arch'), 'Indicators on file', { size: 26, sub: ['answers in seconds'] });
+    hmBox(p, 1350, 270, 340, 140, COL.whole, m('sign'), 'A sign + office hour', { size: 26, sub: ['they decide: can it wait?'] });
+    const sg = G(p, { o: 0 });
+    mk('rect', { x: 480, y: 420, width: 640, height: 120, rx: 10, fill: '#ece8dc' }, sg);
+    T(sg, 'Doing individual work. Please don’t interrupt', { x: 800, y: 470, size: 24, fill: COL.board, weight: 600, anchor: 'middle' });
+    T(sg, 'unless it really can’t wait until 2:00.', { x: 800, y: 506, size: 24, fill: COL.board, weight: 600, anchor: 'middle' });
+    show(sg, m('sign', 1));
+    l7Chip(p, '2:00 · open office hour, fully available', 800, 610, COL.good, m('hour'), 520);
+    hmRule(p, 'Make the irregular regular.', m('reg'), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 7 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Plan around fixed points; batch similar work.', 'w1'], ['Your calendar is a production plan. Say no early.', 'w2'], ['Leave slack, and keep a stock of projects.', 'w3'], ['Six to eight reports, about half a day a week each.', 'w4'], ['Channel interruptions into set times and standard answers.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-fixed', prompt: ['Your quarterly business review is fixed for Thursday at nine. Preparing it takes two afternoons. What do you do first?'],
+      build: choice([['Block the two prep afternoons now, working back from Thursday'], ['Prepare on Wednesday night'], ['Prepare whenever gaps appear']], 0,
+        'The review is the limiting step. Offset the prep before it, then fit the rest around both.',
+        [null, 'That leaves no room for a surprise, and squeezes everything else.', 'Gaps rarely appear on their own. Plan them in.']) },
+    { id: 'p-cal', prompt: ['Your calendar fills up with whatever invitations people send. What does Grove suggest?'],
+      build: choice([['Accept them all: that is the job'], ['Set the fixed events, then schedule your own work into the gaps'], ['Decline every meeting you did not call']], 1,
+        'Use the calendar as a production plan, not a passive list of incoming orders.',
+        ['That is the job-shop habit Grove calls mindless passivity.', null, 'Many meetings are high-leverage. The point is to plan, not to refuse.']) },
+    { id: 'p-slack', prompt: ['You are booked solid from eight to six, every day this week. What is the main risk?'],
+      build: choice([['One unexpected call wrecks the rest of the day'], ['You will run out of work'], ['There is none: full means productive']], 0,
+        'Like a freeway past its best load, a few extra demands bring everything to a halt.',
+        [null, 'The opposite: there is no room for anything new.', 'Past the ideal load, output falls, it does not rise.']) },
+    { id: 'p-span', prompt: ['A director has twelve direct reports and cannot keep up. What does Grove’s rule of thumb say?'],
+      build: choice([['Twelve is fine if she works longer hours'], ['Too many: at half a day each, twelve would take six days a week'], ['Too few to give her real leverage']], 1,
+        'Half a day per person, per week, is what supervision needs. Six to eight fit in a week.',
+        ['Longer hours do not change the arithmetic, and the risk is too little monitoring.', null, 'Twelve is above the six-to-eight range, not below it.']) },
+    { id: 'p-int', prompt: ['Your team interrupts you all day with similar questions. What is the best first step?'],
+      build: choice([['Work from home to get away from them'], ['Write standard answers to the repeat questions, and batch the rest into one-on-ones'], ['Ask them to stop bringing you questions']], 1,
+        'Standard answers handle the repeats, and others can give them. Batching turns the rest into a regular pattern.',
+        ['Hiding leaves real problems to pile up.', null, 'Their problems are legitimate. Channel them; do not block them.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

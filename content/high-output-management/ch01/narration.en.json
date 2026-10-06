@@ -1,0 +1,19 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Lesson one. [[sub]]How to plan any piece of work, learned from serving breakfast.",
+    "order": "Picture yourself as a waiter. One order comes in: [[egg]]a soft-boiled egg, [[toast]]buttered toast, and [[coffee]]coffee. [[once]]Your job is to put all three on the table at the same moment, each one fresh and hot. That is production in miniature: deliver at a promised time, at acceptable quality, at the lowest cost. [[how]]So where do you start?",
+    "limit": "Start with the step that takes longest. Here, that is [[egg]]the egg. [[name]]We call it the limiting step, because it sets the pace for everything else. Now [[back]]work backward from the moment of delivery. [[toast]]The toast takes less time, so it starts later. [[coffee]]The coffee starts last. [[together]]Each step is offset so that everything finishes together.",
+    "q1": "Quick check. Find the limiting step.",
+    "recruit": "The limiting step is not always the longest. It can be the hardest, the most sensitive, or the most expensive. [[flow]]Take hiring college graduates. Managers interview on campus, [[visit]]then bring the best candidates in for a day of interviews. [[cost]]That visit costs travel and many hours of managers' time, so it is the step to plan around. [[screen]]Add a phone interview before it, and fewer people make the trip for every person you hire. [[back]]Then work backward from graduation, so each step happens in time.",
+    "kinds": "Every kind of work mixes three operations. [[p]]Process changes the material, like boiling the egg. [[a]]Assembly puts parts together, like loading the tray. [[t]]Test examines the result: is the toast brown? [[sales]]The same three show up in office work. To train a sales team, [[sp]]you turn raw product data into selling points, [[sa]]combine them into one program, [[st]]and test it with a dry run. [[rework]]If it fails the test, it goes back for rework.",
+    "q2": "Quick check. Name the operation.",
+    "queue": "Real kitchens are busier than our plan assumed. [[queue]]Suppose there is a line for the toaster. Now the toast, with its wait, takes longer than the egg. [[move]]The limiting step has moved, so the whole plan has to be redrawn around it. [[rule]]Whenever your constraint changes, plan around the new one.",
+    "trade": "When a step is short of capacity, you have choices. [[people]]Add people, even a specialist for each step. That adds overhead. [[equip]]Add equipment, like a second toaster. That takes capital. [[inv]]Or build inventory, by making toast ahead of time. Some of it goes to waste. [[cost]]Each one buys you speed, and each one costs money. [[job]]There is a right answer: the mix that gives the best delivery and quality at the lowest cost. You find it by understanding the trade-offs, even roughly.",
+    "q3": "Quick check. Sort each fix into its type.",
+    "wrap": "To sum up. [[w1]]Find the limiting step: the longest, hardest or costliest. [[w2]]Work backward from delivery and offset everything else. [[w3]]All work is process, assembly and test. [[w4]]When the constraint moves, redraw the plan. [[w5]]People, equipment and inventory each buy time, at a cost. [[end]]Now try the lesson practice.",
+    "final1": "Lesson practice. Four situations from a manager's week.",
+    "finish": "Well done. That is the end of lesson one."
+  }
+}

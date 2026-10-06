@@ -1,0 +1,24 @@
+{
+  "voice": "en-US-AndrewMultilingualNeural",
+  "rate": "-4%",
+  "beats": {
+    "intro": "Lesson thirty-two, the last one. [[sub]]Grove's closing homework, and where in this course each item was taught.",
+    "deal": "Grove ends the book with a request. [[cost]]You have spent the price of the book and perhaps eight hours, so do something specific. [[list]]He leaves a list of assignments, each worth points, in three groups: production, leverage, and performance. [[pick]]Choose some, and do them honestly. [[hundred]]Do at least a hundred points' worth, he promises, and you will be a distinctly better manager.",
+    "prod": "First, production. The points are on screen. [[ops]]Find the parts of your work most like process, assembly and test. Lesson one. [[limit]]For one project, find the limiting step and map the flow around it. Lesson one again. [[insp]]Decide where you need receiving, in-process and final inspection. Gate or monitor? And when can you relax into variable inspection? Lesson four.",
+    "q1": "Quick check. Click the item that fits.",
+    "prod2": "[[ind]]Next, find half a dozen new indicators for your group's output, for quantity and quality. Lesson three. [[install]]Make them routine, and review them in staff meetings. Lessons three and nine. [[strat]]Then take your most important strategy. What demand prompted it, and where do you stand? If it succeeds, will things be in good shape? Lesson twelve.",
+    "lev1": "The biggest group is leverage. [[simp]]Simplify your most tedious task: cut at least thirty percent of its steps. Lesson four. [[out]]Define your output, and the output of the groups you influence, in order of importance. [[info]]Check your information sources: headlines, articles and weekly magazines, with some redundancy. [[tour]]Take a tour, and list the transactions you got pulled into. [[excuse]]Then create a monthly excuse for one. All from lesson five.",
+    "lev2": "[[mon]]Before you delegate your next project, decide how you will monitor it: what, how, and how often. Lesson six. [[inv]]Keep an inventory of projects for your discretionary time. Lesson seven. [[one]]Hold a scheduled one-on-one with each report. Explain it first, and have them prepare. Lesson eight. [[cal]]Sort last week's calendar by leverage, and plan to do more of the high. What will you cut?",
+    "q2": "Quick check.",
+    "lev3": "[[fore]]Forecast next week's meetings. Which are process meetings, and which are mission meetings? If mission meetings pass a quarter of your time, cut them back. [[okr]]Set your group's three most important objectives for the next three months, with key results. Lesson thirteen. [[theirs]]Then, after discussing yours, have your reports set their own. [[dec]]And structure three pending decisions with the six questions. Lesson eleven.",
+    "perf1": "Last, performance. [[mas]]Place your own motivation on Maslow's ladder, then each report's. Lesson twenty-one. [[race]]Give each report a racetrack: a set of performance indicators. Lesson twenty-two. [[fb]]List the task-relevant feedback your reports get. Can they gauge their progress by it? [[trm]]Rate each report's task-relevant maturity, and the style that fits. Compare it with the style you use now. Lessons twenty-three and twenty-four.",
+    "perf2": "[[rev]]Then judge the last review you received, and the last ones you gave. Did they improve performance? How did the conversation go? [[redo]]Then redo one as it should have been done. [[both]]Both from lessons twenty-five to twenty-seven.",
+    "q3": "Quick check. Count your points.",
+    "beyond": "Notice what the list leaves out. [[gap]]Nothing on organizing large groups, dual reporting, or modes of control, [[hire]]and nothing on hiring, resignations or pay. That is our observation, not Grove's. [[when]]Those come when the situation does. Then go back to those lessons.",
+    "start": "Where to start? [[first]]One possible first hundred. [[a]]One-on-ones and both sets of objectives: sixty points. [[b]]Indicators in the staff meeting: eighty. [[c]]The calendar sort and maturity ratings: a hundred.",
+    "wrap": "To sum up. [[w1]]Do at least a hundred of Grove's points, honestly. [[w2]]Production: map the flow, place the checks, add indicators. [[w3]]Leverage: define your output, go and see, monitor what you delegate. [[w4]]Run meetings, objectives and decisions with structure. [[w5]]Performance: motivation, racetracks, maturity, and better reviews. Now the lesson practice.",
+    "final1": "Lesson practice. Five illustrative situations from a manager's week. Which homework item fits?",
+    "closing": "[[thanks]]That is the whole book. [[core]]Your output is your team's output, plus the output of the teams you influence. [[week]]So pick your first item this week, [[go]]and do it honestly.",
+    "finish": "Well done. That is the end of lesson thirty-two, and of the book."
+  }
+}

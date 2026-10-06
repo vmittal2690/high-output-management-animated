@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indicators: seeing inside the box</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 3, title: 'Indicators: seeing inside the box', kicker: 'Chapter 2 · Lesson 1', minutes: 10, language: 'en', silent: true, next: '../ch04/index.html' };
+
+/* ---------- hiring chart: goal 60 by June; 160 px per month, 6.5 px per hire ---------- */
+const HX = i => 380 + i * 160, HY = v => 600 - v * 6.5, ACT = [0, 6, 11, 18, 22];
+function c2Chart(p, t) {
+  const ax = G(p, { o: 0 });
+  path(ax, `M380 ${HY(64)}V600H1380`, { stroke: COL.dim, 'stroke-width': 3 });
+  ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'].forEach((s, i) => {
+    path(ax, `M${HX(i + 1)} 600v10`, { stroke: COL.dim, 'stroke-width': 2.5 });
+    T(ax, s, { x: HX(i + 1), y: 640, size: 24, fill: COL.dim, anchor: 'middle' });
+  });
+  [0, 20, 40, 60].forEach(v => {
+    path(ax, `M372 ${HY(v)}h8`, { stroke: COL.dim, 'stroke-width': 2.5 });
+    T(ax, String(v), { x: 360, y: HY(v) + 8, size: 24, fill: COL.dim, anchor: 'end' });
+  });
+  T(ax, 'hires', { x: 360, y: HY(64) - 14, size: 22, fill: COL.dim, anchor: 'end' });
+  show(ax, t.axes);
+  const goal = G(p, { x: HX(6), y: HY(60), s: 0, o: 0 });
+  mk('circle', { r: 11, fill: COL.good }, goal);
+  T(goal, 'goal: 60', { x: 20, y: 9, size: 26, fill: COL.good, weight: 700 });
+  pop(goal, t.goal);
+  draw(path(p, `M${HX(0)} ${HY(0)}L${HX(6)} ${HY(60)}`, { stroke: COL.good, 'stroke-width': 3.5 }, { d: 0 }), t.line, 1.1);
+  hmSay(p, 'straight-line plan', HX(2.1), HY(21) - 62, t.line + .8, { size: 24, fill: COL.good, anchor: 'end' });
+  draw(path(p, 'M' + ACT.map((v, i) => `${HX(i)} ${HY(v)}`).join('L'), { stroke: COL.task, 'stroke-width': 4.5 }, { d: 0 }), t.act, 1.4);
+  ACT.slice(1).forEach((v, i) => {
+    const d = G(p, { x: HX(i + 1), y: HY(v), s: 0, o: 0 });
+    mk('circle', { r: 9, fill: COL.task }, d);
+    pop(d, t.act + .3 + i * .3);
+  });
+  hmSay(p, 'actual', HX(2) + 14, HY(11) + 40, t.act + 1, { size: 24, fill: COL.task });
+}
+const c2Dot = (p, x, y, fill, r = 12) => { const d = G(p, { x, y, o: 0 }); mk('circle', { r, fill }, d); return d; };
+
+/* ---------- trend chart: tickets resolved per month; 160 px per month, 12 px per ticket above 30 ---------- */
+const TY = v => 600 - (v - 30) * 12, TREND = [52, 51, 49, 47, 44];
+/* ---------- stagger chart: each row is the forecast made that month; first cell of a row is that month's actual ---------- */
+const STG = [[20, 26, 33, 40], [24, 30, 36, 42], [27, 31, 36, 41], [27, 30, 34]], SMON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+const SX = j => 560 + j * 150, SY = i => 300 + i * 92;
+function l3Stagger(p, t) {
+  hmSay(p, 'forecast for:', 330, 212, t.head, { size: 24, fill: COL.dim, anchor: 'start' });
+  SMON.forEach((s, j) => hmSay(p, s, SX(j), 212, t.head, { size: 28, fill: COL.dim, weight: 600 }));
+  path(p, 'M300 240H1420', { stroke: COL.faint, 'stroke-width': 2.5 });
+  STG.forEach((row, i) => {
+    hmSay(p, 'made in ' + SMON[i], 330, SY(i), t.rows[i], { size: 26, fill: COL.dim, anchor: 'start' });
+    row.forEach((v, k) => {
+      if (!k) { const c = mk('rect', { x: SX(i) - 44, y: SY(i) - 38, width: 88, height: 52, rx: 10, fill: 'none', stroke: COL.good, 'stroke-width': 3 }, p); put(c, { o: 0 }); show(c, t.rows[i] + .1); }
+      hmSay(p, String(v), SX(i + k), SY(i), t.rows[i] + k * .18, { size: 34, fill: k ? COL.chalk : COL.good, weight: k ? 500 : 700 });
+    });
+  });
+  const lg = G(p, { o: 0 });
+  mk('rect', { x: 330, y: 652, width: 44, height: 30, rx: 8, fill: 'none', stroke: COL.good, 'stroke-width': 3 }, lg);
+  T(lg, 'actual result for that month', { x: 388, y: 676, size: 22, fill: COL.dim });
+  T(lg, 'orders, in thousands (illustrative)', { x: 1420, y: 676, size: 22, fill: COL.dim, anchor: 'end' });
+  show(lg, t.head);
+}
+
+const BEATS = [
+  ['intro', 'Indicators: seeing inside the box', (m, D) => hmTitle(m, D, 'Chapter 2 · Managing the Breakfast Factory · Lesson 1 of 2', 'Indicators: seeing inside the box', 'How to see what your team is producing, and where it is heading')],
+
+  ['five', 'Five indicators', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Five numbers, first thing every morning', 800, 170, .2, { size: 40, weight: 600 });
+    [['f', 'Forecast', ['how much is due?', 'how far off yesterday?']], ['mat', 'Materials', ['do we have what', 'we need?']], ['eq', 'Equipment', ['is anything', 'broken?']], ['ppl', 'People', ['who is out?']], ['q', 'Quality', ['are customers', 'complaining?']]]
+      .forEach(([k, a, b], i) => hmBox(p, 220 + i * 290, 400, 264, 210, COL.whole, m(k), a, { size: 34, sub: b }));
+    hmSay(p, 'See the problem at 8 a.m., while there is still time to fix it.', 800, 640, m('you'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['pair', 'Paired indicators', (m) => {
+    const p = panel(0);
+    path(p, 'M400 620H1200', { stroke: COL.faint, 'stroke-width': 3 });
+    const inv = mk('rect', { x: 480, y: 260, width: 180, height: 360, rx: 6, fill: COL.whole }, p); put(inv, { o: 0, a_y: 260, a_height: 360 }); show(inv, .2);
+    const sh = mk('rect', { x: 940, y: 590, width: 180, height: 30, rx: 6, fill: COL.bad }, p); put(sh, { o: 0, a_y: 590, a_height: 30 }); show(sh, .2);
+    hmSay(p, 'inventory', 570, 662, .2, { size: 30, fill: COL.whole, weight: 600 });
+    hmSay(p, 'shortages', 1030, 662, .2, { size: 30, fill: COL.bad, weight: 600 });
+    hmSay(p, 'You steer toward what you measure', 800, 150, m('steer'), { size: 40, weight: 600 });
+    tw(inv, { a_y: 500, a_height: 120 }, m('push'), 1.6);
+    hmArrow(p, 570, 300, 570, 470, COL.whole, m('push'), 1.2);
+    tw(sh, { a_y: 340, a_height: 280 }, m('short'), 1.4);
+    draw(path(p, 'M480 690V706H1120V690', { stroke: COL.task, 'stroke-width': 3.5 }, { d: 0 }), m('pair'), .7);
+    hmSay(p, 'measure them as a pair', 800, 748, m('pair', .3), { size: 30, fill: COL.task, weight: 700 });
+    hmLines(p, ['finish date', 'with what shipped'], 210, 400, m('ex'), { size: 30, fill: COL.dim });
+    hmLines(p, ['volume', 'with quality'], 1380, 400, m('ex', .9), { size: 30, fill: COL.dim });
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-pair', prompt: ['Your team tracks tickets closed per week. Which second number keeps that one honest?'],
+    build: choice([['Hours worked'], ['Tickets reopened'], ['Tickets opened']], 1,
+      'Reopened tickets are the side effect of closing too fast. The pair shows speed and quality together.',
+      ['Hours measure effort. They do not show whether fast closes were good closes.', null, 'Tickets opened measures demand, not the quality of the closes.']),
+  }], done) }],
+
+  ['output', 'Output, not activity', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Activity', 480, 190, .2, { size: 38, fill: COL.dim, weight: 600 });
+    hmSay(p, 'Output', 1120, 190, .2, { size: 38, fill: COL.good, weight: 700 });
+    path(p, 'M280 220H1320', { stroke: COL.faint, 'stroke-width': 2.5 });
+    [['calls made', 'orders won', 1], ['interviews held', 'people hired', 2], ['meetings run', 'decisions made', 3]].forEach(([a, o, k]) => {
+      const y = 210 + k * 120;
+      hmSay(p, a, 480, y, m('a' + k), { size: 38, fill: COL.dim });
+      hmArrow(p, 680, y - 12, 920, y - 12, COL.faint, m('o' + k), .4);
+      hmSay(p, o, 1120, y, m('o' + k, .2), { size: 38, fill: COL.good, weight: 600 });
+    });
+    hmSay(p, 'Busy is the left column. Results are the right. Measure the right.', 800, 700, m('rule'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['admin', 'Indicators for office work', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Office work can be counted too');
+    const X1 = 330, X2 = 800, X3 = 1270;
+    hmSay(p, 'Team', X1, 200, .3, { size: 26, fill: COL.dim, weight: 600 });
+    hmSay(p, 'Count the output', X2, 200, .3, { size: 26, fill: COL.good, weight: 600 });
+    hmSay(p, 'Pair it with quality', X3, 200, .3, { size: 26, fill: COL.task, weight: 600 });
+    path(p, 'M120 226H1480', { stroke: COL.faint, 'stroke-width': 2.5 });
+    [['ap', 'Accounts payable', 'invoices processed', 'errors found'], ['cust', 'Cleaning', 'square feet cleaned', 'quality rating'], ['hire', 'Recruiting', 'people hired, by role', 'still there and doing well']].forEach(([k, a, b, c], i) => {
+      const y = 300 + i * 100;
+      hmSay(p, a, X1, y, m(k), { size: 34, weight: 600 });
+      hmSay(p, b, X2, y, m(k, .4), { size: 32, fill: COL.good });
+      if (k !== 'hire') hmSay(p, c, X3, y, m(k, .9), { size: 32, fill: COL.task });
+    });
+    hmBox(p, 330, 640, 380, 100, COL.whole, m('use'), 'Clear objectives', { size: 28 });
+    hmBox(p, 800, 640, 380, 100, COL.whole, m('use', 1.6), 'Fairer judgments', { size: 28 });
+    hmBox(p, 1270, 640, 380, 100, COL.whole, m('comp'), 'Teams can compare', { size: 28, sub: ['a contest that lifts everyone'] });
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-output', prompt: ['Is each line an activity or an output?'],
+    build: grid([
+      { parts: ['Held twelve one-on-ones this month'], ans: ['a'], why: 'Meetings are what you did, not what resulted.' },
+      { parts: ['Shipped a feature customers now use'], ans: ['o'], why: 'A working feature in use is a result.' },
+      { parts: ['Sent forty status emails'], ans: ['a'], why: 'Emails are effort. The result would be a decision or an unblocked team.' },
+      { parts: ['Filled both open roles'], ans: ['o'], why: 'Two accepted hires are a countable result.' },
+    ], [['a', 'Activity', null, 'A'], ['o', 'Output', null, 'O']], { multi: false, text: true }),
+  }], done) }],
+
+  ['box', 'Windows in the black box', (m) => {
+    const p = panel(0);
+    const b = G(p, { o: 0 });
+    mk('rect', { x: 560, y: 240, width: 480, height: 270, rx: 10, fill: '#0f1815', stroke: COL.chalk, 'stroke-width': 3.5 }, b);
+    T(b, 'your team', { x: 800, y: 290, size: 26, fill: COL.dim, anchor: 'middle' });
+    show(b, .2);
+    hmArrow(p, 280, 375, 548, 375, COL.chalk, m('in'));
+    hmSay(p, 'inputs', 410, 350, m('in'), { size: 30 });
+    hmArrow(p, 800, 660, 800, 522, COL.chalk, m('lab'));
+    hmSay(p, 'people’s work', 800, 700, m('lab'), { size: 30 });
+    hmArrow(p, 1052, 375, 1320, 375, COL.good, m('out'));
+    hmSay(p, 'output', 1190, 350, m('out'), { size: 30, fill: COL.good, weight: 600 });
+    const tw0 = m('win');
+    [[610, 'M10 70L40 52L70 58L100 30L130 36'], [745, 'M10 30L40 34L70 50L100 62L130 76'], [880, 'M10 60L40 60L70 44L100 48L130 24']].forEach(([x, d], i) => {
+      const w = G(p, { x, y: 330, o: 0 });
+      mk('rect', { width: 110, height: 96, rx: 8, fill: COL.board, stroke: COL.task, 'stroke-width': 3 }, w);
+      mk('path', { d, transform: 'translate(-15,4) scale(.86)', fill: 'none', stroke: COL.task, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, w);
+      show(w, tw0 + i * .25);
+    });
+    hmSay(p, 'A leading indicator is a window into the box', 800, 170, tw0, { size: 38, fill: COL.task, weight: 700 });
+    hmLines(p, ['Believe it and act,', 'or all you get is worry.'], 1230, 590, m('believe'), { size: 28, fill: COL.dim });
+  }],
+
+  ['linear', 'The straight-line check', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Linearity: are we on the line?', 380, 110, .2, { size: 38, weight: 600, anchor: 'start' });
+    c2Chart(p, { axes: .3, goal: m('goal'), line: m('line'), act: m('act') });
+    const ta = m('apr');
+    draw(path(p, `M${HX(4)} ${HY(40) + 6}V${HY(22) - 14}`, { stroke: COL.bad, 'stroke-width': 3.5, 'stroke-dasharray': '.04 .04' }, { d: 0 }), ta, .6);
+    hmSay(p, '18 behind', HX(4) + 16, HY(31) + 8, ta + .4, { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+    const miss = path(p, `M${HX(4)} ${HY(22)}L${HX(6)} ${HY(33)}`, { stroke: COL.bad, 'stroke-width': 3.5, 'stroke-dasharray': '10 9' }, { o: 0 });
+    show(miss, m('miss'));
+    hmSay(p, 'same pace: about 33', HX(6) + 20, HY(22) + 52, m('miss', .3), { size: 24, fill: COL.bad, anchor: 'end', weight: 600 });
+    hmSay(p, 'April: still time to act', 800, 745, m('warn'), { size: 32, fill: COL.task, weight: 700 });
+  }],
+
+  ['q3', 'Quick check', () => {
+    const p = G(panel(0), { x: 180, y: 30, s: .8 });   // the same chart, drawn smaller to leave room for the question
+    hmSay(p, 'Hiring: are we on the line?', 380, 110, .2, { size: 38, weight: 600, anchor: 'start' });
+    c2Chart(p, { axes: .2, goal: .2, line: .2, act: .2 });
+    S.need = path(p, `M${HX(4)} ${HY(22)}L${HX(6)} ${HY(60)}`, { stroke: COL.task, 'stroke-width': 4, 'stroke-dasharray': '10 9' }, { o: 0 });
+  }, { ask: done => quiz({ x: 96, y: 600, w: 1408, cls: 'band' }, [{
+    id: 'c-pace', prompt: ['22 of 60 hired, two months left. Hires needed per month?'],
+    build: blanks([{ parts: ['(60 − 22) ÷ 2 = ', { box: '19' }], why: 'Nineteen a month: over three times the pace so far.', hint: 'Goal minus hires so far, split over two months.', fx: () => fx(S.need, { o: 1 }, .1, .6) }]),
+  }], done) }],
+
+  ['trend', 'The trend indicator', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Tickets resolved per month', 380, 110, .2, { size: 38, weight: 600, anchor: 'start' });
+    const ax = G(p, { o: 0 });
+    path(ax, `M380 ${TY(62)}V600H1380`, { stroke: COL.dim, 'stroke-width': 3 });
+    SMON.forEach((s, i) => T(ax, s, { x: HX(i + 1), y: 640, size: 24, fill: COL.dim, anchor: 'middle' }));
+    [30, 40, 50, 60].forEach(v => { path(ax, `M372 ${TY(v)}h8`, { stroke: COL.dim, 'stroke-width': 2.5 }); T(ax, String(v), { x: 360, y: TY(v) + 8, size: 24, fill: COL.dim, anchor: 'end' }); });
+    show(ax, .3);
+    draw(path(p, 'M' + TREND.map((v, i) => `${HX(i + 1)} ${TY(v)}`).join('L'), { stroke: COL.task, 'stroke-width': 4.5 }, { d: 0 }), m('plot'), 1.5);
+    TREND.forEach((v, i) => { const d = G(p, { x: HX(i + 1), y: TY(v), s: 0, o: 0 }); mk('circle', { r: 9, fill: COL.task }, d); pop(d, m('plot', .2 + i * .28)); });
+    const sd = path(p, `M380 ${TY(50)}H1380`, { stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '14 10' }, { o: 0 });
+    show(sd, m('std'));
+    hmSay(p, 'standard: 50', 1390, TY(50) + 8, m('std'), { size: 24, fill: COL.good, weight: 600, anchor: 'start' });
+    const ex = path(p, `M${HX(5)} ${TY(44)}L${HX(6)} ${TY(41)}`, { stroke: COL.task, 'stroke-width': 4, 'stroke-dasharray': '10 9' }, { o: 0 });
+    show(ex, m('ext'));
+    hmSay(p, 'heading for about 41', HX(6) + 14, TY(41) + 40, m('ext', .3), { size: 24, fill: COL.task, weight: 600, anchor: 'end' });
+    draw(path(p, `M${HX(5)} ${TY(50) + 8}V${TY(44) - 14}`, { stroke: COL.bad, 'stroke-width': 3.5 }, { d: 0 }), m('why'), .5);
+    hmSay(p, '6 below standard: why?', HX(5) + 16, TY(47) + 8, m('why', .3), { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+  }],
+
+  ['stagger', 'The stagger chart', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The stagger chart: forecasts, month after month');
+    l3Stagger(p, { head: .3, rows: [m('r1'), m('r2'), m('r3'), m('act')] });
+    const col = mk('rect', { x: SX(3) - 62, y: 250, width: 124, height: 380, rx: 14, fill: COL.task, 'fill-opacity': .12, stroke: COL.task, 'stroke-width': 3.5 }, p);
+    put(col, { o: 0 }); show(col, m('col'));
+    hmRule(p, 'A forecast that keeps sliding is your earliest warning.', m('why'), 740);
+  }],
+
+  ['q4', 'Quick check', () => {
+    const p = G(panel(0), { x: 176, y: 0, s: .78 });   // the same chart, drawn smaller to leave room for the question
+    hmHead(p, 'The stagger chart: forecasts, month after month');
+    l3Stagger(p, { head: .2, rows: [.2, .3, .4, .5] });
+  }, { ask: done => quiz({ x: 200, y: 560, w: 1200, cls: 'side' }, [{
+    id: 'c-stagger', prompt: ['Look at the June column: 41, then 34. What does it tell you?'],
+    build: choice([['The outlook is getting worse'], ['Nothing until June arrives'], ['Only the newest number matters']], 0,
+      'The same month was forecast lower a month later. That direction is the signal: act on it now.',
+      [null, 'By June it is a result. The point of the chart is to see it coming.', 'The newest number alone hides the direction the outlook is moving.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 3 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Watch a few indicators daily, in pairs.', 'w1'], ['Measure countable output, not activity.', 'w2'], ['Leading indicators only help if you act on them.', 'w3'], ['A straight-line plan shows a miss months early.', 'w4'], ['Watch how forecasts drift, and keep the history.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-lead', prompt: ['Your launch is next quarter. Which of these is a leading indicator?'],
+      build: choice([['Launch-day sales'], ['Milestones reached against the straight-line plan'], ['Hours the team logged last month']], 1,
+        'Progress against the line shows a shortfall months early, while you can still act.',
+        ['Sales arrive after the launch. By then it is too late to change course.', null, 'Hours are activity. They say nothing about whether the launch is on track.']) },
+    { id: 'p-pair', prompt: ['You reward the team for features shipped. What is the best paired indicator?'],
+      build: choice([['Bugs reported after release'], ['Lines of code written'], ['Size of the team']], 0,
+        'Bugs after release are the side effect of shipping too fast. Watching both keeps speed and quality in balance.',
+        [null, 'Lines of code is activity, and it pushes in the same direction as shipping more.', 'Team size is an input. It does not show the cost of rushing.']) },
+    { id: 'p-believe', prompt: ['An early indicator says a project will miss its date, but you are not sure, so you keep watching it. What does Grove say you get?'],
+      build: choice([['Better information next month'], ['Only anxiety, unless you are prepared to act'], ['Proof that the indicator is wrong']], 1,
+        'A leading indicator earns its place only if you trust it enough to take costly steps early. Choose ones you will act on.',
+        ['Waiting spends the lead time the indicator gave you.', null, 'Doubt is not evidence. If you do not trust the indicator, replace it with one you do.']) },
+    { id: 'p-count', prompt: ['Which is the best output indicator for a customer support team?'],
+      build: choice([['Hours spent on calls'], ['Customer problems resolved, paired with problems reopened'], ['Number of team meetings held']], 1,
+        'Resolved problems are countable output, and reopened ones are the quality pair.',
+        ['Hours on calls is activity. Long calls can mean poor help.', null, 'Meetings are activity inside the team, not something a customer receives.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

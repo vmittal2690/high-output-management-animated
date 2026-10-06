@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interviewing</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 28, title: 'Interviewing', kicker: 'Chapter 14 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch29/index.html' };
+
+/* Colours: the four kinds of information, used consistently: blue = technical skill; purple = what they did
+   with it; pink = gaps between knowing and doing; salmon = operational values. Chalk = people and ordinary
+   items; green = the goal or a good result; red = a problem or a failure; amber = the rule. */
+const L28_CAT = [['s', 'Skills', COL.whole, 'S'], ['d', 'Did', COL.real, 'D'], ['g', 'Gaps', COL.rat, 'G'], ['v', 'Values', COL.nat, 'V']];
+function l28Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l28Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A speech bubble whose left edge is at x.
+function l28Bubble(p, s, x, y, color, t0, size = 24) {
+  const w = s.length * size * .54 + 44, g = G(p, { o: 0 });
+  mk('rect', { x, y: y - 26, width: w, height: 52, rx: 18, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x: x + 22, y: y + 8, size, fill: color });
+  show(g, t0); return g;
+}
+function l28Doc(p, x, y, w, h, color, lines, t0, mark) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  for (let j = 0; j < lines; j++) {
+    const yy = y - h / 2 + h * .16 + j * h * .7 / lines;
+    mk('rect', { x: x - w / 2 + w * .14, y: yy, width: w * (j % 3 === 2 ? .45 : .72), height: Math.max(4, h * .04), rx: 2, fill: COL.faint }, g);
+    if (mark && j % 2 === 0) mk('rect', { x: x + w * .3, y: yy - 4, width: 10, height: 12, rx: 2, fill: mark }, g);
+  }
+  show(g, t0); return g;
+}
+// A three-legged chair drawn around its seat centre; it tips about the front of the seat.
+function l28Chair(p, x, y, t0) {
+  const g = G(p, { x, y, o: 0 });
+  path(g, 'M-70 0H70', { stroke: COL.chalk, 'stroke-width': 8 });
+  path(g, 'M-66 0V-120', { stroke: COL.chalk, 'stroke-width': 8 });
+  path(g, 'M-60 0L-70 110M60 0L70 110M0 0V110', { stroke: COL.chalk, 'stroke-width': 6 });
+  show(g, t0); return g;
+}
+
+const BEATS = [
+  ['intro', 'Interviewing', (m, D) => hmTitle(m, D, 'Chapter 14 · Two Difficult Tasks · Lesson 1 of 2', 'Interviewing', 'What an hour with a candidate can, and cannot, tell you')],
+
+  ['why', 'Four purposes, high risk', (m) => {
+    const p = panel(0);
+    hmHead(p, 'An interview has four purposes');
+    [['Select', 'a good performer', 'sel'], ['Educate', 'who you and the firm are', 'edu'], ['Match', 'does it fit both ways?', 'match'], ['Sell', 'them on the job', 'sell']]
+      .forEach(([t, s, k], i) => hmBox(p, 215 + i * 390, 250, 350, 130, COL.good, m(k), t, { size: 32, sub: [s] }));
+    l28Chip(p, 'an hour or two of talk', 620, 400, COL.chalk, m('means'), 300);
+    l28Chip(p, 'a reference check', 980, 400, COL.chalk, m('means', .8), 250);
+    // schematic: how much you get to see before judging
+    hmSay(p, 'appraising your own report', 520, 518, m('hard'), { size: 24, anchor: 'end' });
+    const a = mk('rect', { x: 540, y: 494, width: 0, height: 34, rx: 6, fill: COL.dim }, p); put(a, { a_width: 0 }); tw(a, { a_width: 760 }, m('hard', .4), 1.2, out);
+    hmSay(p, 'months', 920, 520, m('hard', 1.4), { size: 22, fill: COL.board, weight: 700 });
+    hmSay(p, 'interviewing a stranger', 520, 588, m('hard', 3.5), { size: 24, anchor: 'end' });
+    const b = mk('rect', { x: 540, y: 564, width: 0, height: 34, rx: 6, fill: COL.bad }, p); put(b, { a_width: 0 }); tw(b, { a_width: 24 }, m('hard', 3.8), .4);
+    hmSay(p, 'an hour', 590, 590, m('hard', 4), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmSay(p, 'difficult', 1320, 520, m('imp'), { size: 24, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'just about impossible', 700, 590, m('imp', 1), { size: 24, fill: COL.bad, anchor: 'start', weight: 700 });
+    hmSay(p, 'schematic', 1300, 640, m('hard', 1), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmRule(p, 'Interview anyway, knowing the risk is high.', m('risk', .5), 745);
+  }],
+
+  ['talk', 'They talk, you steer', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who talks? The candidate, 80 percent');
+    // to scale: 1000 px = the whole interview
+    const c = mk('rect', { x: 300, y: 190, width: 0, height: 56, rx: 8, fill: COL.good }, p); put(c, { a_width: 0 }); tw(c, { a_width: 800 }, m('eighty', .2), 1, out);
+    const y = mk('rect', { x: 1104, y: 190, width: 0, height: 56, rx: 8, fill: COL.dim }, p); put(y, { a_width: 0 }); tw(y, { a_width: 196 }, m('eighty', 1.2), .5, out);
+    hmSay(p, 'candidate 80%', 700, 228, m('eighty', 1), { size: 26, fill: COL.board, weight: 700 });
+    hmSay(p, 'you 20%', 1202, 228, m('eighty', 1.6), { size: 22, fill: COL.board, weight: 700 });
+    hmSay(p, 'to scale', 1300, 280, m('eighty', 1.6), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'but you steer, as an active listener', 800, 340, m('ctrl'), { size: 30, weight: 600 });
+    const rb = G(p, { o: 0 });
+    const r = mk('rect', { x: 200, y: 414, width: 60, height: 56, rx: 18, fill: '#16211d', stroke: COL.bad, 'stroke-width': 2.5 }, rb); put(r, { a_width: 60 });
+    T(rb, '…and before that job, which reminds me of another one, where…', { x: 222, y: 451, size: 24, fill: COL.bad });
+    show(rb, m('on')); tw(r, { a_width: 860 }, m('on'), 2.2, lin);
+    hmSay(p, 'a nervous or chatty answer runs on', 200, 510, m('on', 1), { size: 22, fill: COL.dim, anchor: 'start' });
+    pop(hmCross(p, 1120, 442, COL.bad, 18), m('cut'));
+    l28Bubble(p, '“Sorry, I’d like to change the subject.”', 480, 590, COL.chalk, m('cut', 2.5), 26);
+    hmSay(p, 'the hour is your only asset', 800, 660, m('cut', 1), { size: 24, fill: COL.dim });
+    hmRule(p, 'The interview is yours to control.', m('yours'), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-eighty', prompt: ['An interview lasts 60 minutes. About how many minutes should the candidate do the talking?'],
+    build: blanks([{ parts: ['80% of 60 = ', { box: '48' }, '  minutes'], why: 'Forty-eight minutes for them, about twelve for your questions and steering.', hint: 'Eight tenths of sixty.' }]),
+  }], done) }],
+
+  ['common', 'Ground you both know', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Talk on ground you both know');
+    [['what they did', 420, 230], ['and why', 800, 170], ['what they would change', 1180, 320]].forEach(([s, x, w], i) => l28Chip(p, s, x, 210, COL.chalk, m('self', i * 1.1), w));
+    const cl = G(p, { o: 0 }); mk('circle', { cx: 680, cy: 450, r: 170, fill: 'none', stroke: COL.dim, 'stroke-width': 3 }, cl); show(cl, m('terms'));
+    const cr = G(p, { o: 0 }); mk('circle', { cx: 920, cy: 450, r: 170, fill: 'none', stroke: COL.dim, 'stroke-width': 3 }, cr); show(cr, m('terms', .4));
+    hmLines(p, ['their', 'world'], 600, 440, m('terms'), { size: 24, fill: COL.dim });
+    hmLines(p, ['your', 'world'], 1000, 440, m('terms', .4), { size: 24, fill: COL.dim });
+    const lens = path(p, 'M800 329.6A170 170 0 0 1 800 570.4A170 170 0 0 1 800 329.6Z', { fill: 'rgba(143,214,176,.25)', stroke: COL.good, 'stroke-width': 3 }); put(lens, { o: 0 }); show(lens, m('terms', 1.4));
+    hmLines(p, ['same', 'words'], 800, 440, m('words'), { size: 24, fill: COL.good, weight: 700 });
+    hmSay(p, 'so you can judge what their account means', 800, 670, m('terms', 2), { size: 24, fill: COL.dim });
+    hmRule(p, 'Make the words mean the same to both of you.', m('words', 1.5), 745);
+  }],
+
+  ['questions', 'Nine good questions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Nine questions from a group of managers');
+    const Q = [['Projects your management', 'valued most'], ['Your weaknesses, and how', 'you work on them'], ['Convince me we', 'should hire you'],
+      ['Current problems: solving', 'and preventing them'], ['Why are you ready', 'for this job?'], ['Your biggest', 'achievements, and why'],
+      ['Your biggest failures, and', 'what you learned'], ['Why an engineer for', 'a marketing job?'], ['Your most important', 'college project']];
+    Q.forEach((ls, i) => {
+      const x = 300 + (i % 3) * 500, y = 240 + Math.floor(i / 3) * 150;
+      hmBox(p, x, y, 450, 120, COL.chalk, m('q' + (i + 1)), ls, { size: 26 });
+    });
+    hmSay(p, 'paraphrased; vary them to the job', 800, 680, m('q8', 2), { size: 22, fill: COL.dim });
+    hmRule(p, 'Ask about the past: what, why, and what they learned.', m('q9', 2.5), 745);
+  }],
+
+  ['four', 'Four kinds of information', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Four kinds of information');
+    const H = [['Technical skill', ['skill at the job', 'they want'], 'tech'], ['What they did', ['with what', 'they know'], 'did'], ['Gaps', ['between knowing', 'and doing, and why'], 'gap'], ['Values', ['operational values', 'that guide the work'], 'val']];
+    const xs = [215, 605, 995, 1385];
+    H.forEach(([t, s, k], i) => hmBox(p, xs[i], 250, 350, 140, L28_CAT[i][2], m(k), t, { size: 30, fill: L28_CAT[i][2], sub: s }));
+    hmSay(p, 'an accountant: accounting · a tax lawyer: tax law · an actuary: statistics', 800, 362, m('tech', 3), { size: 22, fill: COL.dim });
+    const C = [['projects valued', 'weaknesses'], ['achievements', 'failures'], ['what failures taught', 'current problems'], ['ready for this job?', 'why hire you?', 'engineer to marketing?', 'college project']];
+    C.forEach((col, i) => col.forEach((s, j) => l28Chip(p, s, xs[i], 430 + j * 62, L28_CAT[i][2], m('sort', .3 + i * .5 + j * .15), 320, 22)));
+    hmRule(p, 'Probe skill, what they did, the gaps, and values.', m('sort', 4), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-four', prompt: ['Which kind of information does each question mainly get at, in Grove’s sorting?'],
+    build: grid([
+      { parts: ['Describe projects your management valued.'], ans: ['s'], why: 'Grove files it under technical skill: what they can do at the job.' },
+      { parts: ['What were your most significant failures?'], ans: ['d'], why: 'Like achievements, failures show what they did with what they know.' },
+      { parts: ['What did you learn from those failures?'], ans: ['g'], why: 'It explains the gap between what they knew and what they did.' },
+      { parts: ['Why should we hire you?'], ans: ['v'], why: 'The answer reveals what they value and how they see the work.' },
+    ], L28_CAT, { multi: false, text: true }),
+  }], done) }],
+
+  ['potential', 'Judging potential', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Hiring means judging potential');
+    hmBox(p, 480, 240, 480, 120, COL.dim, m('trap'), 'Performance review', { size: 30, sub: ['judge results, not potential'] });
+    hmBox(p, 1120, 240, 480, 120, COL.good, m('must'), 'Hiring', { size: 30, fill: COL.good, sub: ['potential is what you judge'] });
+    hmBox(p, 400, 410, 340, 80, COL.chalk, m('bridge'), 'their past world', { size: 26 });
+    hmBox(p, 1200, 410, 340, 80, COL.chalk, m('bridge', .3), 'your company', { size: 26 });
+    hmArrow(p, 580, 410, 1020, 410, COL.good, m('bridge', .8), .8);
+    hmSay(p, 'project the future', 800, 392, m('bridge', 1.2), { size: 22, fill: COL.good });
+    hmSay(p, 'from their own account', 800, 450, m('self'), { size: 22, fill: COL.dim });
+    l28Bubble(p, '“How good are you technically?”', 230, 560, COL.chalk, m('ask'));
+    l28Bubble(p, '“Well… I think I’m pretty good.”', 860, 630, COL.chalk, m('ask', 3));
+    hmSay(p, 'you', 214, 568, m('ask'), { size: 20, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'candidate', 844, 638, m('ask', 3), { size: 20, fill: COL.dim, anchor: 'end' });
+    hmRule(p, 'Direct questions bring direct answers.', m('direct', 1), 745);
+  }],
+
+  ['hypo', 'A hypothetical problem', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Try a hypothetical problem');
+    show(l28Person(p, 300, 240, COL.chalk), m('cand'));
+    hmLines(p, ['candidate: business', 'graduate, food industry'], 300, 310, m('cand', .3), { size: 22, fill: COL.dim });
+    show(l28Person(p, 1300, 240, COL.chalk), m('none'));
+    hmLines(p, ['Grove: chips,', 'no finance'], 1300, 310, m('none'), { size: 22, fill: COL.dim });
+    draw(path(p, 'M460 240H1140', { stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, { d: 0 }), m('none', 1.5), .6);
+    hmSay(p, 'no shared field', 800, 225, m('none', 1.8), { size: 24, fill: COL.bad });
+    hmChain(p, ['raw wafer', 'processing', 'testing', 'finished wafer'], [290, 630, 970, 1310], 430, 250, 70, COL.chalk, [m('walk'), m('walk', .7), m('walk', 1.4), m('walk', 2.1)], { size: 24 });
+    hmSay(p, '“What does a finished wafer cost?”', 800, 545, m('wafer'), { size: 32, weight: 700 });
+    [['asks questions', 470, 240], ['works out the principles', 800, 340], ['right answer', 1140, 220]].forEach(([s, x, w], i) =>
+      l28Chip(p, s, x, 625, i === 2 ? COL.good : COL.chalk, i === 2 ? m('right') : m('think', i * 1.6), w));
+    hmRule(p, 'A hypothetical shows how they think.', m('right', 3), 745);
+  }],
+
+  ['theirq', 'Their questions', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Let them ask the questions');
+    show(l28Person(p, 420, 300, COL.chalk), m('turn'));
+    hmSay(p, 'candidate', 420, 370, m('turn'), { size: 22, fill: COL.dim });
+    [['what they already know', 230], ['what they want to know', 300], ['how well they prepared', 370]].forEach(([s, y], i) => {
+      hmArrow(p, 480, 290, 760, y - 6, COL.dim, m('shows', i * 1.3), .4);
+      l28Chip(p, s, 960, y - 6, COL.good, m('shows', .3 + i * 1.3), 340);
+    });
+    l28Doc(p, 330, 560, 120, 150, COL.chalk, 6, m('fool'), COL.bad);
+    hmLines(p, ['annual report,', 'marked up'], 330, 670, m('fool', .5), { size: 20, fill: COL.dim });
+    hmBox(p, 720, 560, 300, 80, COL.chalk, m('fail'), 'impressed: hired', { size: 26 });
+    hmArrow(p, 880, 560, 1000, 560, COL.dim, m('fail', 1), .4);
+    hmBox(p, 1170, 560, 300, 80, COL.bad, m('fail', 1.4), 'failed badly', { size: 26, fill: COL.bad });
+    hmArrow(p, 400, 560, 560, 560, COL.dim, m('fail', -.4), .4);
+    hmRule(p, 'Good questions are a clue, not a proof.', m('fail', 3), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ask', prompt: ['Illustrative: a candidate for your clinical data lead role asks sharp, well-researched questions about your trial pipeline. What should you conclude?'],
+    build: choice([['They will clearly succeed: make the offer'], ['Their questions tell you nothing useful'], ['It is useful evidence about preparation, not proof']], 2,
+      'Their questions show what they know and how they prepared. Grove’s best questioner still failed badly.',
+      ['Grove hired just such a candidate, and he failed badly.', 'They show what the candidate knows, wants to know, and how well they prepared.', null]),
+  }], done) }],
+
+  ['refs', 'Working the references', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Working the references');
+    hmSay(p, 'you want the same information the interview sought', 800, 190, m('same'), { size: 26 });
+    hmSay(p, 'a stranger: praise, little specific criticism', 800, 245, m('strange'), { size: 26, fill: COL.bad });
+    hmSay(p, 'someone you know: real information', 800, 300, m('know'), { size: 26, fill: COL.good });
+    // to scale: 1000 px = a 30-minute call
+    const bar = mk('rect', { x: 300, y: 430, width: 1000, height: 50, rx: 8, fill: '#33463f' }, p); put(bar, { o: 0 }); show(bar, m('bond'));
+    hmSay(p, '0', 300, 515, m('bond'), { size: 20, fill: COL.dim }); hmSay(p, '30 min', 1300, 515, m('bond'), { size: 20, fill: COL.dim });
+    hmSay(p, 'stay on until a bond forms: find a shared experience', 800, 400, m('bond', .5), { size: 24, fill: COL.dim });
+    const f = mk('rect', { x: 300, y: 430, width: 333, height: 50, rx: 8, fill: COL.dim }, p); put(f, { o: 0 }); show(f, m('last'));
+    hmSay(p, 'first ten: polite', 466, 463, m('last'), { size: 22, fill: COL.board, weight: 700 });
+    const l = mk('rect', { x: 967, y: 430, width: 333, height: 50, rx: 8, fill: COL.good }, p); put(l, { o: 0 }); show(l, m('last', 1.5));
+    hmSay(p, 'last ten: worth most', 1133, 463, m('last', 1.5), { size: 22, fill: COL.board, weight: 700 });
+    hmSay(p, 'to scale', 800, 515, m('last', 1.5), { size: 18, fill: COL.faint });
+    l28Chip(p, 'then a short, focused follow-up interview', 800, 620, COL.chalk, m('again'), 520);
+    hmRule(p, 'Stay on the call long enough for a bond to form.', m('again', 3), 745);
+  }],
+
+  ['tricks', 'No tricks', (m) => {
+    const p = panel(0);
+    hmHead(p, 'No tricks: show the real thing');
+    path(p, 'M200 560H640', { stroke: COL.faint, 'stroke-width': 3 });
+    const ch = l28Chair(p, 420, 450, m('rick'));
+    tw(ch, { r: 24, y: 431 }, m('rick', 4), .5, back);
+    hmLines(p, ['Rickover’s tipping chair', '(a story Grove heard)'], 420, 620, m('rick', .5), { size: 22, fill: COL.dim });
+    pop(hmCross(p, 600, 380, COL.bad, 20), m('straight'));
+    hmBox(p, 1120, 260, 520, 90, COL.good, m('straight'), 'be completely straightforward', { size: 26, fill: COL.good });
+    hmBox(p, 1120, 400, 520, 110, COL.chalk, m('first'), 'first impressions last', { size: 26, sub: ['if you hire them, they take', 'a long time to change'] });
+    hmBox(p, 1120, 550, 520, 90, COL.good, m('real'), 'show the workplace as it is', { size: 26, fill: COL.good });
+    hmRule(p, 'Show yourself and your workplace as they really are.', m('real', 2.5), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-trick', prompt: ['Illustrative: a peer wants to add a surprise “stress trick” to interviews for your device software team. What would Grove say?'],
+    build: choice([['Keep it straightforward: show the job as it really is'], ['Good idea: it tests character under pressure'], ['Use it only for senior roles']], 0,
+      'Candidates leave with lasting first impressions. Make them true ones.',
+      [null, 'Grove rejects tricks like Rickover’s chair: they leave a false first impression.', 'Seniority doesn’t change it: a false first impression lasts at any level.']),
+  }], done) }],
+
+  ['luck', 'No guarantees', (m) => {
+    const p = panel(0);
+    hmHead(p, 'No guarantees');
+    hmChain(p, ['careful interviews', 'reference calls', 'hired'], [260, 620, 980], 230, 280, 80, COL.chalk, [m('hire'), m('hire', .8), m('hire', 2.5)], { size: 24 });
+    hmArrow(p, 1128, 230, 1190, 230, COL.dim, m('day', -.15), .35);
+    hmBox(p, 1340, 230, 280, 80, COL.bad, m('day'), 'disaster', { size: 24, fill: COL.bad });
+    hmSay(p, 'from day one', 1340, 310, m('day', .3), { size: 22, fill: COL.bad });
+    hmSay(p, 'notes reread: still no clue what he missed', 800, 340, m('notes'), { size: 24, fill: COL.dim });
+    // illustrative odds: neither bar reaches the guarantee line
+    draw(path(p, 'M500 420H1100', { stroke: COL.bad, 'stroke-width': 3, 'stroke-dasharray': '10 8' }, { d: 0 }), m('odds'), .6);
+    hmSay(p, 'a guarantee', 1120, 428, m('odds'), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmBarUp(p, 620, 650, 130, 90, COL.dim, m('odds', .5));
+    hmBarUp(p, 850, 650, 130, 180, COL.good, m('odds', 1.2));
+    hmSay(p, 'little care', 685, 690, m('odds', .5), { size: 22, fill: COL.dim });
+    hmSay(p, 'careful', 915, 690, m('odds', 1.2), { size: 22, fill: COL.good });
+    hmSay(p, 'odds of a good hire (illustrative)', 500, 470, m('odds', 1.5), { size: 20, fill: COL.faint, anchor: 'start' });
+    hmRule(p, 'Care improves your odds. Nothing guarantees them.', m('odds', 3.5), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 28 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Select, teach, check the match, sell.', 'w1'], ['They talk 80 percent; you control the hour.', 'w2'], ['Probe skill, what they did, gaps, values.', 'w3'], ['Ask directly; try a hypothetical; work references.', 'w4'], ['Be straightforward. Care only improves the odds.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-talk', prompt: ['Illustrative: twenty minutes into an interview for a regulatory specialist, the candidate is still on one old project. What do you do?'],
+      build: choice([['Let them finish: interrupting is rude'], ['Apologize, interrupt, and move to the subject you need'], ['End the interview early']], 1,
+        'The hour is your only asset. The interview is yours to control.',
+        ['Courtesy that wastes the hour leaves you with nothing to judge.', null, 'You would lose the rest of your only chance to learn about them.']) },
+    { id: 'p-words', prompt: ['Illustrative: a candidate from a consumer app company says their releases were “fully validated”. Your products are regulated devices. What next?'],
+      build: choice([['Ask what “validated” meant there, so the word means the same to both'], ['Accept it: validated means validated'], ['Mark them down for using jargon']], 0,
+        'Insight comes from terms you both understand. The same word can mean very different work.',
+        [null, 'In a regulated device company the word has a specific meaning. Check theirs.', 'Their word is fine; the risk is assuming it means what it means to you.']) },
+    { id: 'p-refs', prompt: ['You are calling a reference you have never met about a clinical research hire. What helps most?'],
+      build: choice([['Five quick questions, then hang up'], ['Ask only for dates of employment'], ['Stay on long enough to build a bond; look for shared ground']], 2,
+        'Grove found the last ten minutes of a half-hour call worth far more than the first ten.',
+        ['A quick call gets polite praise and no specific criticism.', 'That tells you nothing about how they performed.', null]) },
+    { id: 'p-pot', prompt: ['A colleague says: “Grove says don’t judge potential, so in interviews we judge only past results.” What is the flaw?'],
+      build: choice([['That rule is for appraisals; in hiring you must judge potential'], ['None: past results are all that count'], ['Potential matters only for junior hires']], 0,
+        'An interview projects past performance into a new environment. That is judging potential.',
+        [null, 'Past results are evidence, but the question is how they will do in your company.', 'Every hire is a bet on future performance in your environment.']) },
+    { id: 'p-luck', prompt: ['You interviewed with care and checked references, yet your new hire is struggling badly. What does Grove’s experience suggest?'],
+      build: choice([['You must have skipped a step'], ['Careful interviewing improves the odds but guarantees nothing'], ['Interviews are useless: hire on references alone']], 1,
+        'Grove did everything carefully once and still hired a disaster. Care improves the odds of getting lucky.',
+        ['Grove followed every step and still could not find what he missed.', null, 'References share the same limits. Use both, knowing neither is certain.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

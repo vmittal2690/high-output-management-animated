@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why one job has two bosses</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 17, title: 'Why one job has two bosses', kicker: 'Chapter 9 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch18/index.html' };
+
+/* Colours: purple = the mission-oriented boss (general manager, local operating priorities); salmon = functional or
+   technical supervision, including a group of peers; blue = ordinary people and units; green = the goal;
+   red = a problem; amber = the rule. */
+function l17Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l17Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A reporting line: solid lines are drawn on, dashed ones fade in.
+function l17Line(p, d, color, t0, dashed = false, dur = .5) {
+  if (dashed) { const e = path(p, d, { stroke: color, 'stroke-width': 3.5, 'stroke-dasharray': '10 8' }, { o: 0 }); show(e, t0); return e; }
+  const e = path(p, d, { stroke: color, 'stroke-width': 3.5 }, { d: 0 }); draw(e, t0, dur); return e;
+}
+
+const BEATS = [
+  ['intro', 'Why one job has two bosses', (m, D) => hmTitle(m, D, 'Chapter 9 · Dual Reporting · Lesson 1 of 2', 'Why one job has two bosses', 'Dual reporting, and what it takes to make it work')],
+
+  ['nasa', 'An old idea, made famous', (m) => {
+    const p = panel(0);
+    hmHead(p, 'An old idea, made famous by the moon shot');
+    const xs = [380, 800, 1220];
+    xs.forEach((x, i) => {
+      hmBox(p, x, 220, 300, 64, COL.whole, m('units', i * .3), 'Contractor ' + 'ABC'[i], { size: 26 });
+      l17Line(p, `M${x} 318V252`, COL.whole, m('units', .3 + i * .3), false, .3);
+      hmBox(p, x, 350, 240, 64, i === 2 ? COL.bad : COL.whole, m('units', i * .3), i === 2 ? 'slipping team' : 'a team', { size: 24, fill: i === 2 ? COL.bad : COL.chalk });
+    });
+    hmBox(p, 800, 540, 420, 76, COL.real, m('pm'), 'NASA project manager', { size: 26, fill: COL.real });
+    xs.forEach((x, i) => l17Line(p, `M${x} 382L${800 + (x - 800) * .35} 502`, COL.real, m('pm', .5 + i * .2), true));
+    // resources hop from a strong team to the slipping one, below the boxes
+    const d = hmDot(p, 380, 392, COL.good, 13); show(d, m('shift'), .2);
+    tw(d, { y: 430 }, m('shift', .4), .4); tw(d, { x: 1220 }, m('shift', .9), 1.2); tw(d, { y: 392 }, m('shift', 2.2), .4);
+    hmLines(p, ['resources', 'move to help'], 590, 292, m('shift', .6), { size: 20, fill: COL.good });
+    hmSay(p, 'matrix management = dual reporting on a grand scale', 800, 625, m('matrix'), { size: 26, weight: 600 });
+    [['a high school', 400, 210], ['Sloan’s General Motors', 800, 320], ['breakfast franchises', 1200, 280]].forEach(([s, x, w], i) => l17Chip(p, s, x, 680, COL.dim, m('old', 1.5 + i * 1.3), w, 22));
+    hmRule(p, 'Dual reporting is old. NASA just made it big.', m('old', 6), 750);
+  }],
+
+  ['security', 'Where should plant security report?', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Where should plant security report?');
+    S.l17pm = hmBox(p, 400, 220, 380, 80, COL.real, m('pm'), 'plant manager', { size: 28, fill: COL.real });
+    hmSay(p, 'there every day', 400, 300, m('pm', .5), { size: 22, fill: COL.good });
+    hmLines(p, ['knows little about security,', 'and cares less'], 400, 334, m('pmbad'), { size: 22, fill: COL.bad });
+    S.l17sm = hmBox(p, 1200, 220, 480, 80, COL.nat, m('sm'), 'corporate security manager', { size: 26, fill: COL.nat });
+    hmSay(p, 'hired them, sets the standards', 1200, 300, m('sm', .5), { size: 22, fill: COL.good });
+    hmLines(p, ['at headquarters: did they', 'even show up?'], 1200, 334, m('smbad'), { size: 22, fill: COL.bad });
+    const g = l17Person(p, 800, 520, COL.whole); show(g, .4);
+    hmSay(p, 'security officer, outlying plant', 800, 590, .4, { size: 22, fill: COL.dim });
+    hmArrow(p, 1150, 410, 860, 490, COL.nat, m('how'), .6);
+    hmLines(p, ['sets how the job', 'should be done'], 1070, 490, m('how', .3), { size: 22, fill: COL.nat, anchor: 'start', weight: 600 });
+    hmArrow(p, 450, 410, 740, 490, COL.real, m('watch'), .6);
+    hmLines(p, ['watches how it is', 'done, day by day'], 530, 490, m('watch', .3), { size: 22, fill: COL.real, anchor: 'end', weight: 600 });
+    hmRule(p, 'The expert says how. The local boss sees it done.', m('watch', 3), 660);
+  }],
+
+  ['q1', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-guard', prompt: ['Click the boss who can tell whether the officer turned up on time.'],
+    build: pickEls([{ el: S.l17pm, box: [200, 170, 400, 100], label: 'plant manager' }, { el: S.l17sm, box: [950, 170, 500, 100], label: 'corporate security manager' }], 0,
+      'The plant manager is there every day, so he monitors the daily performance.',
+      () => 'He sets the standards, but from headquarters he cannot see who shows up.'),
+  }], done) }],
+
+  ['boss', 'Who is in charge?', (m) => {
+    const p = panel(0);
+    hmHead(p, '“A person has to have a boss”');
+    hmBox(p, 480, 240, 340, 80, COL.real, .4, 'local boss', { size: 28, fill: COL.real });
+    hmBox(p, 1120, 240, 340, 80, COL.nat, .4, 'expert boss', { size: 28, fill: COL.nat });
+    const g = l17Person(p, 800, 470, COL.whole); show(g, .5);
+    l17Line(p, 'M770 430L540 282', COL.real, .6); l17Line(p, 'M830 430L1060 282', COL.nat, .6);
+    hmSay(p, 'So who is in charge here?', 800, 170, m('q'), { size: 28, fill: COL.bad, weight: 600 });
+    hmSay(p, '?', 800, 360, m('two'), { size: 64, fill: COL.bad, weight: 700 });
+    hmSay(p, 'a tentative yes', 800, 580, m('yes'), { size: 34, fill: COL.good, weight: 700 });
+    hmSay(p, 'a culture of dual reporting: a slow, laborious birth', 800, 640, m('birth'), { size: 26, fill: COL.dim });
+    hmRule(p, 'Yes: one person can have two bosses.', m('birth', 3), 745);
+  }],
+
+  ['career', 'How a manager comes to be', (m) => {
+    const p = panel(0);
+    hmHead(p, 'How a manager comes to be');
+    // illustrative heights: each promotion one step up
+    const st = hmStairs(p, ['salesperson', 'sales manager', 'regional manager', 'general manager'], [80, 160, 240, 320], 540,
+      [m('s1'), m('s2'), m('s3'), m('s4')], { x0: 230, step: 310, w: 180, fill: COL.whole });
+    hmSay(p, 'sells', st[0].cx, st[0].top - 22, m('s1', .4), { size: 22, fill: COL.dim });
+    hmSay(p, 'manages salespeople', st[1].cx, st[1].top - 22, m('s2', .4), { size: 22, fill: COL.dim });
+    hmLines(p, ['also field engineers', 'who know more'], st[2].cx, st[2].top - 50, m('s3', 2), { size: 22, fill: COL.dim });
+    hmLines(p, ['now over manufacturing:', 'never did it'], st[3].cx, st[3].top - 50, m('s4', 1), { size: 22, fill: COL.bad, weight: 600 });
+    hmSay(p, 'general side of the job: yes.  technical side: left alone.', 800, 640, m('gen'), { size: 26 });
+    hmSay(p, 'elsewhere: bosses from engineering or finance', 800, 690, m('other'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Rising managers end up over work they never did.', m('other', 3.5), 750);
+  }],
+
+  ['fix', 'Keep both bosses', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One manufacturing boss for everyone?');
+    hmBox(p, 400, 220, 430, 70, COL.nat, .4, 'senior manufacturing manager', { size: 20, fill: COL.nat });
+    [260, 400, 540].forEach((x, i) => { hmBox(p, x, 340, 120, 56, COL.whole, .6 + i * .15, 'mfg', { size: 22 }); l17Line(p, `M${x} 312V${255}`, COL.nat, .7 + i * .15, false, .3); });
+    hmLines(p, ['purely functional'], 400, 430, m('func'), { size: 26, fill: COL.bad, weight: 600 });
+    hmLines(p, ['no one ties the division', 'to its market'], 400, 480, m('lose'), { size: 22, fill: COL.bad });
+    pop(hmCross(p, 680, 290, COL.bad, 30), m('lose', 2));
+    hmSay(p, 'Grove wants both:', 1180, 170, m('both'), { size: 26, fill: COL.dim });
+    hmBox(p, 1010, 270, 300, 100, COL.real, m('gm'), 'general manager', { size: 26, fill: COL.real, sub: ['priorities, urgency'] });
+    hmBox(p, 1360, 270, 300, 100, COL.nat, m('tech'), 'technical boss', { size: 26, fill: COL.nat, sub: ['how the work is done'] });
+    hmBox(p, 1185, 470, 360, 70, COL.whole, m('gm'), 'manufacturing manager', { size: 22 });
+    l17Line(p, 'M1140 435L1040 320', COL.real, m('gm', .3)); l17Line(p, 'M1230 435L1330 320', COL.nat, m('tech', .3));
+    hmSay(p, 'dual reporting', 1185, 580, m('dual'), { size: 32, fill: COL.good, weight: 700 });
+    hmRule(p, 'Keep the business boss. Add a technical one.', m('dual', 2), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-which', prompt: ['A device manufacturing manager reports to two bosses. Which one should this come from? (illustrative)'],
+    build: grid([
+      { parts: ['This quarter’s top priority: ship the new catheter line'], ans: ['b'], why: 'Operating priorities come from the general manager, who answers to the market.' },
+      { parts: ['The method used to validate a sterilization process'], ans: ['t'], why: 'How the work is done technically is the technical supervisor’s field.' },
+      { parts: ['Lending two technicians to the product that is behind schedule'], ans: ['b'], why: 'Moving people toward the business need is the general manager’s call.' },
+      { parts: ['Whether test-lab calibration meets the company standard'], ans: ['t'], why: 'Standards and technical review come from the functional side.' },
+    ], [['b', 'Business boss', COL.real, 'B'], ['t', 'Technical boss', COL.nat, 'T']], { multi: false, text: true }),
+  }], done) }],
+
+  ['peers', 'A group of peers', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The technical boss can be a group');
+    const xs = [380, 800, 1220], from = ['came up in sales', 'came up in finance', 'came up in engineering'];
+    xs.forEach((x, i) => {
+      const t = i < 2 ? m('cafe', i * 1.5) : m('reg', .8);
+      hmBox(p, x, 220, 300, 84, COL.real, t, 'general manager', { size: 24, fill: COL.real, sub: [from[i]] });
+      hmBox(p, x, 380, 260, 64, COL.whole, t, 'manufacturing ' + 'ABC'[i], { size: 24 });
+      l17Line(p, `M${x} 348V262`, COL.real, t + .3, false, .3);
+    });
+    // the story, told in the gap before the council's lines appear
+    const story = [['coffee', 'cafe', 'share'], ['shared problems', 'share', 'often'], ['meet more often', 'often', 'reg'], ['meet regularly', 'reg', 'council']];
+    story.forEach(([s, a, b]) => { const e = hmSay(p, s, 590, 470, m(a, a === 'cafe' ? 1.6 : 0), { size: 22, fill: COL.dim }); hide(e, m(b, -.2), .3); });
+    hmBox(p, 800, 560, 460, 84, COL.nat, m('council'), 'group of peers', { size: 28, fill: COL.nat, sub: ['the manufacturing council'] });
+    xs.forEach((x, i) => l17Line(p, `M${x} 412L${800 + (x - 800) * .4} 518`, COL.nat, m('council', .6 + i * .2), true));
+    hmSay(p, 'the supervision a GM who knew manufacturing could give', 800, 660, m('gives'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Technical supervision can come from a group of peers.', m('two', 4), 745);
+  }],
+
+  ['trust', 'Giving up some freedom', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Joining means giving something up');
+    [250, 320, 450, 520].forEach((x, i) => show(l17Person(p, x, 280, COL.whole, .85), m('vac', i * .2)));
+    hmSay(p, 'a vacation with another couple', 385, 350, m('vac', .5), { size: 22, fill: COL.dim });
+    l17Chip(p, 'less freedom', 300, 430, COL.bad, m('less'), 200);
+    l17Chip(p, 'more fun', 490, 430, COL.good, m('more'), 160);
+    hmBox(p, 1130, 260, 560, 110, COL.nat, m('work'), 'you go along with your peers', { size: 28, fill: COL.nat, sub: ['in most cases, even when you', 'would have chosen otherwise'] });
+    hmArrow(p, 1130, 320, 1130, 400, COL.dim, m('trust'), .4);
+    hmBox(p, 1130, 450, 560, 80, COL.good, m('trust', .3), 'trust in the group’s judgment', { size: 26, fill: COL.good });
+    hmSay(p, 'Trust is culture: shared values, beliefs, and how things are done here.', 800, 600, m('culture'), { size: 26 });
+    hmRule(p, 'Peer groups run on trust, and trust is culture.', m('culture', 7), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-surrender', prompt: ['A council of engineering managers picks one requirements-management tool for every division. You preferred another. What does Grove’s model ask of you? (illustrative)'],
+    build: choice([['Keep your own tool: it is your division'], ['Go along: you gain more from the group than you give up'], ['Ask your general manager to overrule the council']], 1,
+      'A peer group works only if members voluntarily surrender some individual decisions to it.',
+      ['That takes the group’s benefits without the surrender it depends on.', null, 'Technical choices are what the peer group is for; your general manager can’t judge them.']),
+  }], done) }],
+
+  ['ambig', 'Ambiguous, but it works', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Ambiguous, but nothing simpler works');
+    hmBox(p, 330, 230, 400, 80, COL.nat, m('func'), 'purely functional', { size: 28, fill: COL.nat });
+    hmSay(p, 'clear on paper', 330, 320, m('func', 1), { size: 22, fill: COL.dim });
+    hmLines(p, ['loses sight of', 'what customers want'], 330, 360, m('func', 3), { size: 22, fill: COL.bad });
+    hmBox(p, 800, 230, 400, 80, COL.real, m('miss'), 'purely mission', { size: 28, fill: COL.real });
+    hmSay(p, 'crisp lines, clear objectives', 800, 320, m('miss', 1.5), { size: 22, fill: COL.dim });
+    hmLines(p, ['fragmented: inefficient,', 'poor performance'], 800, 360, m('miss', 4), { size: 22, fill: COL.bad });
+    pop(hmCross(p, 520, 192, COL.bad, 20), m('tried')); pop(hmCross(p, 990, 192, COL.bad, 20), m('tried', .3));
+    hmBox(p, 1270, 230, 400, 80, COL.good, m('tried', 1.5), 'hybrid, dual reporting', { size: 28, fill: COL.good });
+    hmSay(p, 'ambiguous', 1270, 320, m('tried', 2), { size: 22, fill: COL.dim });
+    hmSay(p, 'but it works', 1270, 360, m('tried', 3), { size: 22, fill: COL.good, weight: 600 });
+    hmSay(p, 'Like democracy: not great in itself, just the best way there is.', 800, 560, m('demo'), { size: 28, weight: 600 });
+    hmRule(p, 'Accept the ambiguity. The simpler forms fail.', m('demo', 4), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 17 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Dual reporting: one job, two bosses.', 'w1'], ['The expert sets how; the local boss sees it done.', 'w2'], ['The technical boss can be a group of peers.', 'w3'], ['Peer groups need surrender, trust and culture.', 'w4'], ['Ambiguous, but the simpler forms fail.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-qa', prompt: ['You are setting up a new manufacturing site. Who should the site’s quality engineer report to? (illustrative)'],
+      build: choice([['Only the site director: she sees the work every day'], ['Both: corporate quality for standards, the site director for daily priorities'], ['Only the corporate quality head: quality is their field']], 1,
+        'Like Grove’s plant security: the expert sets how the job is done, the local boss sees it done.',
+        ['She can’t judge whether the work meets the company’s quality standards.', null, 'From headquarters, the quality head can’t see how the work goes day to day.']) },
+    { id: 'p-gm', prompt: ['You rose through clinical affairs and now run a device program, including software engineering you have never done. What fits Grove’s view? (illustrative)'],
+      build: choice([['Supervise the software lead on everything yourself'], ['Move all software engineers under one corporate software head'], ['Keep the software lead reporting to you, with technical supervision from a software peer group']], 2,
+        'You give the program’s priorities; peers who know software give the technical supervision.',
+        ['You can guide the general side, but not the technical one.', 'That goes fully functional: no one ties software to your program’s goals.', null]) },
+    { id: 'p-council', prompt: ['A council of plant managers keeps reopening its decisions because one member won’t go along. What is missing?'],
+      build: choice([['A clearer organization chart'], ['More frequent meetings'], ['Willingness to give up some individual decisions, based on trust']], 2,
+        'A peer group needs members to surrender some individual decision-making, and that rests on trust.',
+        ['Reporting lines can’t create trust; culture does.', 'More meetings won’t help if members won’t accept the group’s decisions.', null]) },
+    { id: 'p-ambig', prompt: ['A colleague says dual reporting is confusing and proposes every engineer report only to their product’s program lead. What would Grove say?'],
+      build: choice([['Good idea: crisp lines always perform better'], ['It is clearer, but it fragments the work and loses efficiency'], ['Better still, have everyone report only to engineering']], 1,
+        'Mission-only organizations are crisp but fragmented; the hybrid is ambiguous but works.',
+        ['Crisp reporting lines alone led to inefficiency and poor performance.', null, 'Purely functional groups lose sight of what customers want.']) },
+    { id: 'p-cra', prompt: ['A clinical monitor at a distant trial site works for the local site lead and the central clinical operations lead. Who should coach her on monitoring methods? (illustrative)'],
+      build: choice([['The central clinical operations lead'], ['The local site lead, who sees her daily'], ['Whoever has more time that week']], 0,
+        'Methods and standards come from the expert; the local lead oversees the daily work.',
+        [null, 'Daily oversight is the local lead’s part; the method is the expert’s.', 'The split follows know-how, not free time.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

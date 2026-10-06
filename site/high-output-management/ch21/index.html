@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can’t or won’t, and the ladder of needs</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 21, title: 'Can’t or won’t, and the ladder of needs', kicker: 'Chapter 11 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch22/index.html' };
+
+/* Colours: blue = training and capability (ordinary work); purple = motivation and the two upper needs,
+   which make people perform; salmon = the three lower needs, which get people to show up;
+   green = the goal (performance); red = a problem; amber = the rule. */
+function l21Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l21Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// Maslow's ladder, bottom level 0 to top level 4. Drawn around (0, 0) = top centre; 76 px per level.
+const L21_NEEDS = ['Physiological', 'Safety / security', 'Social / belonging', 'Esteem / recognition', 'Self-actualization'];
+const L21_H = 76, l21W = i => 700 - i * 100;
+const l21Col = i => i < 3 ? COL.nat : COL.real;
+// opts: hi = levels shown in their colour (others dim); t0s = reveal time per level (or one time); labels = false hides text.
+function l21Ladder(p, x, y, s, t0, { hi = [0, 1, 2, 3, 4], size = 24, labels = true } = {}) {
+  const g = G(p, { x, y, s });
+  return L21_NEEDS.map((n, i) => {
+    const w = l21W(i), yy = (4 - i) * L21_H, on = hi.includes(i), c = on ? l21Col(i) : COL.faint;
+    const lv = G(g, { o: 0 });
+    const r = mk('rect', { x: -w / 2, y: yy + 3, width: w, height: L21_H - 6, rx: 8, fill: on ? '#1f2d29' : '#16211d', stroke: c, 'stroke-width': 3 }, lv);
+    if (labels) T(lv, n, { x: 0, y: yy + L21_H / 2 + size * .35, size, fill: on ? c : COL.dim, anchor: 'middle', weight: 600 });
+    show(lv, Array.isArray(t0) ? t0[i] : t0);
+    return { g: lv, r };
+  });
+}
+
+const BEATS = [
+  ['intro', 'Can’t or won’t, and the ladder of needs', (m, D) => hmTitle(m, D, 'Chapter 11 · The Sports Analogy · Lesson 1 of 2', 'Can’t or won’t, and the ladder of needs', 'Why people don’t perform, and what really moves them')],
+
+  ['cant', 'Can’t or won’t?', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Can’t, or won’t?');
+    [560, 680, 800, 920, 1040].forEach((x, i) => show(l21Person(p, x, 220, COL.chalk, .8), .3 + i * .08));
+    hmSay(p, 'a team performs only as well as its people', 800, 285, m('team'), { size: 24, fill: COL.dim });
+    hmBox(p, 450, 390, 520, 120, COL.whole, m('cant'), 'Can’t', { size: 34, sub: ['not capable'] });
+    hmBox(p, 1150, 390, 520, 120, COL.real, m('wont'), 'Won’t', { size: 34, sub: ['not motivated'] });
+    hmSay(p, '“If their life depended on it, could they do it?”', 800, 515, m('test'), { size: 32, weight: 700 });
+    hmSay(p, 'no → capability', 450, 570, m('test', 4.5), { size: 26, fill: COL.whole, weight: 600 });
+    hmSay(p, 'yes → motivation', 1150, 570, m('test', 3), { size: 26, fill: COL.real, weight: 600 });
+    l21Chip(p, 'violin on command: no', 450, 640, COL.whole, m('violin'), 330);
+    l21Chip(p, 'a mile in six minutes: probably', 1150, 640, COL.real, m('mile'), 420);
+    hmRule(p, 'Ask: could they, if their life depended on it?', m('mile', 3.5), 745);
+  }],
+
+  ['levers', 'Two levers', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two levers: training and motivation');
+    // After Grove's figure (1983): shape only, not to scale. Origin (300, 640).
+    draw(path(p, 'M300 180V640H1120', { stroke: COL.dim, 'stroke-width': 3 }, { d: 0 }), m('axes'), .8);
+    hmSay(p, 'performance', 320, 190, m('axes'), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'individual capability →', 710, 690, m('axes'), { size: 22, fill: COL.dim });
+    draw(path(p, 'M300 640L1100 560', { stroke: COL.real, 'stroke-width': 4, opacity: .55 }, { d: 0 }), m('low'), .9);
+    hmSay(p, 'low motivation', 1110, 566, m('low', .5), { size: 22, fill: COL.real, anchor: 'start' });
+    draw(path(p, 'M300 640L1100 220', { stroke: COL.real, 'stroke-width': 5 }, { d: 0 }), m('high'), .9);
+    hmSay(p, 'high motivation', 1110, 226, m('high', .5), { size: 22, fill: COL.real, anchor: 'start', weight: 600 });
+    const a = hmDot(p, 520, 618, COL.chalk, 11); show(a, m('a'));
+    hmSay(p, 'A', 510, 600, m('a'), { size: 26, weight: 700, anchor: 'end' });
+    hmArrow(p, 532, 616, 752, 594, COL.whole, m('train'), .7);
+    hmSay(p, 'training', 640, 575, m('train', .3), { size: 24, fill: COL.whole, weight: 600 });
+    hmArrow(p, 760, 584, 760, 412, COL.real, m('mot'), .8);
+    const b = hmDot(p, 760, 399, COL.good, 12); show(b, m('mot', .8));
+    hmSay(p, 'B', 742, 392, m('mot', .8), { size: 26, weight: 700, fill: COL.good, anchor: 'end' });
+    hmSay(p, 'motivation', 780, 505, m('mot', .3), { size: 24, fill: COL.real, weight: 600, anchor: 'start' });
+    hmSay(p, 'after Grove’s figure (1983), shape only', 1500, 640, m('axes', 1), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'this chapter: motivation', 1300, 420, m('focus'), { size: 28, fill: COL.real, weight: 700 });
+    hmRule(p, 'Training moves people right. Motivation lifts them up.', m('focus', 2.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-cantwont', prompt: ['Can’t or won’t? Which lever fits? (illustrative cases)'],
+    build: grid([
+      { parts: ['A new field engineer has never been shown the updated system software'], ans: ['c'], why: 'Even with her life at stake she could not use what she was never taught. Train her.' },
+      { parts: ['A senior engineer who has written many test reports keeps putting this one off'], ans: ['w'], why: 'He clearly could do it. The issue is motivation.' },
+      { parts: ['A product manager asked to run sample-size statistics, with no statistics training'], ans: ['c'], why: 'A missing skill. No amount of drive replaces it.' },
+      { parts: ['A reviewer who knows the regulations well skims a submission and misses errors'], ans: ['w'], why: 'The skill is there. Something in the environment is not drawing it out.' },
+    ], [['c', 'Can’t: train', COL.whole, 'C'], ['w', 'Won’t: motivate', COL.real, 'W']], { multi: false, text: true }),
+  }], done) }],
+
+  ['within', 'Motivation comes from within', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Motivation comes from within');
+    const env = mk('rect', { x: 560, y: 190, width: 480, height: 330, rx: 24, fill: 'none', stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '12 8' }, p); put(env, { o: 0 });
+    const per = l21Person(p, 800, 370, COL.chalk, 1.6); show(per, .3);
+    const core = hmDot(p, 800, 384, COL.real, 14); show(core, m('inside'), .4);
+    hmSay(p, 'the drive is theirs', 800, 470, m('inside', .5), { size: 24, fill: COL.real, weight: 600 });
+    show(env, m('env'));
+    hmSay(p, 'the environment you shape', 800, 225, m('env', .3), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, '“I feel motivated”', 290, 300, m('feel'), { size: 28, weight: 600 });
+    pop(hmCross(p, 290, 360, COL.bad, 18), m('feel', 2));
+    hmSay(p, 'means nothing', 290, 420, m('feel', 2), { size: 22, fill: COL.bad });
+    hmLines(p, ['an attitude:', 'only an indicator'], 1310, 300, m('ind'), { size: 24, fill: COL.dim });
+    hmSay(p, 'The output: better performance at the same skill', 800, 610, m('perf'), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'You can’t motivate people. You shape their environment.', m('perf', 3), 745);
+  }],
+
+  ['fear', 'Fear, then and now', (m) => {
+    const p = panel(0);
+    hmHead(p, 'For most of history: fear');
+    hmChain(p, ['no work', 'no pay', 'no food', 'steal', 'hanged'], [240, 520, 800, 1080, 1360], 220, 200, 70, COL.bad, [0, 1, 2, 3, 4].map(i => m('dick', .3 + i * 1)), { size: 26 });
+    hmSay(p, 'Dickens’ time', 800, 290, m('dick', 5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Then, over some thirty years (to 1983): gentler approaches, as knowledge work grew', 800, 360, m('know'), { size: 24 });
+    hmBox(p, 450, 480, 560, 120, COL.whole, m('manual'), 'Manual work', { size: 28, sub: ['output easy to measure', 'a shortfall shows at once'] });
+    hmBox(p, 1150, 480, 560, 120, COL.whole, m('hard'), 'Knowledge work', { size: 28, sub: ['even the expectations', 'are hard to state'] });
+    hmSay(p, 'fear works: galley slaves', 450, 600, m('galley'), { size: 24, fill: COL.dim });
+    hmSay(p, 'fear works poorly: computer architects', 1150, 600, m('galley', 1), { size: 24, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Fear can’t drive work whose output is hard to see.', m('galley', 4), 745);
+  }],
+
+  ['maslow', 'Maslow’s ladder', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Maslow: needs drive motivation');
+    hmChain(p, ['need', 'drive', 'motivation'], [980, 1200, 1420], 220, 180, 60, COL.real, [m('chain'), m('chain', .9), m('chain', 1.8)], { size: 24 });
+    hmSay(p, 'A met need stops motivating', 1210, 330, m('sat'), { size: 28, weight: 700, fill: COL.bad });
+    hmSay(p, 'so some needs must stay unmet', 1210, 375, m('keep'), { size: 24, fill: COL.dim });
+    hmLines(p, ['many needs at once;', 'the strongest sets performance'], 1210, 450, m('one'), { size: 24 });
+    // ladder: top centre (450, 250), 5 × 76 px
+    l21Ladder(p, 450, 250, 1, [0, 1, 2, 3, 4].map(i => m('pyr', .2 + i * .5)), { hi: [] });
+    hmArrow(p, 850, 610, 850, 280, COL.dim, m('up'), 1);
+    hmLines(p, ['when one is met,', 'the next one up takes over'], 1210, 580, m('up', .5), { size: 24, fill: COL.dim });
+    hmRule(p, 'A met need stops motivating.', m('up', 4), 745);
+  }],
+
+  ['lower', 'Physiological and security', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The bottom two needs');
+    l21Ladder(p, 290, 230, .55, .3, { hi: [0, 1], labels: false });
+    hmSay(p, 'you are here', 290, 470, m('money'), { size: 20, fill: COL.dim });
+    hmBox(p, 1020, 260, 700, 120, COL.nat, m('money'), 'Physiological', { size: 30, sub: ['what money buys: food, clothing', 'the fear: losing them'] });
+    hmBox(p, 1020, 420, 700, 120, COL.nat, m('sec'), 'Safety / security', { size: 30, sub: ['protection from slipping back', 'medical insurance vs hospital bills'] });
+    hmSay(p, 'Benefits rarely drive performance,', 800, 580, m('ben'), { size: 30 });
+    hmSay(p, 'but without them, performance would suffer badly.', 800, 630, m('ben', 2.5), { size: 30, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Benefits rarely motivate, but their absence hurts.', m('ben', 5), 745);
+  }],
+
+  ['social', 'Belonging', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Social needs: to belong');
+    hmSay(p, 'not just any group: one like yourself', 800, 185, m('kind'), { size: 28, fill: COL.nat, weight: 600 });
+    hmSay(p, 'happy seeks happy; misery loves miserable company', 800, 230, m('kind', 2), { size: 24, fill: COL.dim });
+    hmBox(p, 440, 380, 600, 180, COL.nat, m('friend'), 'A friend of Grove’s', { size: 28, sub: ['back to work after years at home', 'low pay, barely helped the family', 'she went for the companionship'] });
+    hmBox(p, 1160, 380, 600, 180, COL.nat, m('jim'), 'Jim, a young engineer', { size: 28, sub: ['liked his job at a large, old firm', 'coworkers: married, ten years older', 'moved to Intel, where his friends were'] });
+    l21Ladder(p, 800, 500, .4, .3, { hi: [2], labels: false });
+    hmSay(p, 'level three', 990, 560, .3, { size: 20, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'People need a group of people like themselves.', m('jim', 7), 745);
+  }],
+
+  ['move', 'The ruling need moves', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The ruling need moves, up or down');
+    // ladder at (800, 200), scale .85: level i centre y = 200 + .85 × ((4 − i) × 76 + 38)
+    const S85 = .85, cy = i => 200 + S85 * ((4 - i) * L21_H + L21_H / 2), lx = i => 800 - S85 * l21W(i) / 2 - 28, rx = i => 800 + S85 * l21W(i) / 2 + 28;
+    l21Ladder(p, 800, 200, S85, .3, { hi: [0, 1, 2, 3, 4], size: 26 });
+    const c = hmDot(p, lx(0), cy(0), COL.chalk, 14); show(c, m('chuck'));
+    hmSay(p, 'Chuck: fear of flunking', lx(0) - 26, cy(0) + 8, m('chuck'), { size: 22, anchor: 'end' });
+    tw(c, { x: lx(1), y: cy(1) }, m('study'), .8);
+    hmSay(p, 'study groups', lx(1) - 26, cy(1) + 8, m('study', .6), { size: 22, anchor: 'end' });
+    tw(c, { x: lx(2), y: cy(2) }, m('section'), .8);
+    hmSay(p, 'his section, a team', lx(2) - 26, cy(2) + 8, m('section', .6), { size: 22, anchor: 'end' });
+    const q = hmDot(p, rx(3), cy(3), COL.real, 14); show(q, m('back'));
+    hmSay(p, 'a smooth plant team', rx(3) + 26, cy(3) + 8, m('back'), { size: 22, anchor: 'start' });
+    tw(q, { x: rx(0), y: cy(0) }, m('quake', .5), .5);
+    const z = path(p, `M${rx(1) + 10} ${cy(2)}L${rx(1) + 34} ${cy(1)}H${rx(1) + 14}L${rx(1) + 38} ${cy(0) - 20}`, { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }); draw(z, m('quake'), .4);
+    hmSay(p, 'earthquake: drop everything, run', rx(0) + 26, cy(0) + 8, m('quake', 1), { size: 22, fill: COL.bad, anchor: 'start', weight: 600 });
+    hmRule(p, 'As life changes, the ruling need changes.', m('quake', 6), 745);
+  }],
+
+  ['esteem', 'Esteem', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Esteem: whose respect do you want?');
+    l21Ladder(p, 280, 185, .45, [m('perform', -1), m('perform', -1), m('perform', -1), m('perform'), m('perform')], { labels: false });
+    hmSay(p, 'the top two: make us perform', 500, 238, m('perform'), { size: 26, fill: COL.real, weight: 600, anchor: 'start' });
+    hmSay(p, 'the lower three: get us to show up', 500, 330, .4, { size: 26, fill: COL.nat, weight: 600, anchor: 'start' });
+    hmSay(p, '“Keeping up with the Joneses”', 800, 450, m('jones'), { size: 32, weight: 700 });
+    l21Chip(p, 'last year’s Olympic champion', 560, 520, COL.real, m('gold'), 430);
+    l21Chip(p, 'Laurence Olivier', 1040, 520, COL.real, m('gold', 1.2), 260);
+    hmSay(p, 'In the eye of the beholder:', 800, 610, m('eye'), { size: 26, weight: 600 });
+    hmSay(p, 'the star player’s “hello” thrills you, not your family', 800, 655, m('hello'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Esteem depends on whose respect you want.', m('hello', 6), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-need', prompt: ['Which need is ruling? (illustrative)'],
+    build: grid([
+      { parts: ['A fire alarm sounds, and the whole lab empties in a minute'], ans: ['p'], why: 'Like the earthquake: survival takes over from everything else.' },
+      { parts: ['A technician stays mainly because the health cover protects his family'], ans: ['s'], why: 'Protection from slipping back: security.' },
+      { parts: ['A new hire picks the team where her former classmates work'], ans: ['b'], why: 'Like Jim: a group of people like her.' },
+      { parts: ['An engineer works to earn the respect of the top algorithm experts'], ans: ['e'], why: 'Her “Joneses” are the experts she admires: esteem.' },
+    ], [['p', 'Physiological', COL.nat, 'P'], ['s', 'Security', COL.nat, 'S'], ['b', 'Belonging', COL.nat, 'B'], ['e', 'Esteem', COL.real, 'E']], { multi: false, text: true }),
+  }], done) }],
+
+  ['limit', 'Self-limiting needs', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Every need so far switches off');
+    // the goal line at y 300; bars rise 220 px from base 520 to reach it
+    const gl = path(p, 'M160 300H960', { stroke: COL.chalk, 'stroke-width': 2, 'stroke-dasharray': '10 8' }, { d: 0 }); draw(gl, m('self'), .6);
+    hmSay(p, 'goal met', 160, 285, m('self', .3), { size: 20, fill: COL.dim, anchor: 'start' });
+    ['physiological', 'security', 'belonging', 'esteem'].forEach((n, i) => {
+      const x = 200 + i * 200;
+      hmBarUp(p, x, 520, 130, 220, i < 3 ? COL.nat : COL.real, m('self', .4 + i * .3), .7);
+      hmSay(p, n, x + 65, 560, m('self', .4 + i * .3), { size: 22, fill: COL.dim });
+    });
+    hmSay(p, 'then the urgency goes', 560, 630, m('met'), { size: 26, fill: COL.bad, weight: 600 });
+    hmBox(p, 1260, 400, 400, 200, COL.real, m('vp'), 'Made vice president', { size: 28, sub: ['a life-long goal, reached', '→ an early mid-life crisis', 'looking for a new drive'] });
+    hmRule(p, 'Reach the goal, and the urgency goes.', m('crisis', 3), 745);
+  }],
+
+  ['self', 'Self-actualization', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Self-actualization: no ceiling');
+    hmSay(p, '“What I can be, I must be.” (Maslow)', 800, 190, m('must'), { size: 30, fill: COL.real, weight: 700 });
+    hmSay(p, 'Personal Best: your utter best in a field you chose', 800, 240, m('best'), { size: 24, fill: COL.dim });
+    // schematic: drive over time, not data
+    path(p, 'M300 300V640H1320', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'drive', 290, 320, m('nolimit'), { size: 20, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'time →', 1320, 675, m('nolimit'), { size: 20, fill: COL.dim, anchor: 'end' });
+    draw(path(p, 'M300 630Q480 380 640 410Q790 440 900 600L1300 615', { stroke: COL.nat, 'stroke-width': 5 }, { d: 0 }), m('nolimit', .5), 1.4);
+    hmSay(p, 'other needs: off once met', 1300, 590, m('nolimit', 2), { size: 22, fill: COL.nat, anchor: 'end', weight: 600 });
+    draw(path(p, 'M300 630L1300 330', { stroke: COL.real, 'stroke-width': 6 }, { d: 0 }), m('climb'), 1.6);
+    hmSay(p, 'self-actualization: keeps rising', 1250, 315, m('climb', 1.4), { size: 22, fill: COL.real, anchor: 'end', weight: 600 });
+    hmSay(p, 'schematic', 1500, 640, m('nolimit'), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmRule(p, 'Only self-actualization never switches off.', m('climb', 4), 745);
+  }],
+
+  ['q3', 'Quick check', () => {
+    const p = panel(0);
+    S.l21q = l21Ladder(p, 800, 230, 1, [.3, .4, .5, .6, .7], { size: 26 });
+  }, { ask: done => quiz(BAND, [{
+    id: 'c-top', prompt: ['She keeps refining her code long after the spec is met. Click her need.'],
+    build: pickEls(S.l21q.map((l, i) => ({ el: l.g, box: [800 - l21W(i) / 2, 230 + (4 - i) * L21_H, l21W(i), L21_H], label: L21_NEEDS[i] })), 4,
+      'The spec is met, yet she keeps going: a drive with no ceiling.',
+      i => i === 3 ? 'No one is watching her refine it. This is about her own best.' : 'That need is met already. Something else is driving her.',
+      () => S.l21q[4].r.setAttribute('fill', '#2c2540')),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 21 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Can’t or won’t? Could they, if life depended on it?', 'w1'], ['Training moves people right; motivation lifts.', 'w2'], ['You can’t motivate people: shape the environment.', 'w3'], ['A met need stops motivating; the ruler moves.', 'w4'], ['Only self-actualization never switches off.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-cantwont', prompt: ['A capable analyst’s reports have turned sloppy since a reorganization. What should you ask first?'],
+      build: choice([['Which training course should she take?'], ['Could she do it well if her life depended on it?'], ['Has she lost the skill?']], 1,
+        'She did this well before. If she still could, the issue is motivation, not training.',
+        ['Training fixes can’t, and she has shown she can.', null, 'Skills rarely vanish in a reorganization. Check motivation first.']) },
+    { id: 'p-feel', prompt: ['After a team offsite, everyone says they feel motivated. How will you know it worked?'],
+      build: choice([['The survey scores go up'], ['People say so in one-on-ones'], ['Their performance improves at the same skill level']], 2,
+        'Motivation is measured by output, not by feelings.',
+        ['A survey is an attitude, only an indicator.', 'Saying “I feel motivated” means nothing on its own.', null]) },
+    { id: 'p-benefit', prompt: ['A colleague proposes richer health benefits to raise output on a device program. What would Grove expect?'],
+      build: choice([['They will become the main motivator'], ['They meet a security need: rarely a driver, though their absence would hurt'], ['Benefits make no difference at all']], 1,
+        'Benefits protect people from slipping back. They get people to show up, not to perform.',
+        ['Benefits are rarely a dominant source of motivation.', null, 'Take them away and performance would suffer badly.']) },
+    { id: 'p-down', prompt: ['Rumours of layoffs spread, and your strong team suddenly seems distracted and anxious. What happened?'],
+      build: choice([['They lost their skills'], ['Their ruling need slid down to security'], ['Esteem is still ruling; nothing changed']], 1,
+        'Like the earthquake team, people drop down the ladder when a lower need is threatened. Address it first.',
+        ['Their capability did not change overnight.', null, 'A threatened lower need takes over from the higher ones.']) },
+    { id: 'p-promo', prompt: ['Your lead just won the promotion she worked toward for years, and now seems flat. Grove’s reading?'],
+      build: choice([['A met goal stops motivating; help her find a personal-best goal'], ['Promise her a bigger title soon'], ['She is no longer capable']], 0,
+        'Like Grove’s friend made vice president, a reached goal loses its urgency. Self-actualization has no ceiling.',
+        [null, 'Another title is another self-limiting goal.', 'Her capability is the same. Her motivation lost its target.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

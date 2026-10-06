@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promotions and the Peter Principle</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 31, title: 'Promotions and the Peter Principle', kicker: 'Chapter 15 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch32/index.html' };
+
+/* Colours: blue = pay curves, ordinary work and the noncompetitor; purple = a promotion and the competitor;
+   green = the goal and an "exceeds" rating; chalk = a "meets" rating; red = a problem; amber = the rule. */
+const L31 = { pay: COL.whole, promo: COL.real, meets: COL.chalk, exc: COL.good };
+const l31Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// Grove's career figure, redrawn as a schematic: each job has its own pay curve (rises, then levels);
+// the person moves along one curve and jumps to the next at each promotion. Points computed on the Béziers.
+const L31_J = [[[220, 580], [420, 480], [650, 455], [1300, 445]], [[560, 420], [760, 330], [950, 305], [1300, 300]], [[960, 290], [1080, 215], [1180, 200], [1300, 196]]];
+const l31At = (J, t) => [0, 1].map(i => Math.round((1 - t) ** 3 * J[0][i] + 3 * (1 - t) ** 2 * t * J[1][i] + 3 * (1 - t) * t * t * J[2][i] + t ** 3 * J[3][i]));
+const l31D = J => `M${J[0]}C${J[1]} ${J[2]} ${J[3]}`;
+const L31_P = { A: l31At(L31_J[0], .08), B: l31At(L31_J[0], .3), M2: l31At(L31_J[1], .03), E2: l31At(L31_J[1], .35), M3: l31At(L31_J[2], .05), E3: l31At(L31_J[2], .5), S3: l31At(L31_J[2], .9) };
+function l31Pt(p, k, color, t0, r = 13) { const [x, y] = L31_P[k]; const d = hmDot(p, x, y, color, r); show(d, t0, .3); return d; }
+
+const BEATS = [
+  ['intro', 'Promotions and the Peter Principle', (m, D) => hmTitle(m, D, 'Chapter 15 · Compensation as Task-Relevant Feedback · Lesson 2 of 2', 'Promotions and the Peter Principle', 'Why promotions must follow performance, and how to undo one that went too far')],
+
+  ['promo', 'What a promotion says', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A promotion is a message');
+    hmBox(p, 800, 220, 640, 90, L31.promo, .3, 'A substantial change in a person’s job', { size: 28, fill: L31.promo });
+    hmSay(p, 'handle with great care: it shapes the organization’s health', 800, 310, m('care'), { size: 24, fill: COL.dim });
+    hmBox(p, 450, 430, 500, 120, COL.chalk, m('raise'), 'For the person', { size: 28, sub: ['often a big raise'] });
+    hmBox(p, 1150, 430, 500, 120, COL.chalk, m('seen'), 'For everyone else', { size: 28, sub: ['highly visible: who moved up, and why'] });
+    hmSay(p, 'Each promotion tells the company what it values.', 800, 570, m('value'), { size: 30, weight: 600 });
+    hmSay(p, 'Base it on performance, to keep performance in the spotlight.', 800, 640, m('perf'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Promote on performance: everyone is watching.', m('perf', 4), 745);
+  }],
+
+  ['peter', 'The Peter Principle', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The Peter Principle');
+    // a staircase of jobs; the person climbs while good, and stops at the first job they can't do well
+    [0, 1, 2, 3].forEach(i => {
+      const x = 330 + i * 250, y = 560 - i * 90;
+      const r = mk('rect', { x, y, width: 250, height: 600 - y, fill: '#26362f', stroke: COL.faint, 'stroke-width': 2 }, p); put(r, { o: 0 }); show(r, .3 + i * .1);
+      hmSay(p, ['Job 1', 'Job 2', 'Job 3', 'Job 4'][i], x + 125, y + 34, .3 + i * .1, { size: 22, fill: COL.dim });
+    });
+    const dot = hmDot(p, 455, 520, COL.good, 16); show(dot, m('rule'));
+    tw(dot, { x: 705, y: 430 }, m('again'), .6); tw(dot, { x: 955, y: 340 }, m('again', 1), .6);
+    hmSay(p, 'good at it: promoted', 455, 470, m('rule', .5), { size: 22, fill: COL.good });
+    hmSay(p, 'promoted again', 705, 380, m('again', .5), { size: 22, fill: COL.good });
+    tw(dot, { o: 1 }, m('stop'), .1);
+    const stuck = hmDot(p, 955, 340, COL.bad, 18); show(stuck, m('stop', .5));
+    hmLines(p, ['their level of', 'incompetence: stays'], 920, 250, m('stop', .8), { size: 24, fill: COL.bad, weight: 600 });
+    hmSay(p, 'a caricature, but it captures something real', 800, 660, m('cari'), { size: 26, fill: COL.dim });
+    hmRule(p, 'Merit promotion has a catch. Grove looks closer.', m('cari', 3.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-why', prompt: ['In Grove’s view, why must promotions be based on performance?'],
+    build: choice([['Everyone sees them, so they tell the company what it values'], ['They are the only way to give raises'], ['It stops the Peter Principle from ever happening']], 0,
+      'Promotions are visible messages; basing them on performance keeps performance highlighted.',
+      [null, 'Raises also come from merit pay and bonuses. The point here is the signal.', 'Merit promotion is exactly where the Peter Principle shows up.']),
+  }], done) }],
+
+  ['cycle', 'Meets, exceeds, promoted', (m) => {
+    const p = panel(0);
+    S.l31p = p;
+    hmHead(p, 'One achiever’s career');
+    path(p, 'M200 150V640H1400', { stroke: COL.dim, 'stroke-width': 3 });
+    hmSay(p, 'pay', 188, 170, .3, { size: 22, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'time', 1400, 675, .3, { size: 22, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'after Grove’s figure (1983), redrawn as a schematic', 210, 706, .3, { size: 18, fill: COL.faint, anchor: 'start' });
+    draw(path(p, l31D(L31_J[0]), { stroke: L31.pay, 'stroke-width': 4 }, { d: 0 }), m('a', -.5), 1.2);
+    hmSay(p, 'Job 1 pay', 1315, 452, m('a'), { size: 22, fill: L31.pay, anchor: 'start' });
+    S.l31pts = {};
+    S.l31pts.A = l31Pt(p, 'A', L31.meets, m('a', .5));
+    hmSay(p, 'A · meets', L31_P.A[0], L31_P.A[1] + 48, m('a', 3), { size: 22, fill: L31.meets, weight: 600 });
+    hmLines(p, ['training,', 'motivation'], 300, 480, m('train'), { size: 18, fill: COL.dim, lh: 22 });
+    S.l31pts.B = l31Pt(p, 'B', L31.exc, m('b'));
+    hmSay(p, 'B · exceeds', L31_P.B[0] + 10, L31_P.B[1] + 58, m('b'), { size: 22, fill: L31.exc, weight: 600 });
+    hmArrow(p, L31_P.B[0] + 12, L31_P.B[1] - 10, L31_P.M2[0] - 12, L31_P.M2[1] + 8, L31.promo, m('promo'), .5);
+    hmSay(p, 'promotion', 470, 440, m('promo'), { size: 22, fill: L31.promo, weight: 600, anchor: 'end' });
+    draw(path(p, l31D(L31_J[1]), { stroke: L31.pay, 'stroke-width': 4 }, { d: 0 }), m('promo', .5), 1.2);
+    hmSay(p, 'Job 2 pay', 1315, 307, m('promo', .8), { size: 22, fill: L31.pay, anchor: 'start' });
+    S.l31pts.M2 = l31Pt(p, 'M2', L31.meets, m('meets2'));
+    hmSay(p, 'meets', L31_P.M2[0] - 14, L31_P.M2[1] - 16, m('meets2'), { size: 22, fill: L31.meets, weight: 600, anchor: 'end' });
+    S.l31pts.E2 = l31Pt(p, 'E2', L31.exc, m('exc2'));
+    hmSay(p, 'exceeds', L31_P.E2[0], L31_P.E2[1] + 42, m('exc2'), { size: 22, fill: L31.exc, weight: 600 });
+    hmArrow(p, L31_P.E2[0] + 14, L31_P.E2[1] - 6, L31_P.M3[0] - 14, L31_P.M3[1] + 4, L31.promo, m('repeat'), .5);
+    hmSay(p, 'promotion', 850, 292, m('repeat'), { size: 22, fill: L31.promo, weight: 600, anchor: 'end' });
+    draw(path(p, l31D(L31_J[2]), { stroke: L31.pay, 'stroke-width': 4 }, { d: 0 }), m('repeat', .5), 1);
+    hmSay(p, 'Job 3 pay', 1315, 203, m('repeat', .8), { size: 22, fill: L31.pay, anchor: 'start' });
+    l31Pt(p, 'M3', L31.meets, m('repeat', 1));
+    hmSay(p, 'meets', L31_P.M3[0] - 14, L31_P.M3[1] - 18, m('repeat', 1), { size: 22, fill: L31.meets, weight: 600, anchor: 'end' });
+    l31Pt(p, 'E3', L31.exc, m('repeat', 1.8));
+    hmSay(p, 'exceeds', L31_P.E3[0], L31_P.E3[1] + 40, m('repeat', 1.8), { size: 22, fill: L31.exc, weight: 600 });
+    S.l31rule = hmRule(p, 'Promoted at exceeds, back to meets in the new job.', m('repeat', 4), 745);
+  }],
+
+  ['settle', 'Settling at meets', (m) => {
+    const p = S.l31p;
+    hide(S.l31rule, .2, .3);
+    l31Pt(p, 'S3', COL.dim, m('settle'));
+    hmSay(p, 'settles at meets', L31_P.S3[0], L31_P.S3[1] - 30, m('settle', .4), { size: 22, fill: COL.dim, weight: 600 });
+    hmSay(p, 'meets ↔ exceeds, across a career', 800, 560, m('settle', -1.5), { size: 26, weight: 600 });
+    hmRule(p, 'Grove’s Peter Principle: an achiever alternates, then settles.', m('better', 1.5), 745);
+  }],
+
+  ['q2', 'Quick check', () => {}, { ask: done => quiz(BAND, [{
+    id: 'c-point', prompt: ['Click the point where he first becomes promotable.'],
+    build: pickEls(['A', 'B', 'M2', 'E2'].map(k => ({ el: S.l31pts[k], box: [L31_P[k][0] - 34, L31_P[k][1] - 34, 68, 68], label: k })), 1,
+      'At B he exceeds the requirements of Job 1: promotable.',
+      i => i === 0 ? 'At A he only meets the requirements of Job 1.' : i === 2 ? 'That is after the promotion, back at meets in Job 2.' : 'He is promotable here too, but B came first.'),
+  }], done) }],
+
+  ['alt', 'Holding someone back', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What if we don’t promote at B?');
+    // rating over time (schematic): rises to exceeds, no new challenge, slips back to meets
+    hmSay(p, 'exceeds', 270, 308, .3, { size: 24, fill: L31.exc, anchor: 'end', weight: 600 });
+    hmSay(p, 'meets', 270, 488, .3, { size: 24, fill: L31.meets, anchor: 'end', weight: 600 });
+    [300, 480].forEach(y => path(p, `M290 ${y}H1320`, { stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '10 8' }));
+    draw(path(p, 'M300 480C450 480 500 300 600 300', { stroke: L31.exc, 'stroke-width': 5 }, { d: 0 }), .4, .8);
+    const b = hmDot(p, 600, 300, L31.exc, 13); show(b, .9, .3);
+    hmSay(p, 'B', 600, 270, .9, { size: 24, weight: 700 });
+    draw(path(p, 'M600 300H900', { stroke: COL.dim, 'stroke-width': 5 }, { d: 0 }), m('hold'), 1);
+    hmSay(p, 'same job, no new challenge', 760, 345, m('hold', .8), { size: 22, fill: COL.dim });
+    draw(path(p, 'M900 300C1000 300 1050 480 1200 480H1320', { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), m('atrophy'), 1.2);
+    hmSay(p, 'atrophy', 1200, 400, m('atrophy', .5), { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+    hmSay(p, 'Not fully using a person the company already has.', 800, 600, m('waste'), { size: 28, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Hold an achiever back and they slip back to meets.', m('atrophy', 4), 745);
+  }],
+
+  ['two', 'Two kinds of meets', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two kinds of “meets” performer');
+    hmBox(p, 440, 220, 520, 110, L31.pay, m('non'), 'The noncompetitor', { size: 30, fill: L31.pay, sub: ['settled and satisfied in the job'] });
+    hmBox(p, 1160, 220, 520, 110, L31.promo, m('comp'), 'The competitor', { size: 30, fill: L31.promo, sub: ['a candidate each time he exceeds'] });
+    // schematic sparklines: flat at meets; a rising sawtooth through ever harder jobs
+    draw(path(p, 'M220 420H660', { stroke: L31.pay, 'stroke-width': 5 }, { d: 0 }), m('non', 2), .8);
+    hmSay(p, 'no motivation or no challenge to do more', 440, 470, m('non', 2.5), { size: 22, fill: COL.dim });
+    draw(path(p, 'M930 440L1020 400L1040 410L1130 370L1150 380L1240 340L1260 350L1370 310', { stroke: L31.promo, 'stroke-width': 5 }, { d: 0 }), m('comp', 2), 1.4);
+    hmSay(p, 'meets, exceeds, promoted, meets again', 1160, 470, m('comp', 3), { size: 22, fill: COL.dim });
+    hmSay(p, 'the person Dr. Peter wrote about', 1160, 510, m('peter'), { size: 22, fill: L31.promo, weight: 600 });
+    hmSay(p, 'No real choice: keep promoting achievers.', 800, 600, m('nochoice'), { size: 30, weight: 700 });
+    hmSay(p, 'Meets half the time, but at ever harder jobs.', 800, 660, m('half'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Keep promoting achievers: meets at a harder job is growth.', m('half', 3.5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-kind', prompt: ['Noncompetitor or competitor? (Illustrative.)'],
+    build: grid([
+      { parts: ['A technician who has met requirements for years and wants no more scope'], ans: ['n'], why: 'Settled and satisfied: no motivation to do more.' },
+      { parts: ['A new lead, promoted after two “exceeds” years, now at “meets” in a harder role'], ans: ['c'], why: 'Back to meets after a promotion: the competitor’s cycle.' },
+      { parts: ['A specialist at “meets” who hasn’t been offered a new challenge in years'], ans: ['n'], why: 'Facing no challenge to do more makes a noncompetitor.' },
+      { parts: ['An engineer who exceeded in verification, moved up to run it, and now meets'], ans: ['c'], why: 'Promoted at exceeds, meets in the harder job.' },
+    ], [['n', 'Noncompetitor', L31.pay, 'N'], ['c', 'Competitor', L31.promo, 'C']], { multi: false, text: true }),
+  }], done) }],
+
+  ['over', 'Promoted too far', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When a promotion goes too far');
+    hmBox(p, 420, 300, 460, 120, COL.good, .3, 'Old job', { size: 30, fill: COL.good, sub: ['did it well'] });
+    hmBox(p, 1180, 300, 460, 120, COL.bad, .4, 'New job', { size: 30, fill: COL.bad, sub: ['below average for too long'] });
+    hmArrow(p, 660, 260, 940, 260, L31.promo, .5, .5);
+    hmSay(p, 'promoted', 800, 240, .5, { size: 22, fill: L31.promo, weight: 600 });
+    hmArrow(p, 940, 345, 660, 345, COL.good, m('recycle'), .6);
+    hmSay(p, 'recycle', 800, 385, m('recycle', .3), { size: 26, fill: COL.good, weight: 700 });
+    l31Chip(p, 'often seen as a personal failure', 450, 480, COL.bad, m('fail'), 440);
+    l31Chip(p, 'in fact, management misjudged readiness', 1150, 480, COL.chalk, m('mgmt'), 540);
+    l31Chip(p, 'usual practice: push out, “better for him”', 800, 580, COL.bad, m('forced'), 560);
+    pop(hmCross(p, 1110, 580, COL.bad, 16), m('wrong'));
+    hmSay(p, 'Grove: dead wrong', 1150, 585, m('wrong', .3), { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+    hmRule(p, 'Recycle, don’t push out. The misjudgment was management’s.', m('wrong', 2.5), 745);
+  }],
+
+  ['recycle', 'How to recycle', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Recycling, done well');
+    [['Face up to management’s own error', ''], ['Place them in a job they can do', 'place'], ['Support them through the embarrassment', 'support'], ['Do it openly: it fades quickly', 'open']].forEach(([s, k], i) => {
+      const t = k ? m(k) : .4;
+      const b = mk('rect', { x: 150, y: 196 + i * 80, width: 26, height: 26, rx: 4, fill: 'none', stroke: COL.good, 'stroke-width': 3 }, p); put(b, { o: 0 }); show(b, t);
+      hmSay(p, s, 196, 218 + i * 80, t, { size: 28, anchor: 'start', weight: 500 });
+    });
+    const steps = [['did well in Job 1', COL.good], ['promoted too soon', COL.bad], ['recycled to Job 1', L31.pay], ['confidence back', L31.pay], ['promoted again: likely succeeds', COL.good]];
+    steps.forEach(([s, c], i) => {
+      const t = i < 3 ? .5 + i * .3 : i === 3 ? m('result') : m('again');
+      if (i) hmArrow(p, 1220, 158 + i * 90, 1220, 178 + i * 90, COL.dim, t - .2, .2);
+      l31Chip(p, s, 1220, 200 + i * 90, c, t, 460);
+    });
+    hmSay(p, 'A person doing work we know they do well.', 560, 600, m('result'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Recycle openly, support them, and they can rise again.', m('again', 5), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-recycle', prompt: ['Six months after being promoted to lead a regulatory-submission team, a strong former reviewer is clearly over his head (illustrative). What does Grove advise?'],
+    build: choice([['Let him go, for his own sake'], ['Recycle him openly into the reviewer role and support him'], ['Leave him there: the Peter Principle says it is inevitable']], 1,
+      'Management misjudged his readiness. Own it, put him where he did well, and he may rise again.',
+      ['Grove calls forcing him out “dead wrong”: the error was management’s.', null, 'Too long below average hurts him and the team. Recycling is the fix.']),
+  }], done) }],
+
+  ['honest', 'Honest ratings, honest pay', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The chapter in one picture');
+    hmBox(p, 330, 260, 400, 110, COL.chalk, m('ratings'), 'Honest ratings', { size: 30, sub: ['the performance review'] });
+    hmBox(p, 800, 260, 400, 110, COL.rat, m('pay'), 'Honest merit pay', { size: 30, fill: COL.rat, sub: ['bonus, base salary, ranking'] });
+    hmBox(p, 1270, 260, 400, 110, L31.promo, m('promos'), 'Promotions', { size: 30, fill: L31.promo, sub: ['on performance, in full view'] });
+    [330, 800, 1270].forEach((x, i) => hmArrow(p, x, 320, 800 + (x - 800) * .3, 470, COL.dim, m('result', i * .2), .5));
+    hmBox(p, 800, 530, 720, 110, COL.good, m('result', .8), 'Performance valued for its own sake', { size: 32, fill: COL.good, sub: ['throughout the organization'] });
+    hmRule(p, 'Honest ratings and honest pay make performance valued for itself.', m('result', 4), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 31 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Promotions signal values: base them on performance.', 'w1'], ['Achievers cycle: meets, exceeds, promotion, meets.', 'w2'], ['Hold an exceeds performer back and they atrophy.', 'w3'], ['Overshot? Recycle them openly; own the error.', 'w4'], ['Honest ratings and pay: performance valued for itself.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-visible', prompt: ['Your team sees a well-liked but average engineer promoted over a stronger one (illustrative). What does the team learn?'],
+      build: choice([['That performance is what counts here'], ['That something other than performance gets rewarded'], ['Nothing: promotions are a private matter']], 1,
+        'Promotions are highly visible; each one tells people what the company values.',
+        ['The promotion went to the weaker performer, so the message is the opposite.', null, 'Promotions are among the most visible decisions a manager makes.']) },
+    { id: 'p-peter', prompt: ['A peer says: “Why promote her? She’ll just reach her level of incompetence.” What is Grove’s answer?'],
+      build: choice([['Agree: keep good people where they excel'], ['Promote anyway: she may meet requirements half the time, but at ever harder jobs'], ['Promote only people already at “meets”']], 1,
+        'There is no real alternative: promotion drives people toward higher performance.',
+        ['Held back, an achiever atrophies back to meets.', null, 'Promotion follows exceeding requirements, not meeting them.']) },
+    { id: 'p-meets', prompt: ['Two reports both rate “meets.” One was just promoted into a harder clinical-operations role; the other has done the same job for years with no new challenge. Who is the competitor?'],
+      build: choice([['The newly promoted one'], ['The long-serving one'], ['Neither: the ratings are the same']], 0,
+        'Meets right after a promotion is the competitor’s cycle; the other may have become a noncompetitor.',
+        [null, 'Settled with no challenge describes the noncompetitor.', 'Same rating, different stories: Grove separates the two kinds.']) },
+    { id: 'p-hold', prompt: ['Your best verification engineer has exceeded requirements for two years, but you keep her in place because she is hard to replace (illustrative). What is Grove’s warning?'],
+      build: choice([['She will likely atrophy back to “meets”'], ['None: stability helps the team'], ['Pay her more and the problem is solved']], 0,
+        'Without more work and greater challenge, an exceeds performer slips back and stays there.',
+        [null, 'It wastes a person the company already has.', 'Pay alone does not give the greater challenge she needs.']) },
+    { id: 'p-recycle', prompt: ['A manager has been recycled to his old role and feels embarrassed. If it is done openly, what does Grove expect?'],
+      build: choice([['The embarrassment is short-lived, and he may later be promoted again and succeed'], ['He will never recover, so it is kinder to let him go'], ['Keep the move quiet so the team doesn’t notice']], 0,
+        'Openly done, the embarrassment fades fast; with confidence back, the second promotion often works.',
+        [null, 'Grove calls pushing him out dead wrong.', 'Openness is what makes the embarrassment short-lived.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The blast, the ace, and other practices</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 27, title: 'The blast, the ace, and other practices', kicker: 'Chapter 13 · Lesson 3', minutes: 12, language: 'en', silent: true, next: '../ch28/index.html' };
+
+/* Colours: red = a problem (the early stages, outcomes that fail); amber = the limiting step
+   (assuming responsibility) and the rule; green = the goal or a good result; blue = ordinary work. */
+function l27Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l27Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l27Doc(p, x, y, w, h, color, lines, t0) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 6, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  for (let j = 0; j < lines; j++) mk('rect', { x: x - w / 2 + w * .14, y: y - h / 2 + h * .16 + j * h * .7 / lines, width: w * (j % 3 === 2 ? .45 : .72), height: Math.max(3, h * .04), rx: 2, fill: COL.faint }, g);
+  show(g, t0); return g;
+}
+function l27Check(p, x, y, color, t0) {
+  const g = G(p, { x, y, o: 0 });
+  mk('circle', { r: 22, fill: '#1d2b27', stroke: color, 'stroke-width': 3 }, g);
+  path(g, 'M-10 0L-3 8L11 -8', { stroke: color, 'stroke-width': 5, fill: 'none' });
+  pop(g, t0); return g;
+}
+// The stairs of problem-solving (after Grove's figure): tread i from x 260+220i at y 620−90i.
+const L27_ST = [['Ignore'], ['Deny'], ['Blame others'], ['Assume', 'responsibility'], ['Find solution']];
+const L27_C = [COL.bad, COL.bad, COL.bad, COL.task, COL.good];
+const l27X = i => 260 + i * 220 + 110, l27Y = i => 620 - i * 90;
+function l27Stairs(p, t0, labelT) {
+  draw(path(p, 'M260 620H480V530H700V440H920V350H1140V260H1360', { stroke: COL.dim, 'stroke-width': 4 }, { d: 0 }), t0, 1);
+  L27_ST.forEach((ls, i) => { if (labelT[i] !== undefined) hmLines(p, ls, l27X(i), l27Y(i) - 16 - (ls.length - 1) * 30, labelT[i], { size: 24, fill: L27_C[i], weight: 700, lh: 30 }); });
+}
+
+const BEATS = [
+  ['intro', 'The blast, the ace, and other practices', (m, D) => hmTitle(m, D, 'Chapter 13 · Performance Appraisal: Manager as Judge and Jury · Lesson 3 of 3', 'The blast and the ace', 'The two hardest reviews, and the practical questions around every review')],
+
+  ['blast', 'The blast', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The blast: a big performance problem');
+    l27Stairs(p, m('stairs'), [m('ign'), m('deny'), m('blame')]);
+    const w = l27Person(p, l27X(0), l27Y(0) - 70, COL.chalk, .8); show(w, m('ign', .3));
+    tw(w, { x: l27X(1), y: l27Y(1) - 70 }, m('deny', .5), .7);
+    tw(w, { x: l27X(2), y: l27Y(2) - 70 }, m('blame', 1), .7);
+    hmSay(p, 'after Grove’s figure', 1360, 650, m('stairs'), { size: 18, fill: COL.faint, anchor: 'end' });
+    l27Chip(p, 'facts and examples', 370, 690, COL.whole, m('ign', 3), 280);
+    hmSay(p, 'active denial is progress', 590, 600, m('deny', 2), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmSay(p, '“a problem, but not mine”', 715, 500, m('blame', 2), { size: 22, fill: COL.bad, anchor: 'start' });
+    hmRule(p, 'Facts and examples move them up the first steps.', m('blame', 7), 760);
+  }],
+
+  ['step', 'The biggest step', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The biggest step: “it is my problem”');
+    l27Stairs(p, .2, [.3, .3, .3, m('resp'), m('sol')]);
+    const w = l27Person(p, l27X(2), l27Y(2) - 70, COL.chalk, .8); show(w, .3);
+    draw(path(p, 'M920 440V350', { stroke: COL.task, 'stroke-width': 8 }, { d: 0 }), m('resp', .3), .5);
+    tw(w, { x: l27X(3), y: l27Y(3) - 110 }, m('resp', 1.5), .7);
+    hmLines(p, ['my problem →', 'I must act →', 'a lot of work'], 1450, 400, m('work'), { size: 22, fill: COL.task, anchor: 'end', lh: 30 });
+    hmSay(p, 'emotional step', 940, 400, m('emo'), { size: 22, fill: COL.task, weight: 600, anchor: 'start' });
+    hmSay(p, 'intellectual: easier', 1160, 310, m('emo', 4), { size: 22, fill: COL.good, anchor: 'start' });
+    hmLines(p, ['you: get them to responsibility', 'together: find the solution'], 300, 220, m('job'), { size: 24, fill: COL.chalk, anchor: 'start' });
+    hmSay(p, 'track the stage; solutions while they blame go nowhere', 800, 690, m('track'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Know which step you’re on. Don’t jump ahead.', m('track', 5), 760);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-stage', prompt: ['Which stage does each remark show? (illustrative)'],
+    build: grid([
+      { parts: ['“There is nothing wrong with my test documentation.”'], ans: ['d'], why: 'Active denial: progress over ignoring, but not there yet.' },
+      { parts: ['“The audit failed because the lab’s fixtures were bad.”'], ans: ['b'], why: 'A problem is admitted, but it is someone else’s.' },
+      { parts: ['“My test plans were incomplete. That’s on me.”'], ans: ['r'], why: 'The emotional step: it is my problem.' },
+      { parts: ['“What if I add a peer check before each release?”'], ans: ['s'], why: 'Finding the solution, the easier, intellectual step.' },
+    ], [['d', 'Deny', COL.bad, 'D'], ['b', 'Blame others', COL.bad, 'B'], ['r', 'Responsibility', COL.task, 'R'], ['s', 'Solution', COL.good, 'S']], { multi: false, text: true }),
+  }], done) }],
+
+  ['outcomes', 'Three outcomes', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Three ways a blast can end');
+    hmSay(p, 'agrees with', 820, 200, .3, { size: 22, fill: COL.dim }); hmSay(p, 'the assessment', 820, 226, .3, { size: 22, fill: COL.dim });
+    hmSay(p, 'commits to', 1080, 200, .3, { size: 22, fill: COL.dim }); hmSay(p, 'the cure', 1080, 226, .3, { size: 22, fill: COL.dim });
+    const R = [['one', 'Outcome one', true, true], ['two', 'Outcome two', false, true], ['three', 'Outcome three', false, false]];
+    R.forEach(([k, s, a, c], i) => {
+      const y = 300 + i * 100;
+      hmSay(p, s, 600, y + 8, m(k), { size: 28, weight: 600, anchor: 'end' });
+      a ? l27Check(p, 820, y, COL.good, m(k, .6)) : pop(hmCross(p, 820, y, COL.bad, 14), m(k, .6));
+      c ? l27Check(p, 1080, y, COL.good, m(k, 1.2)) : pop(hmCross(p, 1080, y, COL.bad, 14), m(k, 1.2));
+      hmSay(p, c ? 'acceptable' : 'not acceptable', 1220, y + 8, m('ok', 1 + i * .5), { size: 24, fill: c ? COL.good : COL.bad, weight: 700, anchor: 'start' });
+    });
+    hmSay(p, 'Seek agreement, up to a point.', 800, 600, m('agree'), { size: 26 });
+    hmSay(p, 'Don’t confuse emotional comfort with operational need.', 800, 660, m('comfort'), { size: 28, weight: 600 });
+    hmRule(p, 'A commitment to act is enough.', m('comfort', 4), 745);
+  }],
+
+  ['convince', '“You’ll never convince me”', (m) => {
+    const p = panel(0);
+    hmHead(p, 'One of Grove’s first reviews');
+    show(l27Person(p, 330, 360, COL.chalk, 1.3), .3); show(l27Person(p, 1270, 360, COL.whole, 1.3), .4);
+    hmSay(p, 'Grove', 330, 440, .3, { size: 22, fill: COL.dim }); hmSay(p, 'his report', 1270, 440, .4, { size: 22, fill: COL.dim });
+    [0, 1, 2].forEach(i => hmArrow(p, 420, 300 + i * 40, 640 + i * 60, 300 + i * 40, COL.chalk, m('push', .5 + i * .6), .4));
+    hmSay(p, 'persuading, again and again', 560, 240, m('push', .5), { size: 22, fill: COL.dim });
+    hmLines(p, ['“You’ll never convince me.', 'But why do you need to?', 'I’ve already said I’ll do it.”'], 1000, 280, m('andy'), { size: 26, fill: COL.whole, weight: 600, lh: 38 });
+    hmSay(p, 'paraphrased', 1000, 410, m('andy'), { size: 18, fill: COL.faint });
+    hmSay(p, 'His insistence served his own comfort, not the business.', 800, 580, m('shut', 3), { size: 28, weight: 600 });
+    hmRule(p, 'You need their commitment, not their agreement.', m('shut', 7), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-commit', prompt: ['After a tough review, your report says: “I still think the rating is unfair, but I’ll follow the plan to clear my verification backlog.” Is that enough? (illustrative)'],
+    build: choice([['No: keep going until she agrees'], ['Yes: a commitment to act is acceptable; now monitor it'], ['No: refer it to HR as unresolved']], 1,
+      'Any outcome with a commitment to action is acceptable. Agreement would be nicer, not necessary.',
+      ['That confuses your emotional comfort with what the work needs.', null, 'Nothing is unresolved: she has committed to the course of action.']),
+  }], done) }],
+
+  ['power', 'When you must insist', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Stuck at blame? Use your role');
+    show(l27Person(p, 230, 290, COL.chalk, 1.2), m('role'));
+    hmLines(p, ['“You may be right, or I may be.', 'But I am required to instruct you,', 'and this is what I want you to do.”'], 290, 240, m('role', .5), { size: 24, anchor: 'start', lh: 34 });
+    l27Chip(p, 'secure commitment', 360, 420, COL.good, m('mon'), 280);
+    l27Chip(p, 'monitor against it', 360, 490, COL.good, m('mon', 1.2), 280);
+    hmSay(p, 'Grove’s own case:', 1150, 200, m('story'), { size: 24, weight: 700 });
+    l27Doc(p, 940, 330, 110, 140, COL.bad, 4, m('story', .5));
+    hmSay(p, 'superficial review', 940, 430, m('story', .5), { size: 20, fill: COL.bad });
+    hmArrow(p, 1010, 330, 1100, 330, COL.dim, m('insist'), .4);
+    hmSay(p, '“I want you to do it.”', 1060, 520, m('insist'), { size: 22, fill: COL.task, weight: 600 });
+    l27Doc(p, 1170, 330, 110, 140, COL.good, 8, m('okay'));
+    hmSay(p, 'rewritten well', 1170, 430, m('okay'), { size: 20, fill: COL.good });
+    hmArrow(p, 1240, 330, 1330, 330, COL.dim, m('okay', 2), .4);
+    show(l27Person(p, 1390, 340, COL.whole), m('okay', 2.3));
+    hmSay(p, 'his report', 1390, 430, m('okay', 2.3), { size: 20, fill: COL.dim });
+    hmSay(p, 'the integrity of the system mattered more to Grove', 1150, 570, m('insist', 2), { size: 20, fill: COL.dim });
+    hmRule(p, 'If stuck, use your authority, then monitor.', m('okay', 6), 745);
+  }],
+
+  ['ace', 'Reviewing the ace', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Reviewing the ace');
+    for (let i = 0; i < 5; i++) l27Doc(p, 240 + i * 80, 260, 60, 80, COL.good, 3, m('twenty', .3 + i * .15));
+    hmSay(p, 'about twenty managers’ own reviews', 400, 340, m('twenty'), { size: 20, fill: COL.dim });
+    hmSay(p, 'high, well written…', 400, 380, m('high'), { size: 22, fill: COL.good });
+    hmSay(p, '…but looking back, not forward', 400, 415, m('retro'), { size: 22, fill: COL.bad, weight: 600 });
+    // where improvement effort goes (schematic)
+    path(p, 'M860 420H1340', { stroke: COL.faint, 'stroke-width': 2 });
+    hmSay(p, 'effort spent on improving', 1100, 200, m('poor'), { size: 22, fill: COL.dim });
+    hmBarUp(p, 920, 420, 120, 30, COL.good, m('poor'), .5);
+    hmBarUp(p, 1160, 420, 120, 170, COL.bad, m('poor', .5), .6);
+    hmSay(p, 'stars', 980, 450, m('poor'), { size: 20, fill: COL.dim });
+    hmLines(p, ['poor performers:', 'corrective action plans'], 1220, 470, m('poor', .5), { size: 20, fill: COL.dim });
+    hmSay(p, 'reversed', 1380, 330, m('rev'), { size: 26, fill: COL.bad, weight: 700, anchor: 'start' });
+    // share of the team's work, illustrative: 1000 px = 100%
+    const sh = [['star', 40, COL.good], ['', 22, COL.whole], ['', 16, COL.whole], ['', 13, COL.whole], ['', 9, COL.whole]];
+    let x = 300;
+    sh.forEach(([n, v, c], i) => { const r = mk('rect', { x, y: 560, width: v * 10 - 4, height: 44, rx: 6, fill: c }, p); put(r, { o: 0 }); show(r, m('lev', .3 + i * .2)); x += v * 10; });
+    hmSay(p, 'one star: 40% of the work', 500, 545, m('lev', .5), { size: 20, fill: COL.good, weight: 600 });
+    hmSay(p, 'share of the team’s work (illustrative)', 1300, 635, m('lev'), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Even an ace: use hindsight to show how to do better.', 800, 690, m('room'), { size: 26 });
+    hmRule(p, 'Coach your stars too: that’s high leverage.', m('room', 4), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ace', prompt: ['A star produces 40 units of work a week, a marginal performer 10 (illustrative). Each improves by 10%. How much does each add?'],
+    build: blanks([
+      { parts: ['star: 10% of 40 = ', { box: '4' }], why: 'Four extra units from the star.', hint: 'One tenth of 40.' },
+      { parts: ['marginal: 10% of 10 = ', { box: '1' }], why: 'One unit: the same effort on the star pays four times as much.', hint: 'One tenth of 10.' },
+    ]),
+  }], done) }],
+
+  ['self', 'Self-reviews and upward reviews', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Who does the judging?');
+    l27Doc(p, 260, 280, 110, 140, COL.whole, 6, m('cheat'));
+    hmSay(p, 'your self-review', 260, 380, m('cheat'), { size: 20, fill: COL.dim });
+    hmArrow(p, 330, 280, 440, 280, COL.dim, m('cheat', 1), .4);
+    l27Doc(p, 510, 280, 110, 140, COL.whole, 6, m('cheat', 1.5));
+    hmSay(p, 'retyped: “superior”', 510, 380, m('cheat', 1.5), { size: 20, fill: COL.dim });
+    hmSay(p, 'you would feel cheated', 385, 430, m('cheat', 4), { size: 24, fill: COL.bad, weight: 700 });
+    hmLines(p, ['must you tell your boss', 'what you did? then he', 'wasn’t paying attention'], 385, 490, m('attn'), { size: 22, fill: COL.dim });
+    hmSay(p, 'A formal act of leadership:', 1150, 230, m('lead'), { size: 26, weight: 700 });
+    hmSay(p, 'commit to your own judgment, up front', 1150, 272, m('lead', 1), { size: 24, fill: COL.good });
+    show(l27Person(p, 1000, 430, COL.chalk), m('up'));
+    show(l27Person(p, 1300, 430, COL.whole), m('up'));
+    hmSay(p, 'you', 1000, 495, m('up'), { size: 20, fill: COL.dim }); hmSay(p, 'your report', 1300, 495, m('up'), { size: 20, fill: COL.dim });
+    hmArrow(p, 1250, 400, 1050, 400, COL.whole, m('up', 1), .5);
+    hmSay(p, 'their review of you: advisory', 1150, 370, m('up', 1.5), { size: 22, fill: COL.whole });
+    hmSay(p, 'you lead; never pretend you are equals', 1150, 560, m('equal'), { size: 24, fill: COL.chalk, weight: 600 });
+    hmRule(p, 'Make the judgment yourself. Upward input is advice.', m('equal', 4), 745);
+  }],
+
+  ['timing', 'When to hand it over', (m) => {
+    const p = panel(0);
+    hmHead(p, 'When should they read it?');
+    const rows = [['after', 'after', 'finds a phrase, blows up', 1], ['during', 'during', 'reads ahead; no time to think', 0], ['before', 'before', 'reads alone, digests, arrives ready', -1]];
+    rows.forEach(([k, s, note, pos], i) => {
+      const y = 230 + i * 150, t = m(k);
+      hmSay(p, s, 240, y + 8, t, { size: 28, weight: 700, anchor: 'end' });
+      path(p, `M280 ${y}H900`, { stroke: COL.faint, 'stroke-width': 3 });
+      const mt = mk('rect', { x: 540, y: y - 30, width: 140, height: 60, rx: 8, fill: COL.whole }, p); put(mt, { o: 0 }); show(mt, t);
+      if (i === 0) hmSay(p, 'meeting', 610, y - 45, t, { size: 18, fill: COL.dim });
+      l27Doc(p, 610 + pos * 200, y - (pos === 0 ? 0 : 0), 44, 56, COL.chalk, 3, m(k, .6));
+      const ok = pos < 0;
+      ok ? l27Check(p, 960, y, COL.good, m('ready')) : pop(hmCross(p, 960, y, COL.bad, 14), m(k, 2.5));
+      hmSay(p, note, 1000, y + 8, m(k, 1.5), { size: 24, fill: ok ? COL.good : COL.bad, anchor: 'start' });
+    });
+    hmSay(p, 'reading it aloud: same problem', 1000, 430, m('aloud'), { size: 20, fill: COL.dim, anchor: 'start' });
+    hmSay(p, 'ready, emotionally and rationally', 1000, 570, m('ready', .5), { size: 20, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'Hand over the written review before you meet.', m('ready', 4), 745);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-timing', prompt: ['You will review a regulatory affairs lead on Thursday. When should she get the written review? (illustrative)'],
+    build: choice([['Read it aloud to her on Thursday'], ['Some time before Thursday'], ['Email it after the meeting']], 1,
+      'Reading it privately first lets her react, reread the messages, and come ready.',
+      ['She will listen for what comes next, and have no time to think.', null, 'She may find a phrase she didn’t “hear” and blow up over it.']),
+  }], done) }],
+
+  ['hundred', 'Keep the system honest', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Keep the system honest');
+    hmSay(p, 'learn from the reviews you received', 400, 200, .3, { size: 24, fill: COL.dim });
+    hmSay(p, 'a good tradition, handed down', 400, 250, m('trad'), { size: 24, fill: COL.good });
+    hmSay(p, 'people still need prodding', 400, 300, m('prod'), { size: 24, fill: COL.bad });
+    // about a hundred reviews a year, one square each
+    for (let i = 0; i < 100; i++) {
+      const x = 860 + (i % 10) * 52, y = 190 + Math.floor(i / 10) * 40;
+      const c = i % 7 === 3 ? COL.bad : i % 9 === 5 ? COL.good : COL.whole;
+      const r = mk('rect', { x, y, width: 40, height: 30, rx: 4, fill: '#16211d', stroke: COL.whole, 'stroke-width': 2 }, p); put(r, { o: 0 }); show(r, m('read', .3 + i * .03), .1);
+      if (c !== COL.whole) { const d = mk('rect', { x: x + 6, y: y + 6, width: 28, height: 18, rx: 3, fill: c }, p); put(d, { o: 0 }); show(d, m('back', i * .01), .2); }
+    }
+    hmSay(p, 'about a hundred a year', 1110, 620, m('read'), { size: 24, weight: 600 });
+    hmSay(p, 'his reports’ and a random sample', 1110, 655, m('read', 1), { size: 20, fill: COL.dim });
+    hmSay(p, 'sent back for a rewrite', 400, 420, m('back'), { size: 24, fill: COL.bad, weight: 600 });
+    hmSay(p, 'or with a compliment', 400, 465, m('back', .8), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, 'loudly and visibly', 400, 510, m('back', 2), { size: 22, fill: COL.dim });
+    hmSay(p, 'the most important task-relevant feedback', 400, 600, m('why'), { size: 24, weight: 600 });
+    hmRule(p, 'Show, visibly, that reviews matter.', m('why', 3), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 27 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Blast: move them up to “my problem”.', 'w1'], ['A commitment to act is enough.', 'w2'], ['Stuck? Use your authority, then monitor.', 'w3'], ['Coach your aces: stars are high leverage.', 'w4'], ['Judge on your own; send the review first.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-stage', prompt: ['In a tough review, a device-software engineer finally says: “Fine, the code-review backlog is my problem.” What next? (illustrative)'],
+      build: choice([['Work out the solution together'], ['Keep presenting evidence'], ['End the meeting: he admitted it']], 0,
+        'He has taken the emotional step. Finding the solution is now relatively easy, and shared.',
+        [null, 'Evidence was for the earlier stages; he is past them.', 'Admitting it is not a plan. Find the solution together.']) },
+    { id: 'p-early', prompt: ['Your report still blames the contract manufacturer for late builds. You start proposing fixes. What does Grove warn?'],
+      build: choice([['Good: solutions speed things up'], ['Nothing will happen until she assumes responsibility'], ['Let her choose a fix alone']], 1,
+        'Jumping to solutions while someone is blaming others gets nowhere. Know the stage.',
+        ['Fixes offered at the blame stage are someone else’s fixes to her.', null, 'Choosing a fix comes after responsibility, and it is shared work.']) },
+    { id: 'p-ace', prompt: ['You have limited time for development plans this cycle. How should you spend it?'],
+      build: choice([['All of it on the weakest performers'], ['Give your stars real improvement plans too'], ['Skip anyone rated superior']], 1,
+        'Stars do a disproportionate share of the work, so improving them has the greatest effect.',
+        ['That is the reversed priority Grove found.', null, 'Even an ace has room to improve.']) },
+    { id: 'p-self', prompt: ['A colleague suggests managers collect self-reviews and lightly edit them into the final review. Grove’s view?'],
+      build: choice([['Efficient and fair'], ['The manager must judge up front; a self-review can’t replace that'], ['Fine, as long as the rating is high']], 1,
+        'The review is a formal act of leadership. A prompted judgment looks false.',
+        ['People feel cheated when their own words come back as the boss’s verdict.', null, 'A high rating on borrowed words is exactly what feels hollow.']) },
+    { id: 'p-upward', prompt: ['Your report offers a frank evaluation of you as a manager. How should you treat it?'],
+      build: choice([['As binding: you are equals in this'], ['As useful input, advisory only'], ['Refuse it: it undermines you']], 1,
+        'Grove thinks it may be a good idea, as long as it is advisory. You are the leader.',
+        ['Never pretend you and your reports are equals in reviews.', null, 'Grove sees value in it; it just doesn’t carry the weight of yours.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

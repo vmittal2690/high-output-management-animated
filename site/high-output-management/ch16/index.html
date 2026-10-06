@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grove’s Law and who makes it work</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 16, title: 'Grove’s Law and who makes it work', kicker: 'Chapter 8 · Lesson 2', minutes: 11, language: 'en', silent: true, next: '../ch17/index.html' };
+
+/* Colours (as in lesson 15): blue = mission-oriented units; purple = shared functional groups; green = the goal;
+   red = a problem (central planning, overload); amber = the rule. */
+function l16Box(p, x, y, w, h, color, lines, t0, { size = 24, dash } = {}) {
+  const g = G(p, { o: 0 }), L = [].concat(lines);
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 10, fill: '#16211d', stroke: color, 'stroke-width': 3, ...(dash ? { 'stroke-dasharray': '8 6' } : {}) }, g);
+  L.forEach((s, i) => T(g, s, { x, y: y + size * .36 + (i - (L.length - 1) / 2) * size * 1.2, size, fill: color, anchor: 'middle', weight: 600 }));
+  show(g, t0); return g;
+}
+const l16Link = (p, x1, y1, x2, y2, t0, color = COL.faint) => {
+  const ym = (y1 + y2) / 2;
+  draw(path(p, `M${x1} ${y1}V${ym}H${x2}V${y2}`, { stroke: color, 'stroke-width': 2.5 }, { d: 0 }), t0, .4);
+};
+const l16Chip = (p, s, x, y, color, t0, w, size = 22) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 22, width: w, height: 44, rx: 22, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l16Person(p, x, y, color, t0, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  show(g, t0); return g;
+}
+function l16Doc(p, x, y, w, h, color, lines, t0) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  for (let j = 0; j < lines; j++) mk('rect', { x: x - w / 2 + w * .12, y: y - h / 2 + h * .26 + j * h * .66 / lines, width: w * (j % 3 === 2 ? .45 : .76), height: 6, rx: 3, fill: COL.faint }, g);
+  show(g, t0); return g;
+}
+// A film roll: a small canister.
+const l16Roll = (p, x, y, color, t0) => { const g = G(p, { x, y, o: 0 }); mk('rect', { x: -16, y: -22, width: 32, height: 44, rx: 6, fill: color }, g); mk('rect', { x: -6, y: -30, width: 12, height: 10, rx: 2, fill: color }, g); show(g, t0, .2); return g; };
+
+const BEATS = [
+  ['intro', 'Grove’s Law and who makes it work', (m, D) => hmTitle(m, D, 'Chapter 8 · Hybrid Organizations · Lesson 2 of 2', 'Grove’s Law and who makes it work', 'Why nearly every organization ends up a hybrid, and who balances it')],
+
+  ['press', 'A press release', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A young company reorganizes');
+    l16Doc(p, 250, 380, 240, 300, COL.chalk, 8, .4);
+    hmSay(p, 'press release', 250, 200, .4, { size: 22, fill: COL.dim });
+    hmSay(p, '(names changed)', 250, 560, .5, { size: 20, fill: COL.faint });
+    hmSay(p, 'three years old', 250, 600, m('young'), { size: 22, fill: COL.dim });
+    l16Box(p, 1010, 200, 240, 60, COL.chalk, 'President', m('young', .5));
+    const DX = [720, 1010, 1300], DN = ['Super System', 'Ultra System', 'Hyper System'];
+    DX.forEach((x, i) => { l16Link(p, 1010, 230, x, 290, m('young', 1 + i * .3)); l16Box(p, x, 325, 250, 70, COL.whole, [DN[i], 'division'], m('young', 1.2 + i * .3), { size: 22 }); });
+    [['a founder, who', 'ran engineering'], ['former head of sales', 'and marketing'], ['former manager of', 'product design']].forEach((l, i) => hmLines(p, l, DX[i], 395, m('heads', 1.5 + i * 1.5), { size: 19, fill: COL.dim, lh: 24 }));
+    hmSay(p, 'each division: product marketing and product development', 1010, 485, m('keep'), { size: 22, fill: COL.whole });
+    l16Box(p, 860, 570, 250, 64, COL.real, 'Sales', m('stay'), { size: 24 });
+    l16Box(p, 1160, 570, 250, 64, COL.real, 'Manufacturing', m('stay', .4), { size: 24 });
+    hmSay(p, 'stay at the corporate level, serving all three', 1010, 640, m('stay', 1.5), { size: 22, fill: COL.real });
+    hmRule(p, 'More products: divisions for each, shared functions stay.', m('why', 6), 745);
+  }],
+
+  ['law', 'Grove’s Law', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Grove’s Law');
+    const g = G(p, { o: 0 });
+    mk('rect', { x: 260, y: 200, width: 1080, height: 190, rx: 18, fill: '#16211d', stroke: COL.good, 'stroke-width': 3 }, g);
+    T(g, '“All large organizations with a common business', { x: 800, y: 280, size: 34, fill: COL.chalk, anchor: 'middle', weight: 600 });
+    T(g, 'purpose end up in a hybrid organizational form.”', { x: 800, y: 330, size: 34, fill: COL.chalk, anchor: 'middle', weight: 600 });
+    show(g, m('law'));
+    hmSay(p, 'Grove, 1983', 800, 425, m('law', 1), { size: 22, fill: COL.dim });
+    [['the breakfast factory', 330, 290], ['an army', 610, 160], ['Intel', 820, 130], ['the young company', 1080, 270]].forEach(([s, x, w], i) => l16Chip(p, s, x + 40, 520, COL.whole, m('ex', .5 + i * .6), w));
+    hmRule(p, 'A common purpose pulls large organizations into a hybrid.', m('ex', 4), 745);
+  }],
+
+  ['everywhere', 'Hybrids everywhere', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Not only in business, and not only when large');
+    const COLS = [
+      ['A school', 300, 'school', [['math, English,', 'engineering'], 'departments'], [['personnel, security,', 'library'], 'administration']],
+      ['Junior Achievement', 800, 'ja', [['each chapter picks', 'and sells a product'], 'chapters'], [['structure, paperwork,', 'rewards'], 'national office']],
+      ['A law firm', 1300, 'law2', [['each attorney’s', 'legal work'], 'attorneys'], [['stenography pool,', 'office space'], 'executive committee']],
+    ];
+    COLS.forEach(([h, x, k, mis, fun]) => {
+      const t0 = m(k), t1 = k === 'law2' ? m('comm') : m(k, 4);
+      hmSay(p, h, x, 190, t0, { size: 28, weight: 700 });
+      hmSay(p, mis[1], x, 240, t0 + .4, { size: 20, fill: COL.whole });
+      l16Box(p, x, 300, 400, 80, COL.whole, mis[0], t0 + .5, { size: 22 });
+      hmSay(p, fun[1], x, 410, t1, { size: 20, fill: COL.real });
+      l16Box(p, x, 470, 400, 80, COL.real, fun[0], t1 + .3, { size: 22 });
+    });
+    hmLines(p, ['handles only shared', 'resources, not the law'], 1300, 560, m('comm', 2.5), { size: 20, fill: COL.dim, lh: 26 });
+    hmSay(p, 'a medium-sized firm', 1300, 640, m('law2', 1), { size: 20, fill: COL.dim });
+    hmRule(p, 'Mission units plus shared services: the same shape everywhere.', m('comm', 6), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-hosp', prompt: ['A hospital is a hybrid too (illustrative). Is each part a mission unit or a shared function?'],
+    build: grid([
+      { parts: ['The cardiology service'], ans: ['m'], why: 'It pursues its own clinical mission for its own patients.' },
+      { parts: ['Central sterile processing for every operating room'], ans: ['f'], why: 'One shared service that supplies every unit.' },
+      { parts: ['The oncology clinic'], ans: ['m'], why: 'A mission unit, like a department in a school.' },
+      { parts: ['The pharmacy that serves all the wards'], ans: ['f'], why: 'A common resource each unit needs to function.' },
+    ], [['m', 'Mission unit', COL.whole, 'M'], ['f', 'Shared function', COL.real, 'F']], { multi: false, text: true }),
+  }], done) }],
+
+  ['except', 'The one exception', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The exception: the conglomerate');
+    l16Box(p, 560, 210, 280, 64, COL.chalk, 'Conglomerate', m('cong'));
+    const BX = [270, 560, 850];
+    BX.forEach((x, i) => { l16Link(p, 560, 242, x, 300, m('cong', 1 + i * .3)); l16Box(p, x, 340, 250, 80, COL.whole, [['Hotels', 'Insurance', 'Chemicals'][i], '(illustrative)'], m('cong', 1.2 + i * .3), { size: 22 }); });
+    hmSay(p, 'no common business purpose', 560, 440, m('why'), { size: 26, fill: COL.bad, weight: 600 });
+    l16Doc(p, 560, 530, 90, 100, COL.chalk, 4, m('why', 4));
+    hmSay(p, 'joined only by the profit and loss statement', 560, 620, m('why', 4.5), { size: 22, fill: COL.dim });
+    draw(path(p, 'M980 340H1050', { stroke: COL.dim, 'stroke-width': 3, 'stroke-dasharray': '6 6' }, { d: 0 }), m('inside'), .4);
+    const f = mk('rect', { x: 1060, y: 200, width: 440, height: 360, rx: 18, fill: 'none', stroke: COL.whole, 'stroke-width': 2, 'stroke-dasharray': '10 8' }, p); put(f, { o: 0 }); show(f, m('inside'));
+    hmSay(p, 'inside one business', 1280, 240, m('inside'), { size: 22, fill: COL.whole });
+    [1170, 1280, 1390].forEach((x, i) => l16Box(p, x, 320, 90, 60, COL.whole, '', m('inside', 1 + i * .2)));
+    l16Box(p, 1280, 450, 330, 60, COL.real, 'shared functions', m('inside', 2), { size: 22 });
+    hmSay(p, 'a hybrid again', 1280, 610, m('inside', 2.5), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'No common purpose, no hybrid. Inside each business: a hybrid.', m('inside', 6), 745);
+  }],
+
+  ['shift', 'Moving along the line', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Every hybrid sits somewhere on the line');
+    draw(path(p, 'M260 300H1340', { stroke: COL.dim, 'stroke-width': 5 }, { d: 0 }), .3, .8);
+    hmLines(p, ['totally', 'functional'], 260, 360, .4, { size: 24, fill: COL.real, weight: 700, lh: 30 });
+    hmLines(p, ['totally', 'mission-oriented'], 1340, 360, .4, { size: 24, fill: COL.whole, weight: 700, lh: 30 });
+    hmSay(p, 'endless points in between', 800, 360, .6, { size: 22, fill: COL.dim });
+    const d = hmDot(p, 800, 300, COL.chalk, 18); show(d, m('move'), .3);
+    tw(d, { x: 980 }, m('move', 1), .6); tw(d, { x: 640 }, m('move', 2), .8); tw(d, { x: 800 }, m('move', 3), .6);
+    tw(d, { x: 520 }, m('big', 4), .9);
+    hmLines(p, ['a big new computer:', 'centralize for scale'], 520, 220, m('big', 4.3), { size: 22, fill: COL.real, lh: 28 });
+    tw(d, { x: 1080 }, m('small', 3), 1.1);
+    hmLines(p, ['small cheap computers', 'in each unit, scale kept'], 1080, 220, m('small', 3.3), { size: 22, fill: COL.whole, lh: 28 });
+    hmBox(p, 800, 540, 760, 130, COL.good, m('mgr'), 'Most important: fit the managers', { size: 32, fill: COL.good, sub: ['move to match the styles and abilities', 'of the people running the units'] });
+    hmRule(p, 'Move along the line to fit the tools and the managers.', m('mgr', 5), 745);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-shift', prompt: ['One of your division heads is a seasoned engineering leader who could run her own test team. The other is new and leans on the shared lab. Grove’s view?'],
+    build: choice([['The structure must be identical for every division'], ['Shifting toward mission for one division can fit the managers you have'], ['Always centralize: it is cheaper']], 1,
+      'The most important reason to move between the forms is to match the styles and abilities of the managers.',
+      ['Every hybrid is unique, and it can move back and forth.', null, 'Scale is one consideration, but fit with the managers matters most.']),
+  }], done) }],
+
+  ['alloc', 'Central allocators fail', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The hybrid’s central task');
+    hmBox(p, 800, 210, 1000, 100, COL.good, m('task'), 'Allocate shared resources well and on time', { size: 30, fill: COL.good, sub: ['and settle the conflicts that allocation creates'] });
+    l16Box(p, 300, 420, 320, 90, COL.bad, ['central planning', 'office'], m('hung'), { size: 24 });
+    hmSay(p, 'Hungary, where Grove once lived', 300, 510, m('hung', .5), { size: 22, fill: COL.dim });
+    // winter shelf: empty
+    path(p, 'M640 480H960', { stroke: COL.chalk, 'stroke-width': 4 });
+    hmSay(p, 'winter', 800, 330, m('film'), { size: 26, weight: 700 });
+    hmLines(p, ['he needs high-contrast', 'film: none anywhere'], 800, 380, m('film', 2), { size: 22, fill: COL.bad, lh: 28 });
+    pop(hmCross(p, 800, 448, COL.bad, 14), m('film', 3));
+    // summer shelf: piled with high-contrast film, ordinary film short
+    path(p, 'M1080 480H1480', { stroke: COL.chalk, 'stroke-width': 4 });
+    hmSay(p, 'summer', 1280, 330, m('summer'), { size: 26, weight: 700 });
+    for (let i = 0; i < 9; i++) l16Roll(p, 1110 + i * 42, 450, COL.chalk, m('summer', .5 + i * .1));
+    for (let i = 0; i < 7; i++) l16Roll(p, 1131 + i * 42, 392, COL.chalk, m('summer', 1.4 + i * .1));
+    hmLines(p, ['waist-deep in high-contrast;', 'ordinary film short'], 1280, 530, m('summer', 2.5), { size: 22, fill: COL.bad, lh: 28 });
+    hmSay(p, 'year after year, even predictable demand was missed', 800, 640, m('year'), { size: 26, fill: COL.bad, weight: 600 });
+    hmRule(p, 'Central allocators miss even predictable demand.', m('year', 4), 745);
+  }],
+
+  ['load', 'Too much for one place', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Too many transactions for one place');
+    l16Box(p, 800, 230, 340, 80, COL.chalk, 'Top management', m('heavy', -2.5), { size: 28 });
+    hmSay(p, 'in theory: allocates resources and settles every conflict', 800, 175, m('heavy', -2), { size: 22, fill: COL.dim });
+    const UX = [240, 400, 560, 720, 880, 1040, 1200, 1360];
+    UX.forEach((x, i) => l16Box(p, x, 600, 120, 60, COL.whole, '', m('heavy', -1 + i * .08)));
+    hmSay(p, 'units', 800, 660, m('heavy', -.5), { size: 20, fill: COL.whole });
+    let r = 5; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280;
+    for (let i = 0; i < 40; i++) {
+      const x0 = UX[i % 8], d = hmDot(p, x0, 560, COL.bad, 7);
+      show(d, m('heavy', .2 + i * .07), .1);
+      tw(d, { x: 640 + rnd() * 320, y: 290 + rnd() * 90 }, m('heavy', .2 + i * .07), .7);
+    }
+    hmSay(p, 'in practice: far too heavy', 800, 440, m('heavy', 3.5), { size: 28, fill: COL.bad, weight: 700 });
+    hmSay(p, 'Intel run this way would resemble Hungary’s planners', 800, 500, m('intel'), { size: 24, fill: COL.dim });
+    hmRule(p, 'Resolving everything at the top cannot work.', m('intel', 4), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-load', prompt: ['Forty projects share three hardware test rigs (illustrative). A vice president proposes that the COO approve every booking. What would Grove expect?'],
+    build: choice([['It works: one person sees the whole picture'], ['The load swamps one place; managers near the rigs should settle most bookings'], ['Let projects grab rigs first come, first served']], 1,
+      'The transaction load is far too heavy for one place. The answer is managers close to the resource.',
+      ['That is the central planner’s logic, and it missed even predictable demand.', null, 'Grabbing turns into the open competition that wastes time and energy.']),
+  }], done) }],
+
+  ['middle', 'Middle managers make it work', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The answer: middle managers');
+    const PX = [220, 380, 540, 700, 860, 1020, 1180, 1340];
+    PX.forEach((x, i) => l16Person(p, x, 260, COL.good, m('many', .3 + i * .1), .9));
+    hmSay(p, '1  numerous enough to cover the whole operation', 800, 350, m('many', 1), { size: 26, weight: 600 });
+    hmSay(p, '2  close to the problem: they make and use the resources', 800, 410, m('close'), { size: 26, weight: 600 });
+    hmSay(p, 'to succeed at this high-leverage task:', 800, 490, m('two'), { size: 24, fill: COL.dim });
+    hmBox(p, 500, 580, 520, 100, COL.good, m('accept'), 'Accept the hybrid', { size: 28, fill: COL.good, sub: ['it is inevitable, so serve it'] });
+    hmBox(p, 1100, 580, 520, 100, COL.good, m('dual'), 'Master dual reporting', { size: 28, fill: COL.good, sub: ['the next lesson'] });
+    hmRule(p, 'Middle managers make the hybrid work.', m('dual', 4), 745);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 16 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Grove’s Law: common purpose ends in a hybrid.', 'w1'], ['Schools and small firms show it too.', 'w2'], ['Conglomerates are the one exception.', 'w3'], ['Shift the mix to fit the tools and managers.', 'w4'], ['Not central planners: middle managers.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-reorg', prompt: ['Your device startup now has three product lines. The CEO gives each line its own product development and marketing, but keeps regulatory and manufacturing central. What is this?'],
+      build: choice([['A sign the company is confused'], ['The usual path to a hybrid as a product line grows'], ['A move to a totally functional form']], 1,
+        'Exactly the press-release pattern: product divisions for the missions, shared functions kept central.',
+        ['Grove argues this mix is where nearly every growing company ends up.', null, 'Giving each line its own development and marketing moves toward mission, not away from it.']) },
+    { id: 'p-cong', prompt: ['Which organization is most likely to be totally mission-oriented at the top?'],
+      build: choice([['A medical device maker with three product lines'], ['A university medical center'], ['A holding company that owns a hospital chain, a software firm and a shipping line']], 2,
+        'With no common business purpose, its businesses are tied only by the profit and loss statement.',
+        ['Its product lines share a business purpose, so they share functions too.', 'Its departments share administration and common resources: a hybrid.', null]) },
+    { id: 'p-alloc', prompt: ['Five clinical programs share a pool of study coordinators, and the programs clash over them every week. Who should settle most of these clashes?'],
+      build: choice([['The CEO, so the decision is consistent'], ['Middle managers close to the programs and the pool'], ['Nobody: let the programs sort it out by competing']], 1,
+        'Middle managers are numerous and close to where resources are made and used.',
+        ['That piles the transaction load on one place, like a central planner.', null, 'Open competition for shared resources wastes time and adds no output.']) },
+    { id: 'p-shift', prompt: ['Your company replaces one central data cluster with cloud tools each product team runs itself, at no loss of scale. What is this?'],
+      build: choice([['A practical move along the line, toward mission'], ['A break with the hybrid form'], ['A mistake: centralizing is always better']], 0,
+        'Organizations shift between the poles for practical reasons, as with Grove’s large and small computers.',
+        [null, 'It is still a hybrid; it has just moved along the line.', 'When scale is not lost, putting tools in the mission units makes sense.']) },
+    { id: 'p-predict', prompt: ['A central planning team runs short of sterile packaging every December, although the spike comes every year. What does Grove’s film story suggest?'],
+      build: choice([['Hire more central planners'], ['Accept shortages as unavoidable'], ['Move the decisions closer to the people who make and use the supplies']], 2,
+        'Allocators far from the work miss even predictable demand; managers close to it can respond.',
+        ['More people in one place still cannot carry the load or see local demand.', 'The demand is predictable; the problem is where the decision sits.', null]) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

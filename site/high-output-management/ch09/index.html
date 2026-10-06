@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff, review and decision meetings</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 9, title: 'Staff, review and decision meetings', kicker: 'Chapter 4 · Lesson 2', minutes: 12, language: 'en', silent: true, next: '../ch10/index.html' };
+
+/* Colours: blue = process meetings and ordinary work; purple = mission meetings; green = the goal; red = waste or a problem; amber = the rule. */
+function l9Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l9Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+// A bulleted list, one line per entry, each with its own reveal time.
+const l9List = (p, items, x, y, lh = 46, size = 24, fill = COL.chalk) => items.forEach(([s, t], i) => hmSay(p, '•  ' + s, x, y + i * lh, t, { size, fill, anchor: 'start' }));
+
+/* ---------- Grove's example agenda (book p. 86), re-drawn: 8 px per minute from 11:00 ---------- */
+const L9_AG = [[0, 30, ['manufacturing', 'considerations'], 'plant manager'], [30, 30, ['construction', 'considerations'], 'construction mgr'], [60, 45, ['alternatives and', 'preferred choice'], 'construction mgr'], [105, 15, ['open', 'discussion'], 'all']];
+const L9X = min => 320 + min * 8;
+
+const BEATS = [
+  ['intro', 'Staff, review and decision meetings', (m, D) => hmTitle(m, D, 'Chapter 4 · Meetings: The Medium of Managerial Work · Lesson 2 of 2', 'Staff, review and decision meetings', 'Staff meetings, operation reviews, and meetings called to decide')],
+
+  ['staff', 'Staff meetings', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Staff meetings: peers at one table');
+    const mgr = l9Person(p, 800, 220, COL.chalk); show(mgr, .3);
+    hmSay(p, 'you', 860, 230, .3, { size: 22, fill: COL.dim, anchor: 'start' });
+    const xs = [520, 660, 800, 940, 1080];
+    xs.forEach((x, i) => { const r = l9Person(p, x, 370, COL.whole, .8); show(r, .4 + i * .08); draw(path(p, `M800 250L${x} 336`, { stroke: COL.faint, 'stroke-width': 2 }, { d: 0 }), .5, .4); });
+    const tp = m('peers');
+    for (let i = 0; i < 4; i++) draw(path(p, `M${xs[i] + 24} 400Q${xs[i] + 70} 440 ${xs[i + 1] - 24} 400`, { stroke: COL.good, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, { d: 0 }), tp + i * .3, .4);
+    hmSay(p, 'peers learning to work, and decide, together', 800, 480, tp + 1.4, { size: 26, fill: COL.good, weight: 600 });
+    l9Chip(p, 'view A', 640, 560, COL.whole, m('oppose'), 130); l9Chip(p, 'view B', 960, 560, COL.whole, m('oppose', .3), 130);
+    hmSay(p, '⇄', 800, 572, m('oppose', .5), { size: 36 });
+    hmSay(p, 'two sides argued teach you more than one', 800, 625, m('oppose', 1.5), { size: 24, fill: COL.dim });
+    hmSay(p, 'Grove’s research group: peers knew each other’s work better than he did.', 800, 680, m('lab'), { size: 24 });
+    hmRule(p, 'Staff meetings are where peers learn to work together.', m('lab', 6), 750);
+  }],
+
+  ['staffwhat', 'What to discuss', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Anything that affects more than two people', 800, 130, .2, { size: 36, weight: 700 });
+    const tb = mk('circle', { cx: 700, cy: 330, r: 90, fill: '#16211d', stroke: COL.faint, 'stroke-width': 3 }, p); put(tb, { o: 0 }); show(tb, .3);
+    const seats = [0, 1, 2, 3, 4, 5].map(i => { const a = i / 6 * 2 * Math.PI - Math.PI / 2; const d = hmDot(p, 700 + 140 * Math.cos(a), 330 + 140 * Math.sin(a), COL.whole, 16); show(d, .4 + i * .08); return d; });
+    const tb2 = m('break');
+    l9Chip(p, 'a problem only we have…', 1020, 210, COL.bad, m('two', 2), 340);
+    tw(seats[0], { x: 1180, y: 330 }, tb2 + .6, .9, io); tw(seats[1], { x: 1240, y: 330 }, tb2 + .6, .9, io);
+    hmSay(p, 'continue later', 1210, 390, tb2 + 1.4, { size: 22, fill: COL.dim });
+    const doc = G(p, { o: 0 });
+    mk('rect', { x: 380, y: 480, width: 140, height: 170, rx: 8, fill: '#16211d', stroke: COL.chalk, 'stroke-width': 3 }, doc);
+    for (let j = 0; j < 6; j++) mk('rect', { x: 400, y: 504 + j * 22, width: j % 3 === 2 ? 60 : 100, height: 6, rx: 3, fill: COL.faint }, doc);
+    show(doc, m('agenda'));
+    hmLines(p, ['agenda, sent', 'early enough to prepare'], 560, 550, m('agenda', .4), { size: 24, anchor: 'start' });
+    l9Chip(p, 'open session: anything', 1150, 530, COL.good, m('open'), 320);
+    hmSay(p, 'housekeeping, or a first look at a big issue', 1150, 600, m('open', 2), { size: 22, fill: COL.dim });
+    hmRule(p, 'A controlled agenda, plus an open session.', m('open', 5), 750);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-two', prompt: ['In your staff meeting, two engineers start debugging a test fixture that only they use. What should you do?'],
+    build: choice([['Let them finish: it is real work'], ['Break it off and ask them to continue after the meeting'], ['Join in and help them solve it']], 1,
+      'Staff time is for issues that affect more than two people. Theirs can wait for later.',
+      ['Everyone else is now waiting on a problem that is not theirs.', null, 'That makes it worse: now three people are in a two-person conversation.']),
+  }], done) }],
+
+  ['role', 'Your role', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Your role in the staff meeting');
+    [['leader', 230, 130], ['observer', 420, 150], ['expediter', 620, 160], ['questioner', 830, 170], ['decision-maker', 1060, 210]].forEach(([s, x, w], i) => l9Chip(p, s, x, 200, COL.good, m('roles', .3 + i * .6), w));
+    const lc = l9Chip(p, 'lecturer', 1310, 200, COL.bad, m('lect'), 150);
+    draw(path(p, 'M1240 200H1380', { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), m('lect', .5), .3);
+    // active / inactive, re-drawn from Grove's figure
+    const tc = m('chart');
+    hmSay(p, 'keeping the discussion on track', 700, 310, tc, { size: 22, fill: COL.dim });
+    hmSay(p, 'working the issues', 1100, 310, tc, { size: 22, fill: COL.dim });
+    hmSay(p, 'you', 480, 378, tc, { size: 26, weight: 600, anchor: 'end' });
+    hmSay(p, 'your reports', 480, 478, m('subs'), { size: 26, weight: 600, anchor: 'end' });
+    const cell = (x, y, on, t) => { const r = mk('rect', { x, y, width: 360, height: 80, rx: 10, fill: on ? COL.good : '#26362f', stroke: COL.faint, 'stroke-width': 2 }, p); put(r, { o: 0 }); show(r, t); };
+    cell(520, 340, true, tc + .3); cell(920, 340, false, tc + .3);
+    cell(520, 440, false, m('subs', .3)); cell(920, 440, true, m('subs', .3));
+    [[700, 390, tc + .3], [1100, 390, tc + .3], [700, 490, m('subs', .3)], [1100, 490, m('subs', .3)]].forEach(([x, y, t], i) => hmSay(p, [1, 0, 0, 1][i] ? 'active' : 'quiet', x, y, t, { size: 24, fill: [1, 0, 0, 1][i] ? COL.board : COL.dim, weight: 600 }));
+    hmSay(p, 'Like a family at dinner, not strangers deciding together.', 800, 620, m('family'), { size: 26 });
+    hmRule(p, 'Moderate the meeting; let your reports work the issues.', m('family', 4.5), 750);
+  }],
+
+  ['opreview', 'Operation reviews', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Operation reviews: teaching across levels');
+    [[230, 'senior manager'], [380, 'their manager'], [530, 'presenters']].forEach(([y, s]) => { path(p, `M300 ${y + 30}H1400`, { stroke: COL.faint, 'stroke-width': 2, 'stroke-dasharray': '6 8' }); hmSay(p, s, 280, y + 8, .3, { size: 22, fill: COL.dim, anchor: 'end' }); });
+    const sr = l9Person(p, 700, 230, COL.chalk); show(sr, .3);
+    const pr = l9Person(p, 560, 530, COL.whole); show(pr, m('pres'));
+    const peers = [1100, 1200, 1300].map((x, i) => { const q = l9Person(p, x, 530, COL.dim, .8); show(q, m('pres', 1 + i * .15)); return q; });
+    hmSay(p, 'peers from other groups', 1200, 590, m('pres', 1.4), { size: 22, fill: COL.dim });
+    hmArrow(p, 590, 490, 680, 270, COL.whole, m('pres', .4), .6);
+    hmSay(p, 'their work', 560, 400, m('pres', .8), { size: 22, fill: COL.whole, anchor: 'end' });
+    hmArrow(p, 730, 270, 640, 490, COL.good, m('junior'), .6);
+    hmSay(p, 'comments, criticism, suggestions', 720, 420, m('junior', .4), { size: 22, fill: COL.good, anchor: 'start' });
+    hmSay(p, 'a feel for the details', 780, 230, m('senior'), { size: 22, fill: COL.whole, anchor: 'start' });
+    hmSay(p, 'motivation: a good impression on the boss’s boss', 800, 660, m('motiv'), { size: 26, fill: COL.chalk });
+    hmRule(p, 'Operation reviews keep teaching going across levels.', m('motiv', 3), 750);
+  }],
+
+  ['organizer', 'Organizer and reviewer', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Every player has a job');
+    hmBox(p, 430, 200, 600, 80, COL.whole, m('org'), 'Organizer: the presenters’ manager', { size: 26 });
+    l9List(p, [['chooses the issues and the level of detail', m('org', 2)], ['handles room, visuals and invitations', m('org', 5)], ['keeps time, with quiet signals', m('time')]], 150, 300);
+    hmBox(p, 1170, 200, 600, 80, COL.good, m('rev'), 'Reviewer: the senior manager', { size: 26 });
+    l9List(p, [['asks questions and comments', m('rev', 2)], ['sets the spirit; draws others in', m('rev', 4.5)], ['never previews the material', m('prev')], ['is a role model for the room', m('prev', 4)]], 890, 300);
+    hmRule(p, 'The organizer runs the clock; the reviewer sets the spirit.', m('prev', 7), 750);
+  }],
+
+  ['presenters', 'Presenters and audience', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Presenters and audience');
+    const sc = G(p, { o: 0 });
+    mk('rect', { x: 230, y: 180, width: 400, height: 220, rx: 10, fill: '#ece8dc' }, sc);
+    mk('rect', { x: 260, y: 210, width: 200, height: 22, rx: 4, fill: COL.board }, sc);
+    [0, 1, 2].forEach(j => mk('rect', { x: 260, y: 260 + j * 34, width: 300 - j * 60, height: 14, rx: 4, fill: '#9aaba3' }, sc));
+    mk('rect', { x: 520, y: 300, width: 80, height: 60, rx: 4, fill: COL.whole }, sc);
+    show(sc, .3);
+    hmSay(p, 'overhead transparencies then; slides now', 430, 440, .4, { size: 22, fill: COL.dim });
+    hmSay(p, 'eyes and ears together', 430, 480, m('eyes'), { size: 24, fill: COL.whole });
+    hmSay(p, 'flip, flip, flip: message lost', 430, 520, m('flip'), { size: 24, fill: COL.bad, weight: 600 });
+    // five visuals, 4 minutes each, 22 px per minute
+    for (let i = 0; i < 5; i++) { const r = mk('rect', { x: 210 + i * 90, y: 560, width: 84, height: 40, rx: 6, fill: COL.whole }, p); put(r, { o: 0 }); show(r, m('four', .3 + i * .2)); }
+    hmSay(p, 'about four minutes per visual', 430, 640, m('four', 1), { size: 24, fill: COL.good, weight: 700 });
+    hmSay(p, 'highlight what matters; watch the audience like a hawk', 430, 690, m('watch'), { size: 22, fill: COL.dim });
+    hmSay(p, 'The audience', 1160, 210, m('aud'), { size: 30, weight: 700 });
+    [['asks questions', 280, 260], ['objects when it disagrees', 350, 360], ['corrects errors on the record', 420, 400]].forEach(([s, y, w], i) => l9Chip(p, s, 1160, y, COL.good, m('aud', i * 1.2), w));
+    l9Chip(p, 'yawning, reading the paper', 1160, 520, COL.bad, m('yawn'), 380);
+    draw(path(p, 'M980 520H1340', { stroke: COL.bad, 'stroke-width': 5 }, { d: 0 }), m('yawn', .4), .3);
+    hmSay(p, 'Attending is work.', 1160, 600, m('yawn', 3), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'About four minutes per visual. Attending is work.', m('yawn', 5), 750);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-player', prompt: ['Whose job is it at an operation review?'],
+    build: grid([
+      { parts: ['Keeps each presentation to time with quiet signals'], ans: ['o'], why: 'The organizer is the timekeeper.' },
+      { parts: ['Asks questions without having previewed the slides'], ans: ['r'], why: 'The reviewer reacts spontaneously, and sets the spirit.' },
+      { parts: ['Spends about four minutes per visual and watches the room'], ans: ['p'], why: 'The presenter’s rule of thumb.' },
+      { parts: ['Corrects a factual error on the record'], ans: ['a'], why: 'The audience’s responsibility: attending is work.' },
+    ], [['o', 'Organizer', null, 'O'], ['r', 'Reviewer', null, 'R'], ['p', 'Presenter', null, 'P'], ['a', 'Audience', null, 'A']], { multi: false, text: true }),
+  }], done) }],
+
+  ['mission', 'Mission-oriented meetings', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Meetings called to decide');
+    const ch = l9Person(p, 260, 300, COL.real); show(ch, m('chair'));
+    hmLines(p, ['the chairman:', 'most at stake'], 260, 370, m('chair', .3), { size: 22, fill: COL.real });
+    const seg = [['before', 560, COL.real], ['during', 260, '#6f6496'], ['after', 140, '#6f6496']];
+    seg.reduce((x, [s, w, c], i) => { const r = mk('rect', { x, y: 270, width: w - 6, height: 56, rx: 8, fill: c }, p); put(r, { o: 0 }); show(r, m('before', i * .3)); hmSay(p, s, x + w / 2, 305, m('before', i * .3), { size: 24, fill: COL.board, weight: 700 }); return x + w; }, 420);
+    hmSay(p, 'most of the chairman’s work', 700, 250, m('before', 1), { size: 22, fill: COL.real });
+    hmSay(p, 'If it fails, it is the chairman’s fault.', 900, 380, m('blame'), { size: 26, fill: COL.bad, weight: 600 });
+    hmSay(p, 'If you don’t know what you want, you won’t get it.', 800, 470, m('want'), { size: 30, weight: 700 });
+    [['necessary?', 480], ['desirable?', 800], ['justifiable?', 1120]].forEach(([s, x], i) => {
+      const b = mk('rect', { x: x - 100, y: 545, width: 30, height: 30, rx: 5, fill: 'none', stroke: COL.good, 'stroke-width': 3 }, p); put(b, { o: 0 }); show(b, m('three', 1.5 + i * .9));
+      hmSay(p, s, x - 56, 570, m('three', 1.5 + i * .9), { size: 28, anchor: 'start' });
+    });
+    hmRule(p, 'Unless all three are yes, don’t call the meeting.', m('three', 6), 750);
+  }],
+
+  ['cost', 'What a meeting costs', (m) => {
+    const p = panel(0);
+    hmHead(p, 'A meeting is a purchase');
+    hmSay(p, 'Grove’s estimate, 1983: about $100 per manager-hour, overhead included', 800, 180, m('rate'), { size: 24, fill: COL.dim });
+    for (let i = 0; i < 10; i++) { const q = l9Person(p, 340 + i * 70, 290, COL.chalk, .7); show(q, m('ten', i * .08)); }
+    hmSay(p, '× 2 hours', 1100, 300, m('ten', .9), { size: 30, weight: 700, anchor: 'start' });
+    hmSay(p, '= $2,000', 800, 400, m('ten', 1.6), { size: 44, fill: COL.bad, weight: 700 });
+    hmBox(p, 480, 520, 520, 110, COL.whole, m('approve'), 'A $2,000 purchase', { size: 28, sub: ['needs a senior signature'] });
+    hmBox(p, 1120, 520, 520, 110, COL.bad, m('approve', 2.5), 'A $2,000 meeting', { size: 28, sub: ['can be called on a whim'] });
+    hmSay(p, 'Not justified? Cancel early: a one-on-one, a call, a note.', 800, 650, m('early'), { size: 26, fill: COL.good, weight: 600 });
+    hmRule(p, 'Question a meeting as you would a purchase.', m('early', 5), 750);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-cost', prompt: ['Six managers meet for an hour and a half. At Grove’s 1983 estimate of $100 per manager-hour, what does the meeting cost?'],
+    build: blanks([{ parts: ['6 × 1.5 × $100 = $', { box: '900' }], why: 'Nine hundred dollars, committed without anyone signing for it.', hint: 'People × hours × dollars per hour.' }]),
+  }], done) }],
+
+  ['chair', 'The chairman’s duties', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The chairman’s duties');
+    l9List(p, [['decide who must attend', m('who')], ['get firm commitments', m('who', 2)], ['absent? send someone who can speak for you', m('who', 4)]], 160, 220, 48, 26);
+    const tbl = mk('rect', { x: 1000, y: 240, width: 260, height: 120, rx: 60, fill: '#16211d', stroke: COL.faint, 'stroke-width': 3 }, p); put(tbl, { o: 0 }); show(tbl, m('size'));
+    const pos = [[1010, 210], [1090, 200], [1170, 200], [1250, 210], [1290, 300], [1250, 390], [1170, 400], [1090, 400], [1010, 390], [970, 300]];
+    pos.forEach(([x, y], i) => { const c = i < 7 ? COL.good : i === 7 ? COL.task : COL.bad; const d = hmDot(p, x, y, c, 16); show(d, (i < 7 ? m('size', .3) : m('eight')) + i * .12, .2); });
+    hmSay(p, '6–7 to decide · 8 at most', 1130, 460, m('eight', .8), { size: 24, fill: COL.good, weight: 600 });
+    hmSay(p, 'not a spectator sport', 1130, 495, m('eight', 2), { size: 22, fill: COL.bad });
+    const ck = G(p, { x: 400, y: 520, o: 0 });
+    mk('circle', { r: 56, fill: '#16211d', stroke: COL.bad, 'stroke-width': 4 }, ck); path(ck, 'M0 0V-36M0 0L28 10', { stroke: COL.bad, 'stroke-width': 5 });
+    show(ck, m('late'));
+    hmLines(p, ['lateness wastes everyone’s paid time:', 'like letting someone walk off with', '$2,000 of equipment'], 490, 500, m('late', 2), { size: 24, fill: COL.bad, anchor: 'start', lh: 32 });
+    hmRule(p, 'Six or seven decide. Start on time.', m('late', 6), 750);
+  }],
+
+  ['agenda', 'The agenda', (m) => {
+    const p = panel(0);
+    hmHead(p, 'An agenda states purpose, timing and roles');
+    hmSay(p, 'Grove’s example, re-drawn', 800, 170, .3, { size: 22, fill: COL.dim });
+    hmSay(p, 'Purpose: decide the specific site for the Philippine plant expansion', 800, 220, m('ex'), { size: 28, weight: 700 });
+    hmSay(p, 'Friday, 11:00 to 1:00 · a conference room plus a teleconference link · four invitees', 800, 258, m('ex', 2), { size: 22, fill: COL.dim });
+    const ts = m('slots');
+    L9_AG.forEach(([a, d, lab, who], i) => {
+      const x = L9X(a), w = d * 8, t = ts + i * 1.8;
+      const r = mk('rect', { x: x + 2, y: 320, width: w - 4, height: 84, rx: 8, fill: i === 3 ? COL.good : COL.real }, p); put(r, { o: 0 }); show(r, t);
+      hmLines(p, lab, x + w / 2, 355, t, { size: i === 3 ? 18 : 20, fill: COL.board, weight: 700, lh: 24 });
+      hmSay(p, who, x + w / 2, 434, t, { size: 18, fill: COL.dim });
+      hmSay(p, ['11:00', '11:30', '12:00', '12:45'][i], x, 306, t, { size: 18, fill: COL.dim, anchor: 'start' });
+    });
+    hmSay(p, '1:00', L9X(120), 306, ts + 6, { size: 18, fill: COL.dim, anchor: 'end' });
+    hmSay(p, 'drawn to scale', 1280, 460, ts + 6, { size: 16, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Drill sergeant?', 800, 540, m('sarge'), { size: 28, fill: COL.dim });
+    hmSay(p, 'Grove, as a patient: give me a disciplined operating room.', 800, 610, m('or'), { size: 30, fill: COL.good, weight: 700 });
+    hmRule(p, 'State the purpose, the timing and everyone’s role.', m('or', 4), 750);
+  }],
+
+  ['minutes', 'Minutes', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Minutes, sent fast');
+    const cols = [[300, 'What was decided or to be done'], [920, 'Who'], [1200, 'By when']];
+    cols.forEach(([x, s]) => hmSay(p, s, x, 220, m('what'), { size: 24, fill: COL.dim, anchor: 'start', weight: 600 }));
+    path(p, 'M290 240H1340', { stroke: COL.faint, 'stroke-width': 2 });
+    [['Decision: expand at site B', '—', '—'], ['Finish the site survey', 'construction', 'Oct 15'], ['Draft the staffing plan', 'plant manager', 'Oct 22']].forEach((row, i) => {
+      const t = i ? m('who', (i - 1) * .8) : m('what', 1.2);
+      row.forEach((s, j) => hmSay(p, s, cols[j][0], 290 + i * 56, t, { size: 26, anchor: 'start', fill: i ? COL.chalk : COL.good }));
+    });
+    hmSay(p, 'illustrative', 1340, 460, m('who', 1), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmSay(p, 'Send them before people forget.', 800, 540, m('what', -1), { size: 28 });
+    hmSay(p, 'Small effort, high leverage: it makes the meeting pay off.', 800, 620, m('lev'), { size: 28, fill: COL.good, weight: 600 });
+    hmRule(p, 'Minutes: what, who, by when, sent fast.', m('lev', 4), 750);
+  }],
+
+  ['ratio', 'The 80/20 test', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Where the issues get handled');
+    const a = mk('rect', { x: 300, y: 230, width: 0, height: 70, rx: 8, fill: COL.whole }, p); put(a, { a_width: 0 }); tw(a, { a_width: 800 }, m('eighty'), 1.2, out);
+    hmSay(p, 'regular process meetings: ~80%', 700, 275, m('eighty', 1), { size: 26, fill: COL.board, weight: 700 });
+    const b = mk('rect', { x: 1104, y: 230, width: 0, height: 70, rx: 8, fill: COL.real }, p); put(b, { a_width: 0 }); tw(b, { a_width: 196 }, m('twenty'), .6, out);
+    hmSay(p, 'mission: ~20%', 1202, 275, m('twenty', .5), { size: 22, fill: COL.board, weight: 700 });
+    hmSay(p, 'Drucker: over 25% of your time in meetings = poor organization', 800, 420, m('druck'), { size: 26, fill: COL.dim });
+    hmSay(p, 'Grove: over 25% in ad hoc mission meetings is the real warning sign', 800, 490, m('grove'), { size: 28, fill: COL.good, weight: 700 });
+    hmRule(p, 'Too many ad hoc meetings means the regular ones are failing.', m('grove', 5), 750);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ratio', prompt: ['You spend about 40% of your week in ad hoc meetings called to fix problems. What would Grove read into that?'],
+    build: choice([['Normal for a busy manager'], ['Your regular meetings are not doing their job: a sign of malorganization'], ['Cut every kind of meeting to 25% of your time']], 1,
+      'Regular process meetings should catch most issues. Lots of firefighting meetings means they are not.',
+      ['Grove sets the line at about a quarter, and only for ad hoc meetings.', null, 'Regular meetings are the medium of the job. It is the ad hoc share that signals trouble.']),
+  }], done) }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 9 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Staff meetings: issues for more than two; never lecture.', 'w1'], ['Operation reviews: everyone, audience too, has a job.', 'w2'], ['Before a mission meeting: necessary, desirable, justifiable?', 'w3'], ['Six or seven people, an agenda, on time, fast minutes.', 'w4'], ['Many ad hoc meetings: the regular ones are failing.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-invite', prompt: ['You are invited to a two-hour meeting with twelve people and no stated purpose. What should you do?'],
+      build: choice([['Go: it would be rude not to'], ['Ask the chair what it is for and whether you are needed, and suggest a cheaper medium if not'], ['Go, but work on your laptop']], 1,
+        'Even invitees should question a meeting’s cost. Get it reshaped or cancelled early.',
+        ['Two hours of your time is real money. It is fair to ask why.', null, 'Then you pay the cost and add nothing: worse than not attending.']) },
+    { id: 'p-who', prompt: ['You are chairing a meeting to decide a product’s launch date. Who should attend?'],
+      build: choice([['Everyone who is interested'], ['The six or seven people needed to decide, each committed to coming'], ['Just you and the product lead']], 1,
+        'Decision-making is not a spectator sport. Keep it to those who must decide, and get commitments.',
+        ['Onlookers slow the decision down.', null, 'Leaving out people with a stake means the decision may not hold.']) },
+    { id: 'p-late', prompt: ['Two people arrive fifteen minutes late to your decision meeting. What is Grove’s view?'],
+      build: choice([['Let it go: it happens'], ['Address it: their lateness spends everyone’s paid time'], ['Start over when they arrive']], 1,
+        'You would not let someone take $2,000 of equipment. Do not let them take that much of everyone’s time.',
+        ['Grove calls it criminal for a chairman to allow it.', null, 'That rewards lateness and wastes more time.']) },
+    { id: 'p-slides', prompt: ['Your operation-review slot is thirty minutes, and your deck has thirty slides. What does Grove’s rule suggest?'],
+      build: choice([['Speak faster'], ['Cut to about seven or eight slides: roughly four minutes each'], ['Skip the discussion to fit them all in']], 1,
+        'About four minutes per visual, including discussion, so the message is not lost in chart-flipping.',
+        ['Rushing loses the audience and the discussion.', null, 'Discussion is the point of a review.']) },
+    { id: 'p-lecture', prompt: ['In your staff meetings, you spend most of the time explaining your own views. What does Grove warn?'],
+      build: choice([['That is your job as leader'], ['Pontificating kills free discussion: moderate instead'], ['Only if the meeting runs long']], 1,
+        'Your effort goes into keeping the discussion on track. Your reports should do the work on the issues.',
+        ['Leader, yes. Lecturer, never.', null, 'Length is not the issue. It is who does the thinking.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>

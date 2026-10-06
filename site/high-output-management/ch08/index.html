@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meetings and the one-on-one</title>
+<link rel="stylesheet" href="../lib/engine.css">
+<link rel="expect" href="#bar" blocking="render">
+</head>
+<body>
+<script src="../lib/engine.js"></script>
+<script src="../lib/book.js"></script>
+<script src="audio/en/timings.js"></script>
+<script>
+'use strict';
+const CHAPTER = { number: 8, title: 'Meetings and the one-on-one', kicker: 'Chapter 4 · Lesson 1', minutes: 12, language: 'en', silent: true, next: '../ch09/index.html' };
+
+/* Colours: blue = process meetings and ordinary work; purple = mission meetings; green = the goal; red = a problem; amber = the rule. */
+function l8Person(p, x, y, color, s = 1) {
+  const g = G(p, { x, y, s, o: 0 });
+  mk('circle', { cy: -22, r: 16, fill: color }, g);
+  path(g, 'M-28 26C-28 0 -14 -4 0 -4C14 -4 28 0 28 26Z', { fill: color, stroke: 'none' });
+  return g;
+}
+const l8Chip = (p, s, x, y, color, t0, w, size = 24) => {
+  const g = G(p, { o: 0 }); mk('rect', { x: x - w / 2, y: y - 24, width: w, height: 48, rx: 24, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x, y: y + 8, size, fill: color, anchor: 'middle' }); show(g, t0); return g;
+};
+function l8Doc(p, x, y, w, h, color, lines, t0) {
+  const g = G(p, { o: 0 });
+  mk('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: '#16211d', stroke: color, 'stroke-width': 3 }, g);
+  for (let j = 0; j < lines; j++) mk('rect', { x: x - w / 2 + w * .14, y: y - h / 2 + h * .16 + j * h * .7 / lines, width: w * (j % 3 === 2 ? .45 : .72), height: Math.max(4, h * .04), rx: 2, fill: COL.faint }, g);
+  show(g, t0); return g;
+}
+// A speech bubble whose left edge is at x.
+function l8Bubble(p, s, x, y, color, t0) {
+  const w = s.length * 12.6 + 44, g = G(p, { o: 0 });
+  mk('rect', { x, y: y - 26, width: w, height: 52, rx: 18, fill: '#16211d', stroke: color, 'stroke-width': 2.5 }, g);
+  T(g, s, { x: x + 22, y: y + 8, size: 24, fill: color });
+  show(g, t0); return g;
+}
+
+const BEATS = [
+  ['intro', 'Meetings and the one-on-one', (m, D) => hmTitle(m, D, 'Chapter 4 · Meetings: The Medium of Managerial Work · Lesson 1 of 2', 'Meetings and the one-on-one', 'Why meetings are the manager’s medium, and how to run a one-on-one')],
+
+  ['badname', 'Meetings have a bad name', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Meetings have a bad name');
+    hmBox(p, 300, 280, 440, 150, COL.bad, m('study'), 'A study', { size: 30, sub: ['managers spend up to half', 'their time in meetings'] });
+    hmBox(p, 800, 280, 440, 150, COL.bad, m('druck'), 'Peter Drucker', { size: 30, sub: ['over a quarter of your time:', 'a sign of poor organization'] });
+    hmBox(p, 1300, 280, 440, 150, COL.bad, m('whyte'), 'William H. Whyte, Jr.', { size: 30, sub: ['labour that', 'contributes nothing'] });
+    hmSay(p, 'Grove: know-how and decisions happen face to face.', 800, 470, m('grove'), { size: 30 });
+    hmSay(p, 'A meeting is the medium of managerial work.', 800, 570, m('med'), { size: 38, fill: COL.good, weight: 700 });
+    hmRule(p, 'Don’t fight meetings. Use the time well.', m('med', 3.5), 745);
+  }],
+
+  ['kinds', 'Two kinds of meeting', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Two kinds of meeting');
+    hmBox(p, 450, 290, 580, 180, COL.whole, m('proc'), 'Process-oriented', { size: 34, sub: ['share knowledge and information', 'on a regular schedule'] });
+    hmBox(p, 1150, 290, 580, 180, COL.real, m('miss'), 'Mission-oriented', { size: 34, sub: ['solve one problem, often with a decision', 'called as needed'] });
+    [['regular format', 230], ['batched items', 450], ['plannable time', 670]].forEach(([s, x], i) => l8Chip(p, s, x, 450, COL.whole, m('reg', 1.5 + i * 1.4), 190));
+    hmSay(p, 'Intel’s three:', 450, 530, m('three'), { size: 24, fill: COL.dim });
+    [['one-on-one', 260, 170], ['staff meeting', 450, 190], ['operation review', 665, 230]].forEach(([s, x, w], i) => l8Chip(p, s, x, 580, COL.whole, m('three', 1 + i * .9), w));
+    hmSay(p, 'next lesson', 1150, 450, m('miss', 2), { size: 24, fill: COL.dim });
+    hmRule(p, 'Process meetings run on regularity.', m('three', 4.5), 745);
+  }],
+
+  ['q1', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-kind', prompt: ['Process-oriented or mission-oriented?'],
+    build: grid([
+      { parts: ['Weekly one-on-one with a new engineer'], ans: ['p'], why: 'Regular, scheduled, for exchanging information and know-how.' },
+      { parts: ['An urgent meeting about a field complaint on a device'], ans: ['m'], why: 'Called for one problem, to reach a decision.' },
+      { parts: ['Monthly operation review of the clinical program'], ans: ['p'], why: 'A regular forum for teaching and learning across levels.' },
+      { parts: ['A meeting to choose between two suppliers by Friday'], ans: ['m'], why: 'One specific output: a decision.' },
+    ], [['p', 'Process', COL.whole, 'P'], ['m', 'Mission', COL.real, 'M']], { multi: false, text: true }),
+  }], done) }],
+
+  ['oneone', 'The one-on-one', (m) => {
+    const p = panel(0);
+    hmHead(p, 'The one-on-one: mutual teaching');
+    const a = l8Person(p, 460, 340, COL.chalk), b = l8Person(p, 1140, 340, COL.chalk); show(a, .3); show(b, .4);
+    hmSay(p, 'manager', 460, 410, .3, { size: 24, fill: COL.dim }); hmSay(p, 'report', 1140, 410, .4, { size: 24, fill: COL.dim });
+    hmArrow(p, 530, 300, 1070, 300, COL.whole, m('teach'), .6);
+    hmSay(p, 'skills and know-how', 800, 280, m('teach', .3), { size: 26, fill: COL.whole, weight: 600 });
+    hmArrow(p, 1070, 370, 530, 370, COL.good, m('learn'), .6);
+    hmSay(p, 'detail on their work and worries', 800, 410, m('learn', .3), { size: 26, fill: COL.good, weight: 600 });
+    hmSay(p, '“I see her several times a day” is not a one-on-one.', 800, 500, m('casual'), { size: 26, fill: COL.dim });
+    hmSay(p, 'Grove, early at Intel: two reports taught him memory design and manufacturing.', 800, 580, m('story'), { size: 26 });
+    hmSay(p, 'They prepared like teachers. He took notes like a pupil.', 800, 630, m('pupil'), { size: 26, fill: COL.dim });
+    hmRule(p, 'A one-on-one is teaching in both directions.', m('pupil', 3), 745);
+  }],
+
+  ['often', 'How often', (m) => {
+    const p = panel(0);
+    hmHead(p, 'How often? By task-relevant maturity');
+    hmArrow(p, 420, 210, 1260, 210, COL.dim, m('trm'), .8);
+    hmSay(p, 'new to this task', 420, 250, m('trm', .4), { size: 22, fill: COL.dim });
+    hmSay(p, 'veteran at it', 1260, 250, m('trm', .4), { size: 22, fill: COL.dim });
+    hmSay(p, 'their experience with this task, not their age or career', 840, 180, m('trm', 4), { size: 22, fill: COL.dim });
+    hmSay(p, 'new: weekly', 380, 348, m('new'), { size: 26, anchor: 'end' });
+    path(p, 'M400 340H1300', { stroke: COL.faint, 'stroke-width': 3 });
+    for (let i = 0; i < 14; i++) draw(path(p, `M${420 + i * 64} 318V362`, { stroke: COL.whole, 'stroke-width': 6 }, { d: 0 }), m('new', .3 + i * .05), .2);
+    hmSay(p, 'veteran: every few weeks', 380, 448, m('vet'), { size: 26, anchor: 'end' });
+    path(p, 'M400 440H1300', { stroke: COL.faint, 'stroke-width': 3 });
+    [420, 676, 932, 1188].forEach((x, i) => draw(path(p, `M${x} 418V462`, { stroke: COL.whole, 'stroke-width': 6 }, { d: 0 }), m('vet', .3 + i * .15), .2));
+    hmSay(p, '14 weeks shown', 1300, 492, m('vet', 1), { size: 18, fill: COL.faint, anchor: 'end' });
+    hmBox(p, 520, 590, 520, 100, COL.whole, m('pace'), 'Fast-moving area: more often', { size: 26, sub: ['like marketing'] });
+    hmBox(p, 1080, 590, 520, 100, COL.whole, m('pace', 2.5), 'Quieter area: less often', { size: 26, sub: ['like research'] });
+    hmRule(p, 'Meet more often when the task is new or the area moves fast.', m('pace', 6), 750);
+  }],
+
+  ['long', 'How long, and where', (m) => {
+    const p = panel(0);
+    hmHead(p, 'How long, and where?');
+    const clock = (x, frac, c, t0) => {
+      const g = G(p, { x, y: 300, o: 0 });
+      mk('circle', { r: 90, fill: '#16211d', stroke: c, 'stroke-width': 4 }, g);
+      const a = frac * 2 * Math.PI, ex = 90 * Math.sin(a), ey = -90 * Math.cos(a);
+      if (frac < 1) path(g, `M0 0L0 -90A90 90 0 ${frac > .5 ? 1 : 0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}Z`, { fill: c, stroke: 'none', opacity: .7 });
+      else mk('circle', { r: 84, fill: c, opacity: .7 }, g);
+      show(g, t0); return g;
+    };
+    clock(470, .25, COL.bad, m('short'));
+    hmLines(p, ['15 minutes:', 'only the easy topics'], 470, 430, m('short', 2), { size: 26, fill: COL.bad, weight: 600 });
+    clock(1130, 1, COL.good, m('hour'));
+    hmLines(p, ['an hour at least:', 'room for thorny issues'], 1130, 430, m('hour', .3), { size: 26, fill: COL.good, weight: 600 });
+    hmSay(p, 'Meet in or near their work area', 800, 560, m('where'), { size: 30, weight: 700 });
+    [['organized?', 430, 170], ['hunting for documents?', 760, 320], ['always interrupted?', 1120, 290]].forEach(([s, x, w], i) => l8Chip(p, s, x, 630, COL.whole, m('clues', i * 1.2), w));
+    hmRule(p, 'At least an hour, in their space.', m('clues', 4.5), 750);
+  }],
+
+  ['q2', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-often', prompt: ['Your new hire has managed vendors for years but has never run a clinical study, which she now leads. How often should your one-on-ones on the study be?'],
+    build: choice([['Every few weeks: she is very experienced'], ['Weekly for now: she is new to this task'], ['Only when a problem comes up']], 1,
+      'Frequency follows task-relevant maturity: her experience with this task, not her career overall.',
+      ['Her experience is with vendors. With clinical studies she is new.', null, 'Waiting for problems loses the teaching and the early warnings.']),
+  }], done) }],
+
+  ['theirs', 'It is their meeting', (m) => {
+    const p = panel(0);
+    hmHead(p, 'It is the report’s meeting');
+    hmSay(p, 'their agenda, their tone', 800, 180, m('agenda'), { size: 30, fill: COL.good, weight: 700 });
+    for (let i = 0; i < 8; i++) l8Doc(p, 230 + i * 52, 300, 40, 54, COL.bad, 3, m('prep', .2 + i * .1));
+    hmSay(p, 'you, preparing for eight reports', 412, 360, m('prep', 1), { size: 22, fill: COL.bad });
+    l8Doc(p, 1180, 300, 40, 54, COL.good, 3, m('prep', 2.5));
+    hmSay(p, 'each report, preparing once', 1180, 360, m('prep', 2.5), { size: 22, fill: COL.good });
+    l8Doc(p, 800, 520, 150, 170, COL.chalk, 6, m('outline'));
+    hmSay(p, 'their outline', 800, 630, m('outline'), { size: 22, fill: COL.dim });
+    hmLines(p, ['forces them to', 'think it through'], 660, 500, m('outline', 2), { size: 24, fill: COL.good, anchor: 'end' });
+    hmLines(p, ['lets you pace', 'by meatiness'], 940, 500, m('pace'), { size: 24, fill: COL.good, anchor: 'start' });
+    hmSay(p, 'they bring the support material and walk you through it', 800, 680, m('walk'), { size: 22, fill: COL.dim });
+    hmRule(p, 'Their meeting: their outline, their agenda.', m('walk', 3), 750);
+  }],
+
+  ['cover', 'What to cover', (m) => {
+    const p = panel(0);
+    hmHead(p, 'What goes on the agenda?');
+    [['their indicators, especially trouble signs', 'ind', COL.chalk], ['news since last time', 'since', COL.chalk], ['hiring, people, organization, plans', 'since', COL.chalk], ['potential problems, even a hunch', 'pot', COL.bad]].forEach(([s, k, c], i) => {
+      const t = m(k, k === 'since' && i === 2 ? 2.5 : 0);
+      const b = mk('rect', { x: 150, y: 196 + i * 70, width: 26, height: 26, rx: 4, fill: 'none', stroke: c, 'stroke-width': 3 }, p); put(b, { o: 0 }); show(b, t);
+      hmSay(p, s, 196, 218 + i * 70, t, { size: 28, fill: c, anchor: 'start', weight: i === 3 ? 700 : 500 });
+    });
+    const bx = G(p, { o: 0 });
+    mk('rect', { x: 1060, y: 220, width: 320, height: 220, rx: 14, fill: '#121a17', stroke: COL.faint, 'stroke-width': 4 }, bx);
+    mk('rect', { x: 1160, y: 280, width: 120, height: 100, rx: 8, fill: '#26362f', stroke: COL.chalk, 'stroke-width': 3 }, bx);
+    show(bx, m('pot', 4));
+    hmLines(p, ['a hunch opens a window', 'into the black box'], 1220, 480, m('pot', 4.5), { size: 22, fill: COL.dim });
+    hmSay(p, 'Above all: whatever is nagging at them', 800, 620, m('nag'), { size: 34, fill: COL.good, weight: 700 });
+    hmRule(p, 'Cover what nags them, even if it is only a hunch.', m('nag', 2.5), 750);
+  }],
+
+  ['ask', 'Ask one more question', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Your job: get them talking');
+    hmSay(p, 'Drucker: good managers get their people to talk about their own problems.', 800, 180, m('druck'), { size: 24, fill: COL.dim });
+    const lines = [['Enrollment is a little slow.', 0, 'one'], ['Where is it slow?', 1, 'more'], ['Mostly at two sites.', 0, 'more'], ['What is different there?', 1, 'more'], ['Both lost their study coordinator.', 0, 'bottom']];
+    lines.forEach(([s, you, k], i) => l8Bubble(p, s, 230 + i * 130, 260 + i * 72, you ? COL.chalk : COL.whole, m(k, k === 'more' ? (i - 1) * 1.2 : 0)));
+    hmSay(p, 'report', 200, 268, m('one'), { size: 20, fill: COL.whole, anchor: 'end' });
+    hmSay(p, 'you', 330, 340, m('more'), { size: 20, fill: COL.chalk, anchor: 'end' });
+    hmSay(p, 'the bottom of it', 1250, 556, m('bottom', 1), { size: 26, fill: COL.good, weight: 700, anchor: 'start' });
+    hmSay(p, 'Grove’s Principle of Didactic Management', 800, 670, m('one'), { size: 24, fill: COL.dim });
+    hmRule(p, '“Ask one more question!”', m('one', .5), 745);
+  }],
+
+  ['q3', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-ask', prompt: ['In a one-on-one, your report says the launch is “basically on track” and moves on. What does Grove suggest?'],
+    build: choice([['Accept it and go to the next item'], ['Ask one more question: what does “basically” cover?'], ['Tell them about a similar problem you once solved']], 1,
+      'Keep the flow going with another question until you both reach the bottom of it.',
+      ['“Basically” often hides the thing that matters.', null, 'That turns their meeting into yours. Get them talking about their problem.']),
+  }], done) }],
+
+  ['notes', 'Notes and the hold file', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Write it down');
+    l8Doc(p, 470, 280, 170, 200, COL.chalk, 8, .3); l8Doc(p, 1130, 280, 170, 200, COL.chalk, 8, .4);
+    hmSay(p, 'your notes', 470, 410, .3, { size: 22, fill: COL.dim }); hmSay(p, 'their notes', 1130, 410, .4, { size: 22, fill: COL.dim });
+    hmLines(p, ['keeps your mind on it', 'and organizes it'], 800, 250, m('mind'), { size: 24, fill: COL.whole });
+    hmSay(p, 'an action written down = a commitment, like a handshake', 800, 470, m('hand'), { size: 28, fill: COL.good, weight: 700 });
+    hmSay(p, 'your copy lets you follow up next time', 800, 515, m('follow'), { size: 24, fill: COL.dim });
+    const fol = G(p, { x: 800, y: 620, o: 0 });
+    mk('path', { d: 'M-90 -40H-30L-15 -26H90V46H-90Z', fill: '#16211d', stroke: COL.whole, 'stroke-width': 3 }, fol);
+    T(fol, 'hold file', { x: 0, y: 16, size: 24, fill: COL.whole, anchor: 'middle', weight: 600 });
+    show(fol, m('hold'));
+    [0, 1, 2].forEach(i => { const d = hmDot(p, 600 - i * 70, 560, COL.whole, 10); show(d, m('hold', 1 + i * .5), .2); tw(d, { x: 800, y: 600, o: 0 }, m('hold', 1.3 + i * .5), .6); });
+    hmLines(p, ['non-urgent items wait', 'for the next one-on-one'], 940, 610, m('hold', 2.5), { size: 22, fill: COL.dim, anchor: 'start' });
+    hmRule(p, 'Notes are commitments. A hold file batches the rest.', m('hold', 6), 750);
+  }],
+
+  ['heart', 'Heart-to-hearts and zingers', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Room for heart-to-heart issues');
+    [['happy with their performance?', 300, 400], ['something blocking them?', 790, 340], ['doubts about direction?', 1270, 320]].forEach(([s, x, w], i) => l8Chip(p, s, x, 200, COL.whole, m('q', i * 1.8), w));
+    // a 60-minute one-on-one, 1000 px wide
+    const bar = mk('rect', { x: 300, y: 360, width: 1000, height: 40, rx: 8, fill: '#33463f' }, p); put(bar, { o: 0 }); show(bar, m('zing', -.5));
+    hmSay(p, '0', 300, 430, m('zing', -.5), { size: 20, fill: COL.dim }); hmSay(p, '60 min', 1300, 430, m('zing', -.5), { size: 20, fill: COL.dim });
+    const z = path(p, 'M1235 300L1215 350H1235L1215 400', { stroke: COL.bad, 'stroke-width': 6 }, { d: 0 }); draw(z, m('zing', 1.2), .4);
+    hmSay(p, '“I’ve been looking for another job.”', 1230, 290, m('zing', 4.5), { size: 24, fill: COL.bad, weight: 600, anchor: 'end' });
+    const ok = mk('rect', { x: 400, y: 360, width: 120, height: 40, rx: 8, fill: COL.good }, p); put(ok, { o: 0 }); show(ok, m('time'));
+    hmSay(p, 'make room early', 460, 345, m('time'), { size: 22, fill: COL.good, weight: 600 });
+    hmSay(p, 'Remote:', 200, 560, m('remote'), { size: 26, weight: 700, anchor: 'start' });
+    [['outline in advance', 520, 260], ['notes on both sides', 840, 280], ['swap notes after', 1150, 250]].forEach(([s, x, w], i) => l8Chip(p, s, x, 552, COL.whole, m('remote', 2 + i * 1.3), w));
+    hmRule(p, 'Make room for the big issue early, not in the last five minutes.', m('remote', 7), 750);
+  }],
+
+  ['rolling', 'Rolling schedule', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Book the next one as this one ends');
+    const W = i => 380 + i * 130;
+    [0, 1, 2, 3, 4, 5, 6, 7].forEach(i => { hmSay(p, 'wk ' + (i + 1), W(i) + 60, 200, .3, { size: 20, fill: COL.dim }); });
+    const vac = mk('rect', { x: W(3), y: 220, width: 120, height: 220, rx: 8, fill: 'rgba(240,140,122,.15)', stroke: COL.bad, 'stroke-width': 2, 'stroke-dasharray': '8 6' }, p); put(vac, { o: 0 }); show(vac, m('fixed'));
+    hmSay(p, 'vacation', W(3) + 60, 470, m('fixed'), { size: 22, fill: COL.bad });
+    hmSay(p, 'fixed slot', 360, 290, m('fixed'), { size: 24, anchor: 'end' });
+    [1, 3, 5, 7].forEach((i, k) => { const r = mk('rect', { x: W(i) + 10, y: 266, width: 100, height: 44, rx: 6, fill: COL.whole }, p); put(r, { o: 0 }); show(r, m('fixed', .5 + k * .3)); });
+    pop(hmCross(p, W(3) + 60, 288, COL.bad, 16), m('fixed', 2.5));
+    hmSay(p, 'rolling', 360, 390, m('roll'), { size: 24, anchor: 'end' });
+    [1, 2, 4, 6].forEach((i, k) => { const r = mk('rect', { x: W(i) + 10, y: 366, width: 100, height: 44, rx: 6, fill: COL.good }, p); put(r, { o: 0 }); show(r, m('roll', .5 + k * .4)); });
+    hmSay(p, 'each booked at the end of the last, around what is coming', 800, 530, m('roll', 2.5), { size: 24, fill: COL.good });
+    hmSay(p, 'Grove even held one-on-ones at home, over dinner with each teenage daughter.', 800, 630, m('home'), { size: 26 });
+    hmRule(p, 'Book the next one before you leave the room.', m('home', 6), 750);
+  }],
+
+  ['lev', 'The leverage of a one-on-one', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Ninety minutes, two weeks of work');
+    // to scale: 1000 px = 80 hours (4,800 minutes), so 90 minutes = 19 px
+    hmSay(p, 'your time: 90 minutes', 300, 260, m('mtg'), { size: 26, anchor: 'start', weight: 600 });
+    const a = mk('rect', { x: 300, y: 280, width: 0, height: 50, rx: 4, fill: COL.whole }, p); put(a, { a_width: 0 }); tw(a, { a_width: 19 }, m('mtg', .3), .4);
+    hmSay(p, 'the work it can shape: about 80 hours', 300, 400, m('work'), { size: 26, anchor: 'start', weight: 600, fill: COL.good });
+    const b = mk('rect', { x: 300, y: 420, width: 0, height: 50, rx: 6, fill: COL.good }, p); put(b, { a_width: 0 }); tw(b, { a_width: 1000 }, m('work', .3), 1.6, out);
+    hmSay(p, 'to scale', 1300, 500, m('work', 1), { size: 20, fill: COL.faint, anchor: 'end' });
+    hmSay(p, '+ you learn what they are doing', 800, 560, m('you'), { size: 26, fill: COL.dim });
+    hmSay(p, 'A shared base of information and approach: what delegation needs.', 800, 630, m('base'), { size: 28 });
+    hmRule(p, 'Ninety minutes can shape two weeks of work.', m('base', 4), 750);
+  }],
+
+  ['q4', 'Quick check', () => { panel(0); }, { ask: done => quiz(MID, [{
+    id: 'c-lev', prompt: ['Your report works 40 hours a week. You hold a one-on-one every two weeks. How many hours of their work can it shape?'],
+    build: blanks([{ parts: ['2 × 40 = ', { box: '80' }, '  hours'], why: 'Eighty hours of work shaped by about ninety minutes of yours.', hint: 'Two weeks of a 40-hour week.' }]),
+  }], done) }],
+
+  ['teach', 'The report teaches you', (m) => {
+    const p = panel(0);
+    hmHead(p, 'Your report teaches you, too');
+    // illustrative order trend: growth that flattens
+    path(p, 'M160 220V440H560', { stroke: COL.dim, 'stroke-width': 3 });
+    draw(path(p, 'M170 420L250 380L330 340L400 318L460 314L540 316', { stroke: COL.whole, 'stroke-width': 5 }, { d: 0 }), m('trend'), 1.2);
+    hmSay(p, 'incoming orders (illustrative)', 360, 475, m('trend'), { size: 20, fill: COL.dim });
+    hmLines(p, ['stopped growing,', 'not just summer'], 470, 260, m('slow'), { size: 22, fill: COL.bad, weight: 600 });
+    const g = l8Person(p, 760, 330, COL.chalk), s = l8Person(p, 900, 330, COL.chalk); show(g, m('trend', .3)); show(s, m('trend', .3));
+    hmSay(p, 'Grove', 760, 400, m('trend', .3), { size: 22, fill: COL.dim }); hmSay(p, 'sales head', 900, 400, m('trend', .3), { size: 22, fill: COL.dim });
+    hmBox(p, 830, 500, 400, 80, COL.good, m('both'), 'be cautious on expansion', { size: 24, fill: COL.good });
+    ['group 1', 'group 2', 'group 3', 'group 4'].forEach((n, i) => {
+      const y = 220 + i * 100;
+      hmArrow(p, 1036, 500, 1190, y, COL.dim, m('fan', 3 + i * .2), .4);
+      hmBox(p, 1300, y, 200, 70, COL.whole, m('fan', 3.3 + i * .2), n, { size: 24 });
+    });
+    hmSay(p, 'every group Grove supervised', 1300, 640, m('fan', 4.5), { size: 22, fill: COL.dim });
+    hmRule(p, 'What a report teaches you can travel to everyone.', m('fan', 7), 750);
+  }],
+
+  ['wrap', 'Summary', (m) => {
+    const p = panel(0);
+    hmSay(p, 'Lesson 8 in five lines', 800, 120, .2, { size: 40, weight: 600 });
+    hmWrap(p, [['Meetings are the medium: process or mission.', 'w1'], ['One-on-ones: by task maturity, an hour, in their space.', 'w2'], ['It is their meeting: their outline, their worries.', 'w3'], ['Ask one more question; take notes; keep a hold file.', 'w4'], ['Book the next one as this one ends.', 'w5']], m);
+  }],
+
+  ['final1', 'Lesson practice', () => { panel(0); }, { ask: done => quiz(SCREEN, [
+    { id: 'p-casual', prompt: ['A peer says scheduled one-on-ones are pointless because she sees her team all day. What would Grove say?'],
+      build: choice([['She is right: frequent contact is enough'], ['Passing chats are not a prepared, regular one-on-one'], ['One-on-ones are only needed for poor performers']], 1,
+        'A casual encounter, or a meeting about one problem, is very different from a prepared, regular one-on-one.',
+        ['Casual contact rarely surfaces what nags people or teaches know-how.', null, 'Their main purpose is mutual teaching, for everyone who reports to you.']) },
+    { id: 'p-agenda', prompt: ['Who should prepare the outline for a one-on-one?'],
+      build: choice([['You, the manager'], ['The report: it is their meeting'], ['No one: keep it informal']], 1,
+        'They prepare once; you would prepare for every report. And it makes them think the issues through.',
+        ['You would prepare eight times for eight reports, and the agenda would be yours.', null, 'Without an outline you cannot pace the meeting or see the issues coming.']) },
+    { id: 'p-zinger', prompt: ['With five minutes left, your report says she is thinking of leaving. What is the best response?'],
+      build: choice([['Promise to deal with it next time'], ['Make time for it now or very soon, and open room for such topics early next time'], ['Remind her the meeting is nearly over']], 1,
+        'A zinger needs real time. Act quickly; a valued person thinking of leaving cannot wait two weeks.',
+        ['Two weeks may be too late.', null, 'That shuts down exactly the conversation one-on-ones are for.']) },
+    { id: 'p-roll', prompt: ['Your one-on-ones are set for every other Wednesday and keep getting cancelled. What is the fix?'],
+      build: choice([['Move them to Thursdays'], ['Book each next one at the end of the current one'], ['Hold them only when there is something to discuss']], 1,
+        'A rolling schedule works around vacations and commitments, so meetings stop being lost.',
+        ['Any fixed slot collides with something eventually.', null, 'That turns a process meeting into an ad hoc one, and the regularity is lost.']) },
+    { id: 'p-hold', prompt: ['Your report sends you five small, non-urgent questions by chat every day. Which tool fits?'],
+      build: choice([['A hold file for the next one-on-one'], ['Answer each as it arrives'], ['Ask them to stop asking']], 0,
+        'Batching non-urgent items into the one-on-one saves you both from constant interruptions.',
+        [null, 'That is five interruptions a day.', 'Their questions are legitimate. Channel them instead.']) },
+  ], done, 'Lesson practice') }],
+
+  ['finish', 'Finished', () => { panel(0); }, { ask: finishCard }],
+].map(([id, title, run, extra]) => ({ id, title, run, ...extra }));
+boot();
+</script>
+</body>
+</html>
