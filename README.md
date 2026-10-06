@@ -4,6 +4,11 @@ Short animated lessons with quizzes that retell Andrew Grove's *High Output Mana
 The whole book is built: 32 lessons covering all fifteen chapters and Grove's closing homework list.
 Captions only for now; see "Voice narration" below.
 
+Based on *High Output Management* by Andrew S. Grove (first published 1983; Vintage Books).
+[Buy the book](https://www.penguinrandomhouse.com/books/72467/high-output-management-by-andrew-s-grove-former-chairman-and-ceo-of-intel/)
+and read the original. This is an independent study guide in original words and drawings. It is not affiliated
+with or endorsed by the author's estate or the publisher, and it does not include or link to the book's text.
+
 Started by Vaishali Mittal. Lesson engine and pipeline: [Papermorph](https://github.com/DozenTwelve/Papermorph) (MIT).
 
 ## What is here

@@ -56,6 +56,10 @@ h1 i { color: var(--task); font-style: italic; }
 .btn.quiet:hover { border-color: var(--dim); }
 .btn svg { width: 15px; height: 15px; fill: currentColor; }
 .meta { margin: 30px 0 0; color: var(--faint); font-size: 15px; letter-spacing: .04em; }
+.credit { max-width: 40em; margin: 22px auto 0; color: var(--faint); font-size: 14px; line-height: 1.55; text-wrap: balance; }
+.credit a { color: var(--dim); }
+.credit a:hover { color: var(--chalk); }
+.foot { max-width: 1212px; margin: 56px auto 0; padding: 24px 16px 40px; border-top: 1px solid var(--edge); text-align: center; }
 /* Faint chalk notes around the edges of the board. */
 .chalk { position: absolute; inset: 0; z-index: -1; pointer-events: none; animation: none !important; }
 .chalk span { position: absolute; font: italic 400 clamp(22px, 3vw, 38px) var(--book); color: var(--chalk); opacity: 0; white-space: nowrap;
@@ -204,6 +208,7 @@ main#contents { padding-bottom: 80px; }
     <a class="btn quiet" href="summary.html">The book on one page</a>
   </div>
   <p class="meta" id="meta"></p>
+  <p class="credit">Based on <i>High Output Management</i> by Andrew S. Grove (first published 1983; Vintage Books). <a href="https://www.penguinrandomhouse.com/books/72467/high-output-management-by-andrew-s-grove-former-chairman-and-ceo-of-intel/" target="_blank" rel="noopener">Buy the book</a> and read the original.<br>An independent study guide in our own words and drawings. Not affiliated with or endorsed by the author’s estate or the publisher.</p>
 </section>
 
 <main id="contents">
@@ -212,6 +217,7 @@ main#contents { padding-bottom: 80px; }
     <span class="prog" id="prog"></span>
   </header>
   <div id="units"></div>
+  <footer class="foot credit">Based on <i>High Output Management</i> by Andrew S. Grove (first published 1983; Vintage Books). <a href="https://www.penguinrandomhouse.com/books/72467/high-output-management-by-andrew-s-grove-former-chairman-and-ceo-of-intel/" target="_blank" rel="noopener">Buy the book</a> and read the original.<br>An independent study guide in our own words and drawings. Not affiliated with or endorsed by the author’s estate or the publisher.</footer>
 </main>
 
 <script>
